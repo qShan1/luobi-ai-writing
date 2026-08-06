@@ -90,7 +90,7 @@ function getChapter(project, chapterNumber, includeContent = false) {
     SELECT d.*, c.body AS content
     FROM drafts d
     JOIN contents c ON c.id = d.content_id
-    WHERE d.chapter_number = ? AND d.status = 'finalized'
+    WHERE d.chapter_number = ? AND d.status IN ('draft', 'revised', 'finalized')
     ORDER BY d.version DESC LIMIT 1
   `, [chapterNumber]) || null
   return {
@@ -98,7 +98,7 @@ function getChapter(project, chapterNumber, includeContent = false) {
     title: blueprint.title || `第${chapterNumber}章`,
     purpose: blueprint.purpose || '',
     suspenseHook: blueprint.suspense_hook || '',
-    status: draft ? 'finalized' : (Object.keys(blueprint).length ? 'planned' : 'missing'),
+    status: draft?.status || (Object.keys(blueprint).length ? 'planned' : 'missing'),
     draftId: draft?.id ?? null,
     version: draft?.version ?? null,
     wordCount: draft?.word_count ?? 0,
@@ -127,7 +127,7 @@ function status(projectPath) {
       title: core.project_name || path.basename(project.root),
       genre: core.genre || '',
       totalChapters: core.total_chapters || 0,
-      plannedChapters: chapters.filter(chapter => chapter.status === 'planned' || chapter.status === 'finalized').length,
+      plannedChapters: chapters.filter(chapter => ['planned', 'draft', 'revised', 'finalized'].includes(chapter.status)).length,
       finalizedChapters: finalized.length,
       finalizedWords: finalized.reduce((sum, chapter) => sum + (chapter.wordCount || 0), 0),
       chapters,
