@@ -14,7 +14,7 @@
   "directories": {
     "output": "release/${version}"
   },
-  "icon": "build/icon.png",
+  "icon": "build/luobi.ico",
   "files": [
     "dist",
     "dist-electron",

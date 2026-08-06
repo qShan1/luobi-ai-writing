@@ -8,7 +8,7 @@ export type Theme = 'light' | 'galaxy' | 'paper' | 'dark'
 // ─── 共享字体库 ─────────────────────────────────────────────────────────────
 
 /** 内置字体 ID（界面字体和写作字体共享同一张清单） */
-export type FontId = 'inter' | 'noto-sans-sc' | 'lxgw-wenkai' | 'noto-serif-sc' | 'system'
+export type FontId = string
 
 export interface FontOption {
   id: FontId

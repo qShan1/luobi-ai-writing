@@ -17,6 +17,10 @@ export interface ConfigChannels {
     args: []
     return: string
   }
+  'config:list-system-fonts': {
+    args: []
+    return: string[]
+  }
 }
 
 export interface GlobalConfig {

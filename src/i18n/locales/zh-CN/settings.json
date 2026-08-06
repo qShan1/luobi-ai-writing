@@ -16,7 +16,7 @@
     "proxyDesc": "配置 HTTP / SOCKS5 代理，用于访问受限 API",
     "editorDesc": "字体大小、自动保存等编辑器偏好设置",
     "promptsDesc": "自定义 AI 创作各环节使用的提示词模板",
-    "aboutDesc": "商业合作与个人开发赞助"
+    "aboutDesc": "版本信息与本地创作说明"
   },
   "appearance": {
     "theme": "主题",

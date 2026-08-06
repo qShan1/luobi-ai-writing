@@ -185,6 +185,10 @@ export const useProjectStore = create<ProjectState>()((set, get) => ({
   loadRecentProjects: async () => {
     const list = await ipc.invoke('project:recent-list')
     set({ recentProjects: list })
+    // 桌面端启动时恢复最近一次工程，避免用户面对空白欢迎页。
+    if (!get().currentProject && list[0]?.path) {
+      await get().openProject(list[0].path)
+    }
   },
 
   closeProject: () => {

@@ -28,7 +28,7 @@ function createWindow() {
     minWidth: 1024,
     minHeight: 640,
     title: '落笔 — AI 小说创作 IDE',
-    icon: path.join(process.env.APP_ROOT!, 'build', 'icon.png'),
+    icon: path.join(process.env.APP_ROOT!, 'build', 'luobi.ico'),
     // macOS 使用自定义标题栏
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 12, y: 10 },
@@ -42,7 +42,7 @@ function createWindow() {
   })
 
   if (process.platform === 'darwin') {
-    app.dock?.setIcon(path.join(process.env.APP_ROOT!, 'build', 'icon.png'))
+    app.dock?.setIcon(path.join(process.env.APP_ROOT!, 'build', 'luobi-app-icon.png'))
   }
 
   // 隐藏默认菜单栏（Windows/Linux）

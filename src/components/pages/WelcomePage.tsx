@@ -20,7 +20,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
       <div className="welcome-content max-w-4xl w-full mx-auto px-10 py-12">
         <div className="welcome-hero mb-12">
           <div className="welcome-brand-row">
-            <img className="welcome-logo" src="/luobi-logo.svg" alt="落笔 LUOBI AI WRITING" />
+            <img className="welcome-logo" src="./luobi-logo.svg" alt="落笔 LUOBI AI WRITING" />
             <div>
               <div className="welcome-kicker">LUOBI / AI WRITING DESK</div>
               <h1 className="text-3xl font-semibold" style={{ color: 'var(--color-text)' }}>

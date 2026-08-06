@@ -21,11 +21,6 @@ import { cn } from '../../lib/utils'
 import { ipc } from '../../services/ipc-client'
 import { Switch } from '../ui/Switch'
 
-// 打赏/赞助 图片资源（通过 import 让 Vite 处理路径，确保打包后可正常加载）
-import wepayImg from '/buyme/wepay.jpg?url'
-import alipayImg from '/buyme/alipay.jpg?url'
-import wechatImg from '/buyme/wechat.jpg?url'
-
 // ==================== 分类定义 ====================
 
 type SettingsSection = 'language' | 'llm' | 'embedding' | 'proxy' | 'editor' | 'prompts' | 'about'
@@ -817,8 +812,20 @@ function FontSelect({
   onChange: (id: FontId) => void
 }) {
   const [open, setOpen] = useState(false)
+  const [options, setOptions] = useState(FONT_OPTIONS)
   const ref = useRef<HTMLDivElement>(null)
-  const current = FONT_OPTIONS.find((o) => o.id === value) ?? FONT_OPTIONS[0]
+  const current = options.find((o) => o.id === value) ?? FONT_OPTIONS[0]
+
+  useEffect(() => {
+    ipc.invoke('config:list-system-fonts').then((fonts) => {
+      const known = new Set(FONT_OPTIONS.map((item) => item.label.toLowerCase()))
+      const detected = fonts.filter((name) => !known.has(name.toLowerCase())).map((name) => ({
+        id: `system:${name}`, label: name, labelEn: 'Local font', desc: '当前电脑已安装',
+        family: `'${name.replace(/'/g, "\\'")}', sans-serif`, preview: '中文小说 Aa 123',
+      }))
+      setOptions([...FONT_OPTIONS, ...detected])
+    }).catch(() => undefined)
+  }, [])
 
   // 点击外部关闭
   useEffect(() => {
@@ -874,7 +881,7 @@ function FontSelect({
             boxShadow: 'var(--shadow-lg)',
           }}
         >
-          {FONT_OPTIONS.map((opt) => (
+          {options.map((opt) => (
             <button
               key={opt.id}
               onClick={() => { onChange(opt.id); setOpen(false) }}
@@ -973,32 +980,26 @@ function EditorSection() {
 // ==================== 关于与支持区 ====================
 
 function AboutSection() {
-  const { t } = useTranslation('settings')
   return (
     <div className="space-y-6 max-w-[600px] p-2">
       <div className="flex flex-col items-center justify-center py-8 rounded-xl space-y-2" style={{ backgroundColor: 'var(--color-sidebar)', border: '1px solid var(--color-border)' }}>
-        <h1 className="text-2xl font-bold brand-gradient tracking-wider">Vela IDE</h1>
+        <h1 className="text-2xl font-bold brand-gradient tracking-wider">落笔</h1>
         <p className="text-sm opacity-80" style={{ color: 'var(--color-text)' }}>v{__APP_VERSION__}</p>
-        <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>Crafted with ❤️ by heider</p>
+        <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>本地优先的 AI 小说创作工作台</p>
       </div>
 
       <div className="space-y-4 pt-2">
-        <h3 className="text-sm font-semibold pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>☕ {t('about.sponsorship')}</h3>
+        <h3 className="text-sm font-semibold pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>创作方式</h3>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-          {t('about.sponsorDescription')}
+          落笔将项目设定、章节蓝图、人物状态和草稿保存在本地。模型配置由你自己掌控；正文生成后先进入草稿，再由你决定是否定稿或导出。
         </p>
-        <div className="flex gap-4 items-center">
-          <img src={wepayImg} alt="WeChat Pay" className="w-[180px] rounded-lg" style={{ border: '1px solid var(--color-border)' }} />
-          <img src={alipayImg} alt="Alipay" className="w-[180px] rounded-lg" style={{ border: '1px solid var(--color-border)' }} />
-        </div>
       </div>
 
       <div className="space-y-4 pt-4">
-        <h3 className="text-sm font-semibold pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>🤝 {t('about.businessInquiries')}</h3>
+        <h3 className="text-sm font-semibold pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>当前版本</h3>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-          {t('about.businessDescription')}
+          支持本地小说项目、章节草稿、模型配置、导出和发布前整理。平台登录、验证码与最终发布仍由你确认。
         </p>
-        <img src={wechatImg} alt="WeChat" className="w-[180px] rounded-lg" style={{ border: '1px solid var(--color-border)' }} />
       </div>
     </div>
   )

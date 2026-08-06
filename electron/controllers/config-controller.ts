@@ -1,4 +1,5 @@
 import { ipcMain } from 'electron'
+import { execFileSync } from 'node:child_process'
 import { readJsonFile, writeJsonFile, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG, VELA_HOME } from '../utils/config-utils'
 import { GlobalConfig } from '../../src/shared/ipc-channels'
 
@@ -23,5 +24,17 @@ export function registerConfigController() {
   /** 获取 ~/.vela 路径 */
   ipcMain.handle('config:get-vela-home', async () => {
     return VELA_HOME
+  })
+
+  /** Windows 读取已安装字体名称；其他系统交由浏览器默认字体回退。 */
+  ipcMain.handle('config:list-system-fonts', async () => {
+    if (process.platform !== 'win32') return []
+    try {
+      const script = "$p=Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts'; $p.PSObject.Properties | Where-Object {$_.Name -notmatch '^PS'} | ForEach-Object {$_.Name -replace ' \\(TrueType\\)| \\(OpenType\\)| \\(All res\\)$',''} | Sort-Object -Unique"
+      return execFileSync('powershell.exe', ['-NoProfile', '-Command', script], { encoding: 'utf8', windowsHide: true })
+        .split(/\r?\n/).map((name) => name.trim()).filter(Boolean).slice(0, 180)
+    } catch {
+      return []
+    }
   })
 }

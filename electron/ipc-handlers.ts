@@ -25,5 +25,5 @@ export function registerIPCHandlers() {
   registerKBController()
   registerImportController()
 
-  console.log(`[Vela IPC] 所有 Controller 已注册完成 | 全局工作区: ${VELA_HOME}`)
+  console.log(`[Luobi IPC] 所有 Controller 已注册完成 | 本地工作区: ${VELA_HOME}`)
 }

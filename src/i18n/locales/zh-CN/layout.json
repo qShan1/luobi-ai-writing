@@ -16,7 +16,7 @@
   },
   "statusBar": {
     "supportAuthor": "❤️ 支持作者",
-    "sponsorTooltip": "商业合作与赞助支持",
+    "sponsorTooltip": "关于落笔",
     "currentModel": "当前模型：{{name}}",
     "clickToConfigModel": "点击配置模型",
     "noModel": "未配置模型",

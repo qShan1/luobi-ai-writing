@@ -31,9 +31,9 @@ export default function StatusBar() {
     >
       {/* 左侧 */}
       <div className="flex items-center h-full">
-        <StatusBarSegment title="Vela IDE">
+        <StatusBarSegment title="落笔 AI 写作">
           <BookOpen size={11} />
-          <span className="font-medium brand-gradient">Vela</span>
+          <span className="font-medium brand-gradient">落笔</span>
           <span className="opacity-80 brand-gradient">v{__APP_VERSION__}</span>
         </StatusBarSegment>
 

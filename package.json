@@ -2,7 +2,7 @@
   "name": "vela",
   "version": "0.1.0",
   "description": "落笔 - LUOBI AI WRITING，AI 深度驱动的小说创作 IDE",
-  "author": "heider",
+  "author": "Luobi AI Writing",
   "private": true,
   "type": "module",
   "main": "dist-electron/main.js",

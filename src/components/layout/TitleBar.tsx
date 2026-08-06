@@ -104,7 +104,7 @@ export default function TitleBar() {
     >
       {/* 左侧：macOS 留出交通灯位置 + 应用名 */}
       <div className="flex items-center flex-shrink-0" style={{ paddingLeft: isMac ? 78 : 12 }}>
-        <img src="/luobi-logo-white.svg" alt="落笔 LUOBI AI WRITING" className="titlebar-logo" />
+        <img src="./luobi-logo-white.svg" alt="落笔 LUOBI AI WRITING" className="titlebar-logo" />
         {projectName && (
           <span className="text-xs ml-2 opacity-50" style={{ color: 'var(--color-titlebar-text)' }}>
             — {projectName}

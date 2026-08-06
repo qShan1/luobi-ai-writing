@@ -5,11 +5,11 @@
     "newProject": "新建项目",
     "newProjectDesc": "创建一部新的小说",
     "openProject": "打开项目",
-    "openProjectDesc": "打开已有落笔项目",
+    "openProjectDesc": "打开已有小说工程",
     "importNovel": "导入小说",
     "importNovelDesc": "导入已有作品续写",
     "recentProjects": "最近项目",
-    "footer": "落笔 v0.1.0 · 七阶段 AI 驱动创作流水线 · 本地化数据安全"
+    "footer": "落笔 v0.1.0 · 本地小说工程 · 逐章创作与状态管理"
   },
   "knowledge": {
     "title": "知识库概览",
