@@ -41,6 +41,13 @@ Thumbs.db
 dist-ssr
 tailwind.config.js.bak
 
+# 小说项目本地状态与数据库
+.luobi/
+.vela/
+*.db
+*.sqlite
+*.sqlite3
+
 # Backup / debug artifacts (审计过程产物)
 *.orig
 debug-*.mjs
