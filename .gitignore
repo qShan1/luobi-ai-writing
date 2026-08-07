@@ -37,6 +37,7 @@ Thumbs.db
 
 # 临时文件
 *.local
+.local/
 dist-ssr
 tailwind.config.js.bak
 
