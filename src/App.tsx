@@ -85,7 +85,7 @@ export default function App() {
       }).catch(() => {})
       unsubActionToast()
     }
-  }, [initTheme, initLLM, loadRecentProjects])
+  }, [initTheme, initLLM, loadRecentProjects, t])
 
   // 全局快捷键: Cmd+N 新建项目，Cmd+O 打开项目
   // 注意：Cmd+=/- 缩放已由 TitleBar.tsx 统一处理，此处不重复注册

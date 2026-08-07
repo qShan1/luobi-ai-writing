@@ -10,21 +10,14 @@ import { ipc } from '../../../services/ipc-client'
 import { useProjectStore } from '../../../stores/project-store'
 import i18n from '../../../i18n'
 
-import { showSidebarMenu, openChapterFile } from './SidebarShared'
+import { showSidebarMenu, openChapterFile } from './SidebarSharedUtils'
+import { chapterTitleCache } from './chapter-title-cache'
 
 // ===== 章节标题缓存 =====
 
 /** 章节标题内存缓存：path → 显示名（进程内常驻，避免大量重复 IPC 读取） */
-export const chapterTitleCache = new Map<string, string>()
 
 /** 清除特定文件的章节标题缓存 */
-export function clearChapterTitleCache(filePath?: string) {
-  if (filePath) {
-    chapterTitleCache.delete(filePath)
-  } else {
-    chapterTitleCache.clear()
-  }
-}
 
 /**
  * 优先从蓝图 JSON 读取章节标题，fallback 到文件首行

@@ -16,7 +16,7 @@ import CharactersView from './sidebar/CharactersView'
 import {
   registerMenuSetter, unregisterMenuSetter,
   type SidebarMenuState,
-} from './sidebar/SidebarShared'
+} from './sidebar/SidebarSharedUtils'
 
 /** 左侧面板 */
 export default function Sidebar() {
@@ -69,4 +69,3 @@ export default function Sidebar() {
 }
 
 // 保持向后兼容的 re-export（外部引用了 chapterTitleCache）
-export { chapterTitleCache, clearChapterTitleCache } from './sidebar/ManuscriptGroup'

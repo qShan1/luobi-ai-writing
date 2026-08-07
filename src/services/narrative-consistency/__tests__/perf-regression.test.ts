@@ -53,7 +53,7 @@ function makeBigCanon(numCharacters: number) {
 
 describe('性能回归测试 (Perf Regression Suite)', () => {
   it('validateChapter (10K chars, 20 chars) 必须在 10ms 内完成', () => {
-    const { text, characters } = makeChapterContent(10000, 20)
+    const { text } = makeChapterContent(10000, 20)
     const canon = makeBigCanon(20)
     const start = performance.now()
     validateChapter({ chapterNumber: 5, chapterContent: text, canon })
@@ -63,7 +63,7 @@ describe('性能回归测试 (Perf Regression Suite)', () => {
   })
 
   it('validateChapter (20K chars, 50 chars) 必须在 30ms 内完成', () => {
-    const { text, characters } = makeChapterContent(20000, 50)
+    const { text } = makeChapterContent(20000, 50)
     const canon = makeBigCanon(50)
     const start = performance.now()
     validateChapter({ chapterNumber: 5, chapterContent: text, canon })
@@ -73,7 +73,7 @@ describe('性能回归测试 (Perf Regression Suite)', () => {
   })
 
   it('200 章节批量 validateChapter 必须在 200ms 内完成', () => {
-    const { text, characters } = makeChapterContent(2000, 5)
+    const { text } = makeChapterContent(2000, 5)
     const canon = makeBigCanon(5)
     const start = performance.now()
     for (let i = 1; i <= 200; i++) {

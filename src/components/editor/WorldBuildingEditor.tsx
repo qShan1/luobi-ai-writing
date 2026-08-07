@@ -3,7 +3,7 @@ import { Sparkles, CheckCircle2, Circle, RefreshCw, FileText, BookOpen, AlertTri
 import { useTranslation } from 'react-i18next'
 import { useProjectStore } from '../../stores/project-store'
 import { useCharacterStore } from '../../stores/character-store'
-import { renderIcon } from '../panels/sidebar/SidebarShared'
+import { renderIcon } from '../panels/sidebar/SidebarSharedUtils'
 
 import ArchitectureConfirmDialog from '../dialogs/ArchitectureConfirmDialog'
 

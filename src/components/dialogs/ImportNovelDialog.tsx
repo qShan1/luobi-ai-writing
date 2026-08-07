@@ -72,7 +72,7 @@ export default function ImportNovelDialog({ open, onClose }: ImportNovelDialogPr
     } finally {
       setSplitting(false)
     }
-  }, [name])
+  }, [name, t])
 
   /** 选择保存路径 */
   const handleSelectFolder = useCallback(async () => {

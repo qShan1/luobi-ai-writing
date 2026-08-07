@@ -767,7 +767,7 @@ describe('回归测试：审计发现的 bug 修复验证', () => {
         return { success: true }
       },
     }
-    const store = new CanonStore(fakeIpc as any)
+    const store = new CanonStore(fakeIpc)
     await store.writeback({
       chapterNumber: 1, chapterTitle: '第一章',
       chapterSummary: 'summary',
@@ -821,7 +821,7 @@ describe('回归测试：审计发现的 bug 修复验证', () => {
 
   // F12/F29: prompt builder 必须转义 value 中的 {{}}
   it('F12/F29: prompt builder 必须转义用户数据中的 {{xxx}} 模板变量', () => {
-    const template = BUILTIN_PROMPTS.find((p: any) => p.key === 'next_chapter_draft')
+    const template = BUILTIN_PROMPTS.find(p => p.key === 'next_chapter_draft')
     const builder = new BasePromptBuilder(template)
     const maliciousValue = '恶意：{{chapter_title}} 应该被替换为敏感内容'
     builder.withCanonContext(maliciousValue)

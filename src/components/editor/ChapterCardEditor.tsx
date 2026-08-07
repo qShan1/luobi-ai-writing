@@ -93,7 +93,7 @@ export default function ChapterCardEditor() {
     }
     setLoading(false)
     setDirty(false)
-  }, [currentProject, addLog])
+  }, [currentProject, addLog, t])
 
   useEffect(() => {
     let mounted = true

@@ -10,7 +10,7 @@ import { useDraftStore, readDraftBody } from '../../../stores/draft-store'
 import { useEditorStore } from '../../../stores/editor-store'
 import { confirm } from '../../ui/Confirm'
 import { DRAFT_STATUS_LABEL, DRAFT_STATUS_COLOR } from '../../../shared/draft-status'
-import { showSidebarMenu } from './SidebarShared'
+import { showSidebarMenu } from './SidebarSharedUtils'
 import { ipc } from '../../../services/ipc-client'
 
 // ===== 草稿箱折叠组 =====

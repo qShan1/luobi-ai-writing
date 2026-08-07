@@ -192,7 +192,6 @@ export function issuesToWarnings(issues: ConsistencyIssue[]): string {
 export function buildReport(
   _originalIssues: ConsistencyIssue[],
   autoFixResult: AutoFixResult,
-  _originalContent: string,
 ): ConsistencyReport {
   const allIssues = [...autoFixResult.fixedIssues.map(i => ({ ...i, severity: 'info' as const, message: `[已自动修复] ${i.message}` })), ...autoFixResult.remainingIssues]
   return {

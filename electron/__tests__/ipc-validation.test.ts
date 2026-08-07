@@ -151,7 +151,7 @@ describe('validateCanonWritebackPayload 集成校验', () => {
   it('拒绝嵌套字段的错误枚举', () => {
     expect(() => validateCanonWritebackPayload({
       chapterNumber: 1,
-      newEvents: [{ chapterNumber: 1, sequence: 1, characters: ['X'], location: 'A', timeFlow: 'FUTURE' as any, summary: 'e', impact: '' }],
+      newEvents: [{ chapterNumber: 1, sequence: 1, characters: ['X'], location: 'A', timeFlow: 'FUTURE' as unknown as 'sequential', summary: 'e', impact: '' }],
       characterDeltas: [],
       newFacts: [],
     })).toThrow(/expected one of/)

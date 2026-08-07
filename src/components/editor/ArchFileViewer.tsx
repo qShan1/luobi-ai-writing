@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Save, RefreshCw, Sparkles, Loader2, AlertTriangle, FileText } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { renderIcon } from '../panels/sidebar/SidebarShared'
+import { renderIcon } from '../panels/sidebar/SidebarSharedUtils'
 
 import { useEditorStore } from '../../stores/editor-store'
 import ArchitectureConfirmDialog from '../dialogs/ArchitectureConfirmDialog'

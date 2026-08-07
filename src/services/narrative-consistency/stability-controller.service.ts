@@ -41,7 +41,6 @@ export interface StabilityScore {
 
 function computeContextDrift(
   characterStates: CharacterStateSnapshot[],
-  _recentSummaries: ChapterSummary[],
 ): number {
   if (characterStates.length === 0) return 0
 
@@ -170,7 +169,7 @@ export async function computeStabilityScore(
 ): Promise<StabilityScore> {
   const summaries = await canonStore.getRecentSummaries(10)
 
-  const contextDrift = computeContextDrift(characterStates, summaries)
+  const contextDrift = computeContextDrift(characterStates)
   const intentVariance = computeIntentVariance(characterStates)
   const characterEntropy = computeCharacterEntropy(timeline, summaries, currentChapter)
   const timelineNoise = computeTimelineNoise(timeline, currentChapter)
@@ -220,10 +219,9 @@ export async function generateCanonSnapshot(
 ): Promise<CanonSnapshot> {
   const startChapter = Math.max(1, currentChapter - window)
 
-  const [timeline, characterStates, _summaries, facts, plotLines] = await Promise.all([
+  const [timeline, characterStates, facts, plotLines] = await Promise.all([
     canonStore.getTimeline(currentChapter),
     canonStore.getAllCharacterStates(),
-    canonStore.getRecentSummaries(window),
     canonStore.getFacts(),
     canonStore.getPlotLines(),
   ])
@@ -305,7 +303,6 @@ export interface StabilizeResult {
  */
 export function stabilizeOutput(
   content: string,
-  _characterStates: CharacterStateSnapshot[],
 ): StabilizeResult {
   let working = content
   const fixes: string[] = []

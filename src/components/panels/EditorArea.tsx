@@ -26,7 +26,7 @@ import { useLayoutStore } from '../../stores/layout-store'
 import { ipc } from '../../services/ipc-client'
 import { toast } from '../ui/Toast'
 
-import { clearChapterTitleCache } from './Sidebar'
+import { clearChapterTitleCache } from './sidebar/chapter-title-cache'
 import '../editor/novel-editor.css'
 
 // ─── 正文章节编辑器包装层（含字数信息栏） ─────────────────────────────────────────────
@@ -301,7 +301,7 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
         },
       ]
     },
-    [tabs, tryCloseTab, tryBatchClose]
+    [tabs, tryCloseTab, tryBatchClose, t]
   )
 
   /** 构建三个点菜单项（Tab 操作 + 已打开 Tab 列表） */
@@ -366,7 +366,7 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
         })),
       ] : []),
     ]
-  }, [tabs, activeTabId, tryCloseTab, tryBatchClose, setActiveTab])
+  }, [tabs, activeTabId, tryCloseTab, tryBatchClose, setActiveTab, t])
 
   // ===== 条件渲染 =====
 

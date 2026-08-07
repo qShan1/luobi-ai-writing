@@ -2,6 +2,7 @@ import i18n from '../../../i18n'
 import { BaseWorkflowCommand, CommandExecuteParams } from './base-command'
 import { useProjectStore } from '../../../stores/project-store'
 import { useLLMStore } from '../../../stores/llm-store'
+import type { StepCallbacks } from '../../../stores/workflow-store'
 
 const t = (key: string, opts?: Record<string, unknown>) => i18n.t(key, { ns: 'commands', ...opts })
 import { getPromptTemplate } from '../../prompt-templates'
@@ -192,7 +193,7 @@ export function buildFinalizePostProcessSteps(
       key: 'canon_compression',
       label: t('finalize.compression'),
       critical: false,
-      executor: async (callbacks: any) => {
+      executor: async (callbacks: StepCallbacks) => {
         try {
           const { canonStore } = await import('../../narrative-consistency/canon-store');
           const recent = await canonStore.getRecentSummaries(20);
@@ -203,7 +204,7 @@ export function buildFinalizePostProcessSteps(
           // 将前15章合并为压缩摘要
           const oldSummaries = recent.slice(0, 15);
           const compressed = oldSummaries
-            .map((s: any) => '第' + s.chapterNumber + '章：' + (s.summary || '').slice(0, 80))
+            .map((s) => '第' + s.chapterNumber + '章：' + (s.summary || '').slice(0, 80))
             .join(' | ');
           callbacks.log(t('finalize.compressionDone', { count: oldSummaries.length, length: compressed.length }));
           // 写入压缩后的 canonical summary
@@ -358,16 +359,31 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
       const canon = await buildCanonContext({
         chapterNumber: this.params.chapterNumber,
         architecture: {
-          premise: (core as any)?.premise || '',
-          charactersArch: (core as any)?.charactersArch || '',
-          worldbuilding: (core as any)?.worldbuilding || '',
-          synopsis: (core as any)?.synopsis || '',
+          premise: (core as { premise?: string } | null)?.premise || '',
+          charactersArch: (core as { charactersArch?: string } | null)?.charactersArch || '',
+          worldbuilding: (core as { worldbuilding?: string } | null)?.worldbuilding || '',
+          synopsis: (core as { synopsis?: string } | null)?.synopsis || '',
         },
-        characters: (allCharacters || []).map((c: any) => ({
-          name: c.name as string,
-          role: c.role as string,
-          currentState: c.currentState as any,
-        })),
+        characters: (Array.isArray(allCharacters) ? allCharacters : []).map((c) => {
+          const character = c as {
+            name?: string
+            role?: string
+            currentState?: {
+              location?: string
+              powerLevel?: string
+              physicalState?: string
+              mentalState?: string
+              keyItems?: string
+              recentEvents?: string
+              updatedAtChapter?: number
+            }
+          }
+          return {
+            name: character.name || '',
+            role: character.role || '',
+            currentState: character.currentState,
+          }
+        }),
         chapterGoal: t('finalize.chapterGoalPrefix', { chapter: this.params.chapterNumber }),
         previousEnding: '',
         ragContext: '',

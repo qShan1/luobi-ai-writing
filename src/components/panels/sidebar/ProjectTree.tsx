@@ -19,9 +19,12 @@ import { useTranslation } from 'react-i18next'
 
 
 import {
-  ARCH_FILES, LeafItem, renderIcon, showSidebarMenu,
-  openArchFile, openBuiltinEditor,
+  LeafItem,
 } from './SidebarShared'
+import {
+  ARCH_FILES, renderIcon, showSidebarMenu,
+  openArchFile, openBuiltinEditor,
+} from './SidebarSharedUtils'
 import DraftBoxGroup from './DraftBoxGroup'
 import ManuscriptGroup from './ManuscriptGroup'
 
