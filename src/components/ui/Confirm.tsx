@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 /**
- * Vela 异步确认对话框
+ * Luobi 异步确认对话框
  *
  * 替代所有 window.confirm() 调用，返回 Promise<boolean>
  * 使用 CSS 动画（dialog-enter / dialog-exit / backdrop-enter）统一进出场效果。

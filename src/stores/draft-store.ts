@@ -67,7 +67,7 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
         status: m.status as DraftStatus,
         source: m.source as DraftMeta['source'],
         fileName: `draft_v${m.version}.md`,
-        filePath: `vela://draft/${m.id}`
+        filePath: `luobi://draft/${m.id}`
       }))
 
       // 按版本号排序（新 → 旧）
@@ -100,7 +100,7 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
           status: m.status as DraftStatus,
           source: m.source as DraftMeta['source'],
           fileName: `draft_v${m.version}.md`,
-          filePath: `vela://draft/${m.id}`
+          filePath: `luobi://draft/${m.id}`
         }))
 
         metas.sort((a, b) => b.version - a.version)
@@ -144,8 +144,8 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
 
       let targetDraftId: number | undefined
       // 统一通过 DB 更新草稿内容
-      if (filePath.startsWith('vela://draft/') || filePath.startsWith('vela://manuscript/')) {
-        const prefix = filePath.startsWith('vela://draft/') ? 'vela://draft/' : 'vela://manuscript/'
+      if (filePath.startsWith('luobi://draft/') || filePath.startsWith('luobi://manuscript/')) {
+        const prefix = filePath.startsWith('luobi://draft/') ? 'luobi://draft/' : 'luobi://manuscript/'
         targetDraftId = parseInt(filePath.replace(prefix, ''))
         await ipc.invoke('db:draft-update-content', targetDraftId, mergedText, mergedText.length)
       } else {
@@ -198,12 +198,12 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
 // ===== 辅助工具导出 =====
 
 /**
- * 读取草稿文件正文（委托给 vela-protocol 统一路由）
- * @deprecated 建议直接使用 readVelaContent()
+ * 读取草稿文件正文（委托给 luobi-protocol 统一路由）
+ * @deprecated 建议直接使用 readLuobiContent()
  */
 export async function readDraftBody(filePath: string): Promise<string> {
-  const { readVelaContent } = await import('../services/vela-protocol')
-  return readVelaContent(filePath)
+  const { readLuobiContent } = await import('../services/luobi-protocol')
+  return readLuobiContent(filePath)
 }
 
 export type { DraftMeta, DraftStatus }

@@ -89,7 +89,7 @@ if (isBrowser) {
 
   i18nConfig.detection = {
     order: ['localStorage'],
-    lookupLocalStorage: 'vela-locale',
+    lookupLocalStorage: 'luobi-locale',
     caches: ['localStorage'],
   }
 }
@@ -101,9 +101,9 @@ if (isBrowser) {
   i18n.on('languageChanged', (lng) => {
     document.documentElement.lang = lng === 'ru' ? 'ru' : lng === 'en' ? 'en' : 'zh-CN'
     const titles: Record<string, string> = {
-      'ru': 'Vela — ИИ-редактор для написания романов',
-      'en': 'Vela — AI Novel Writing IDE',
-      'zh-CN': 'Vela — AI 小说创作 IDE',
+      'ru': 'Luobi — ИИ-редактор для написания романов',
+      'en': 'Luobi — AI Novel Writing IDE',
+      'zh-CN': '落笔 — AI 小说创作 IDE',
     }
     document.title = titles[lng] || titles['zh-CN']
   })

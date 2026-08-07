@@ -1,5 +1,5 @@
 /**
- * Vela Design Tokens
+ * Luobi Design Tokens
  * Auto-extracted from src/index.css CSS custom properties
  *
  * Usage:

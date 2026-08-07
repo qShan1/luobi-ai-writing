@@ -630,7 +630,7 @@ describe('CanonStore.writeback', () => {
 // ============================================================
 describe('CanonRepository SQLite persistence', () => {
   it('真实 SQLite 表能持久化 timeline/state/plot/fact/summary', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'vela-canon-db-'))
+    const projectDir = mkdtempSync(join(tmpdir(), 'luobi-canon-db-'))
     try {
       initProjectDatabase(projectDir)
 
@@ -722,7 +722,7 @@ describe('CanonRepository SQLite persistence', () => {
 describe('回归测试：审计发现的 bug 修复验证', () => {
   // F1: knowledge merge（不能覆盖旧 knowledge）
   it('F1: 多次 upsert character state 应累积 knowledge 列表', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'vela-rf-'))
+    const projectDir = mkdtempSync(join(tmpdir(), 'luobi-rf-'))
     try {
       initProjectDatabase(projectDir)
       CanonRepository.upsertCharacterState({
@@ -782,7 +782,7 @@ describe('回归测试：审计发现的 bug 修复验证', () => {
 
   // F6: safeParse 必须抛错而不是静默吞 JSON 错
   it('F6: corrupt JSON in DB should throw (not silently return empty)', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'vela-rf-'))
+    const projectDir = mkdtempSync(join(tmpdir(), 'luobi-rf-'))
     try {
       initProjectDatabase(projectDir)
       const db = getProjectDb()
@@ -793,7 +793,7 @@ describe('回归测试：审计发现的 bug 修复验证', () => {
 
   // F7: addFact dedup（大小写/空格不敏感）
   it('F7: addFact 应当用规范化去重 (大小写/空格不敏感)', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'vela-rf-'))
+    const projectDir = mkdtempSync(join(tmpdir(), 'luobi-rf-'))
     try {
       initProjectDatabase(projectDir)
       const id1 = CanonRepository.addFact({ category: 'identity', statement: 'X 是 Y', introducedAt: 1, characters: [], evidence: '' })
@@ -808,7 +808,7 @@ describe('回归测试：审计发现的 bug 修复验证', () => {
 
   // F8: timeline sequence 应有 UNIQUE 约束
   it('F8: 同一 (chapter, sequence) 第二次 append 应覆盖而非重复插入', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'vela-rf-'))
+    const projectDir = mkdtempSync(join(tmpdir(), 'luobi-rf-'))
     try {
       initProjectDatabase(projectDir)
       CanonRepository.appendTimelineEvent({ chapterNumber: 1, sequence: 1, characters: ['A'], location: 'X', timeFlow: 'sequential', summary: 'first', impact: '' })

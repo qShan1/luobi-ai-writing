@@ -156,7 +156,7 @@ function LanguageSection() {
 
   const handleLanguageChange = async (langCode: string) => {
     await i18n.changeLanguage(langCode)
-    localStorage.setItem('vela-locale', langCode)
+    localStorage.setItem('luobi-locale', langCode)
   }
 
   return (

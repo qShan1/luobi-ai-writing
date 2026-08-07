@@ -161,7 +161,7 @@ export class RefineDraftCommand extends BaseWorkflowCommand<string> {
       content: finalRefined,
       revisionPath: String(createRes.id),
       chapterNumber: this.params.chapterNumber,
-      chapterDir: `vela://draft/ch${this.params.chapterNumber}`,
+      chapterDir: `luobi://draft/ch${this.params.chapterNumber}`,
     })
 
     context.data.refined = finalRefined

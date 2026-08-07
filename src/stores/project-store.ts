@@ -132,7 +132,7 @@ export const useProjectStore = create<ProjectState>()((set, get) => ({
       return false
     } catch (e) {
       console.error('[Project] IPC 通信异常:', e)
-      try { await ipc.invoke('fs:write-file', '/tmp/vela_error.log', String(e)) } catch { /* ignore error writing to log */ }
+      try { await ipc.invoke('fs:write-file', '/tmp/luobi_error.log', String(e)) } catch { /* ignore error writing to log */ }
       alertError(String(e), { title: i18n.t('project.openError', { ns: 'stores' }) })
       return false
     } finally {

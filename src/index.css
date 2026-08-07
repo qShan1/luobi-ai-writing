@@ -1,5 +1,5 @@
 /* ========================================================================
- * Vela — index.css
+ * Luobi — index.css
  * TailwindCSS v4 全面适配版本
  *
  * 层级顺序（由低到高）：
@@ -82,7 +82,7 @@
 /* ===== Tailwind v4 设计令牌（精简版 — 仅保留 Tailwind 需要的扩展） ===== */
 @theme {
   /* Interface type should be quiet and predictable; prose has its own font. */
-  --font-sans: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+  --font-sans: system-ui, 'Microsoft YaHei UI', 'Noto Sans SC', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
   --font-writing: 'Noto Serif SC', 'Source Han Serif SC', Georgia, serif;
 
@@ -169,41 +169,41 @@
     /* ☀️ 浅色主题 — 清冷蓝调（从 Logo 蓝紫色系延伸） */
 
     /* 背景层次（冷白蓝调，与Logo深蓝形成呼应） */
-    --color-bg: #F7F9FC;
-    --color-sidebar: #EFF2F7;
-    --color-panel: #EFF2F7;
-    --color-titlebar: #F7F9FC;
-    --color-activity-bar: #E5E9F0;
-    --color-hover: #EBF0F7;
-    --color-active: #DDE3ED;
+    --color-bg: #F5F3EE;
+    --color-sidebar: #EEEAE2;
+    --color-panel: #FBFAF7;
+    --color-titlebar: #FBFAF7;
+    --color-activity-bar: #E7E2D8;
+    --color-hover: #E9E4DA;
+    --color-active: #DED7CB;
 
     /* 文字层次 */
-    --color-text: #1A2233;
-    --color-text-secondary: #4A5568;
-    --color-text-muted: #8A9AAB;
+    --color-text: #22201D;
+    --color-text-secondary: #625D56;
+    --color-text-muted: #8C857B;
 
     /* 边框 */
-    --color-border: #DEE3ED;
+    --color-border: #D8D1C6;
 
     /* 强调色（Logo 星空蓝） */
-    --color-accent: #5B9ED6;
-    --color-accent-hover: #4A8DC5;
-    --color-accent-rgb: 91, 158, 214;
+    --color-accent: #A53D32;
+    --color-accent-hover: #8E3027;
+    --color-accent-rgb: 165, 61, 50;
 
     /* 品牌金色（Logo 星辰点睛） */
-    --color-gold: #C9A76C;
+    --color-gold: #A53D32;
 
     /* 语义色（莫兰迪低饱和度高通透感） */
     --color-success: #10b981;
     --color-warning: #f59e0b;
     --color-error: #f43f5e;
-    --color-info: #5B9ED6;
+    --color-info: #A53D32;
 
     /* Tab 系统 */
     --color-tab-bg: transparent;
     --color-tab-active: #FFFFFF;
     --color-tab-border: transparent;
-    --color-tab-indicator: #5B9ED6;
+    --color-tab-indicator: #A53D32;
 
     /* 状态栏 */
     --color-statusbar: #EFF2F7;
@@ -1232,28 +1232,25 @@
   }
 
   /* Welcome page: restrained editorial workspace rather than a dashboard of cards. */
-  .welcome-shell {
-    background:
-      linear-gradient(90deg, rgba(217, 130, 91, 0.06) 1px, transparent 1px) 0 0 / 64px 64px,
-      var(--color-editor-bg);
-  }
+  .welcome-shell { background: var(--color-editor-bg); }
 
   .welcome-content { min-height: 100%; }
-  .welcome-hero { border-bottom: 1px solid var(--color-border); padding-bottom: 28px; }
-  .welcome-brand-row { display: flex; align-items: center; gap: 18px; }
-  .welcome-logo { width: 220px; height: auto; object-fit: contain; }
-  .welcome-kicker { color: var(--color-gold); font-size: 10px; letter-spacing: 0.18em; margin-bottom: 7px; }
+  .welcome-hero { border-bottom: 1px solid var(--color-border); padding-bottom: 24px; }
+  .welcome-brand-row { display: flex; align-items: center; gap: 14px; }
+  .welcome-logo { width: 42px; height: 42px; padding: 8px; background: #171717; object-fit: contain; border-radius: 4px; }
+  .welcome-title { font-size: 24px; line-height: 1.2; font-weight: 650; margin: 0; letter-spacing: 0; }
+  .welcome-subtitle { font-size: 13px; margin: 6px 0 0; }
   .welcome-actions { display: grid; grid-template-columns: minmax(220px, 1.35fr) repeat(2, minmax(180px, 1fr)); gap: 12px; }
-  .welcome-primary, .welcome-secondary { min-height: 92px; border-radius: 8px; display: flex; align-items: center; text-align: left; gap: 14px; padding: 18px 20px; transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease; }
-  .welcome-primary { justify-content: space-between; color: #18201D; background: #D9825B; border: 1px solid #D9825B; box-shadow: 0 8px 18px rgba(10, 14, 12, 0.22); }
-  .welcome-primary:hover { background: #E39972; transform: translateY(-1px); }
-  .welcome-secondary { color: var(--color-text); background: color-mix(in srgb, var(--color-sidebar) 82%, transparent); border: 1px solid var(--color-border); }
-  .welcome-secondary:hover { border-color: var(--color-gold); background: var(--color-hover); transform: translateY(-1px); }
+  .welcome-primary, .welcome-secondary { min-height: 92px; border-radius: 4px; display: flex; align-items: center; text-align: left; gap: 14px; padding: 18px 20px; transition: border-color 160ms ease, background-color 160ms ease; }
+  .welcome-primary { justify-content: space-between; color: #FFFFFF; background: #171717; border: 1px solid #171717; box-shadow: none; }
+  .welcome-primary:hover { background: #34312D; }
+  .welcome-secondary { color: var(--color-text); background: transparent; border: 1px solid var(--color-border); }
+  .welcome-secondary:hover { border-color: var(--color-text-secondary); background: var(--color-hover); }
   .welcome-action-label, .welcome-action-desc { display: block; }
   .welcome-action-label { font-size: 13px; font-weight: 600; }
   .welcome-action-desc { color: color-mix(in srgb, currentColor 65%, transparent); font-size: 11px; line-height: 1.5; margin-top: 5px; }
   .welcome-primary .welcome-action-desc { color: rgba(24, 32, 29, 0.72); }
-  .welcome-section-label { color: var(--color-gold); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .welcome-section-label { color: var(--color-text-muted); font-size: 11px; letter-spacing: 0; }
   @media (max-width: 900px) { .welcome-actions { grid-template-columns: 1fr; } .welcome-content { padding: 32px 24px; } }
 
   .titlebar-logo { width: 84px; height: 28px; object-fit: contain; margin-right: 8px; }

@@ -1,4 +1,4 @@
-# Vela 项目 Cursor AI 规则
+# Luobi 项目 Cursor AI 规则
 
 项目完整规范：`./rule.md`
 

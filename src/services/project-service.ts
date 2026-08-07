@@ -170,7 +170,7 @@ async function syncEditorTabsForChapter(chapterNumber: number): Promise<void> {
     for (const tab of relatedTabs) {
       if (!tab.filePath) continue
       let content = ''
-      if (tab.filePath.startsWith('vela://')) {
+      if (tab.filePath.startsWith('luobi://')) {
         const { readDraftBody } = await import('../stores/draft-store')
         content = await readDraftBody(tab.filePath)
       } else {

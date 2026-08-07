@@ -134,7 +134,7 @@ export class ReviewChapterCommand extends BaseWorkflowCommand<string> {
     const reportContent = JSON.stringify(parsedResult, null, 2)
 
     const { useEditorStore } = await import('../../../stores/editor-store')
-    const pseudoReviewPath = `vela://draft/ch${this.params.chapterNumber}/v${baseVersion}/review${revIndex}`
+    const pseudoReviewPath = `luobi://draft/ch${this.params.chapterNumber}/v${baseVersion}/review${revIndex}`
     useEditorStore.getState().openFile({
       id: `review-${this.params.draftPath}-${revIndex}`,
       name: t('reviewChapter.tabName', { chapter: this.params.chapterNumber }),

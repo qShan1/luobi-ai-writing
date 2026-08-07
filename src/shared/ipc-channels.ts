@@ -1,5 +1,5 @@
 /**
- * Vela IPC 频道定义 — 渲染进程与主进程的类型安全通信契约
+ * Luobi IPC 频道定义 — 渲染进程与主进程的类型安全通信契约
  * 所有 IPC 调用都通过此文件定义频道名和参数/返回值类型
  */
 
@@ -13,7 +13,7 @@ export interface ConfigChannels {
     args: [config: Partial<GlobalConfig>]
     return: { success: boolean; error?: string }
   }
-  'config:get-vela-home': {
+  'config:get-luobi-home': {
     args: []
     return: string
   }

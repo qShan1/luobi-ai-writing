@@ -13,24 +13,26 @@
 
 [🚀 下载客户端 / Download](#-安装与使用--installation) • [☕ 赞助作者 / Sponsor](#-赞助与支持--sponsor)
 
+**当前发行版维护者：qShan1** · 本发行版基于上游 Luobi 项目，完整归属与来源见 [ATTRIBUTIONS.md](ATTRIBUTIONS.md)。
+
 </div>
 
 ---
 
 > **落笔** 是一款开源、隐私优先、本地优先的 AI 写作 IDE，专为**长篇小说创作 (Novel Writing)**、**网文写手 (Web Fiction)**与**创意写作 (Creative Writing)** 而生。它将大语言模型驱动的全流程工作流（大纲生成、章节起草、智能重写、自动审阅）与本地 RAG 知识库深度融合，为作者提供 IDE 级别的沉浸式创作体验——所有数据和模型调用都运行在您自己的计算机上，使用您自己的 API Key (BYOK)。
 
-<!-- SEO: Vela is an open-source, privacy-first, local-first AI writing IDE purpose-built for novel writing, fiction writing, web novel creation, and long-form creative writing. It deeply integrates LLM-powered workflows with a local RAG knowledge base, giving authors an IDE-level creative experience — all running on your own machine with your own API keys (BYOK). -->
+<!-- SEO: Luobi is an open-source, privacy-first, local-first AI writing IDE purpose-built for novel writing, fiction writing, web novel creation, and long-form creative writing. -->
 
 ---
 
 ## 🎨 界面预览 / Screenshots
 
-|<img src="public/screenshot/1.png" width="800" alt="Vela AI Novel Writing IDE - Main Editor Interface"/>|
+|<img src="public/screenshot/1.png" width="800" alt="Luobi AI Novel Writing IDE - Main Editor Interface"/>|
 |:---:|
 |*沉浸式写作空间：编辑器 + AI 助手并排布局，支持 JetBrains/VSCode 级窗口管理*|
 |*Immersive writing workspace with side-by-side AI panel, IDE-grade window management*|
 
-|<img src="public/screenshot/2.png" width="800" alt="Vela AI Writing Workflow - Outline and Chapter Generation"/>|
+|<img src="public/screenshot/2.png" width="800" alt="Luobi AI Writing Workflow - Outline and Chapter Generation"/>|
 |:---:|
 |*全自动小说创作工作流：从世界观到正文的端到端 AI 管线*|
 |*End-to-end AI novel writing pipeline: from worldbuilding to chapter generation*|
@@ -39,13 +41,13 @@
 <summary><b>点击查看更多截图 / More Screenshots 📸</b></summary>
 <br>
 
-<img src="public/screenshot/3.png" width="800" alt="Vela AI Writer - Character Management and World Building"/>
+<img src="public/screenshot/3.png" width="800" alt="Luobi AI Writer - Character Management and World Building"/>
 <br/><br/>
-<img src="public/screenshot/4.png" width="800" alt="Vela Novel IDE - AI Rewrite and Refinement Pipeline"/>
+<img src="public/screenshot/4.png" width="800" alt="Luobi Novel IDE - AI Rewrite and Refinement Pipeline"/>
 <br/><br/>
-<img src="public/screenshot/5.png" width="800" alt="Vela Writing Tool - Local RAG Knowledge Base Search"/>
+<img src="public/screenshot/5.png" width="800" alt="Luobi Writing Tool - Local RAG Knowledge Base Search"/>
 <br/><br/>
-<img src="public/screenshot/6.png" width="800" alt="Vela Creative Writing IDE - Dark Theme Full View"/>
+<img src="public/screenshot/6.png" width="800" alt="Luobi Creative Writing IDE - Dark Theme Full View"/>
 
 </details>
 
@@ -53,9 +55,9 @@
 
 ## ✨ 核心特性 / Key Features
 
-Vela is not just another chat-based text editor — it is a **production-grade novel writing engine** that deeply integrates LLM capabilities, long-context retrieval (RAG), and automated pipelines for fiction authoring.
+Luobi is not just another chat-based text editor — it is a **production-grade novel writing engine** that deeply integrates LLM capabilities, long-context retrieval (RAG), and automated pipelines for fiction authoring.
 
-Vela 不是又一个带对话框的文本编辑器——它是一套深度融合了**大语言模型能力、长文本上下文检索 (RAG)、自动化创作管线**的专业级小说写作引擎。
+落笔不是又一个带对话框的文本编辑器——它是一套深度融合了**大语言模型能力、长文本上下文检索 (RAG)、自动化创作管线**的专业级小说写作引擎。
 
 ### 🧬 AI-Powered Novel Writing Pipeline / AI 小说创作全流程
 
@@ -100,7 +102,7 @@ Vela 不是又一个带对话框的文本编辑器——它是一套深度融合
 
 ### 方式一：直接下载 / Direct Download
 
-前往 [Releases](https://github.com/heider-x/vela/releases) 下载对应操作系统的最新版本：
+前往 [Luobi Releases](https://github.com/qShan1/luobi-ai-writing/releases) 下载对应操作系统的最新版本：
 - **macOS**: `.dmg` 安装包
 - **Windows**: `.exe` 安装程序 (NSIS)
 
@@ -110,8 +112,8 @@ Vela 不是又一个带对话框的文本编辑器——它是一套深度融合
 # 环境要求：Node.js >= 18, pnpm >= 8
 
 # 1. 克隆项目
-git clone https://github.com/heider-x/vela.git
-cd vela
+git clone https://github.com/qShan1/luobi-ai-writing.git
+cd luobi-ai-writing
 
 # 2. 安装依赖
 pnpm install
@@ -129,7 +131,7 @@ pnpm build
 
 ## ⚙️ 模型配置 / Model Configuration
 
-Vela 支持接入多种主流 LLM 服务商，以下是快速配置步骤：
+落笔支持接入多种主流 LLM 服务商，以下是快速配置步骤：
 
 1. 打开应用 → 点击左下角 **⚙️ 设置**
 2. 进入 **「模型配置」** 页面
@@ -147,12 +149,12 @@ Vela 支持接入多种主流 LLM 服务商，以下是快速配置步骤：
 
 ## 🤝 赞助与支持 / Sponsor
 
-Vela 开源版由独立开发者利用业余时间热情驱动。如果这个工具有效提升了您的小说创作效率，欢迎扫码赞助！您的每一份支持都是我持续迭代的最大动力 ❤️
+落笔发行版由 qShan1 持续维护。如果这个工具有效提升了您的小说创作效率，欢迎扫码赞助！您的每一份支持都是后续迭代的动力 ❤️
 
 ### 📢 微信群交流 / WeChat Group
 
 <p align="left">
-  <img src="public/buyme/group.png" width="300" alt="Vela 微信群 WeChat Group"/>
+  <img src="public/buyme/group.png" width="300" alt="落笔微信群 WeChat Group"/>
 </p>
 
 ### 👤 技术交流与合作 / Contact
@@ -173,7 +175,7 @@ Vela 开源版由独立开发者利用业余时间热情驱动。如果这个工
 
 ### 🎁 推荐 API 服务商 / Recommended API Providers
 
-以下是经过测试、与 Vela 完美兼容的 API 服务商，使用推荐链接注册可享受专属优惠，同时也是对本项目的支持：
+以下是经过测试、与落笔兼容的 API 服务商，使用推荐链接注册可享受专属优惠，同时也是对本项目的支持：
 
 * **智谱 AI (GLM Coding)**：国内顶流编程大模型，20+ 主流工具全适配 👉 [立即参与「拼好模」](https://www.bigmodel.cn/glm-coding?ic=7IJ2G7AE6W)
 * **MiniMax (海螺 AI)**：Token Plan 含语音/视频/生图权益，新用户 **9折** 优惠 👉 [立即订阅](https://platform.minimaxi.com/subscribe/token-plan?code=EjhLD7uCvT&source=link)
@@ -202,7 +204,7 @@ Vela 开源版由独立开发者利用业余时间热情驱动。如果这个工
 - 🌐 国际化 (i18n) 翻译
 - 📖 文档完善
 
-> 重大功能重构请先在 [Issues](https://github.com/heider-x/vela/issues) 中与作者探讨，以避免方向冲突。
+> 重大功能重构请先在 [Issues](https://github.com/qShan1/luobi-ai-writing/issues) 中与维护者探讨，以避免方向冲突。
 
 ---
 
@@ -216,11 +218,11 @@ Vela 开源版由独立开发者利用业余时间热情驱动。如果这个工
 
 <div align="center">
 
-**Crafted with 💡 by [heider-x]([https://github.com/heider](https://github.com/heider-x))**
+**Maintained with care by [qShan1](https://github.com/qShan1)**
 
-*Vela — Your AI-powered novel writing companion. Write smarter, not harder.*
+*Luobi — Your AI-powered novel writing companion. Write smarter, not harder.*
 
-*Vela — 你的 AI 小说创作伙伴。让写作更智能，而非更辛苦。*
+*落笔 — 你的 AI 小说创作伙伴。让写作更智能，而非更辛苦。*
 
 </div>
 

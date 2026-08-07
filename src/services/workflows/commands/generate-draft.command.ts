@@ -209,7 +209,7 @@ export class GenerateDraftCommand extends BaseWorkflowCommand {
       wordCount: finalDraft.length,
     })
 
-    const pseudoPath = createResult.id ? `vela://draft/${createResult.id}` : `vela://draft/ch${this.chapterInfo.chapterNumber}/v${nextVersion}`
+    const pseudoPath = createResult.id ? `luobi://draft/${createResult.id}` : `luobi://draft/ch${this.chapterInfo.chapterNumber}/v${nextVersion}`
 
     context.data.draft = finalDraft
     context.data.draftContent = finalDraft

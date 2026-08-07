@@ -48,9 +48,9 @@ import { ipc } from '../../../services/ipc-client'
 /** 打开架构文件（带 AI 生成工具栏；若 tab 已存在则刷新内容） */
 export async function openArchFile(filePath: string, name: string) {
   let content = ''
-  // 支持 vela://core/ 伪协议路径，从 DB 读取架构字段
-  if (filePath.startsWith('vela://core/')) {
-    const { readCoreContent } = await import('../../../services/vela-protocol')
+  // 支持 luobi://core/ 伪协议路径，从 DB 读取架构字段
+  if (filePath.startsWith('luobi://core/')) {
+    const { readCoreContent } = await import('../../../services/luobi-protocol')
     content = await readCoreContent(filePath)
   } else {
     const result = await ipc.invoke('fs:read-file', filePath)
@@ -81,9 +81,9 @@ export function openBuiltinEditor(id: string, name: string, type: 'chapter-card'
 /** 打开章节文件 */
 export async function openChapterFile(filePath: string, name: string) {
   let content = ''
-  if (filePath.startsWith('vela://')) {
-    const { readVelaContent } = await import('../../../services/vela-protocol')
-    content = await readVelaContent(filePath)
+  if (filePath.startsWith('luobi://')) {
+    const { readLuobiContent } = await import('../../../services/luobi-protocol')
+    content = await readLuobiContent(filePath)
   } else {
     const result = await ipc.invoke('fs:read-file', filePath)
     content = result.success ? result.content : ''

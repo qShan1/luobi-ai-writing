@@ -1,12 +1,12 @@
 /**
- * Vela SQLite 数据库服务 — 主进程使用
+ * Luobi SQLite 数据库服务 — 主进程使用
  *
  * 负责 SQLite 实例的连接、生命周期与建表。
  * 具体业务逻辑由 /repositories 提供。
  */
 import { createRequire } from 'node:module'
 import path from 'node:path'
-import fs from 'node:fs'
+import { ensureProjectStorage } from './utils/project-storage'
 
 const require = createRequire(import.meta.url)
 const Database = require('better-sqlite3') as typeof import('better-sqlite3')
@@ -18,8 +18,7 @@ let projectDb: BetterSqlite3.Database | null = null
 export function initProjectDatabase(projectPath: string): void {
   closeProjectDatabase()
 
-  const dbPath = path.join(projectPath, '.vela', 'vela.db')
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true })
+  const dbPath = path.join(ensureProjectStorage(projectPath), 'luobi.db')
 
   projectDb = new Database(dbPath)
   projectDb.pragma('journal_mode = WAL')
@@ -29,7 +28,7 @@ export function initProjectDatabase(projectPath: string): void {
   createTables(projectDb)
   // 对老库执行 schema 迁移（加 UNIQUE 约束等）
   migrateProjectDatabase(projectDb)
-  console.log(`[Vela DB] 项目数据库已打开: ${dbPath}`)
+  console.log(`[Luobi DB] 项目数据库已打开: ${dbPath}`)
 }
 
 /** 关闭项目数据库 */
@@ -69,7 +68,7 @@ function migrateProjectDatabase(db: BetterSqlite3.Database): void {
         `)
         db.exec(`CREATE UNIQUE INDEX idx_canon_timeline_unique ON canon_timeline_events(chapter_number, sequence)`)
       } catch (e) {
-        console.warn('[Vela DB] 添加 canon_timeline unique 约束失败（可能存在冲突数据）:', e)
+        console.warn('[Luobi DB] 添加 canon_timeline unique 约束失败（可能存在冲突数据）:', e)
       }
     }
     const factsUnique = db.prepare(
@@ -87,7 +86,7 @@ function migrateProjectDatabase(db: BetterSqlite3.Database): void {
         `)
         db.exec(`CREATE UNIQUE INDEX idx_canon_facts_unique ON canon_facts(statement COLLATE NOCASE)`)
       } catch (e) {
-        console.warn('[Vela DB] 添加 canon_facts unique 约束失败:', e)
+        console.warn('[Luobi DB] 添加 canon_facts unique 约束失败:', e)
       }
     }
     const plotUnique = db.prepare(
@@ -104,7 +103,7 @@ function migrateProjectDatabase(db: BetterSqlite3.Database): void {
         `)
         db.exec(`CREATE UNIQUE INDEX idx_canon_plot_unique ON canon_plot_lines(name COLLATE NOCASE)`)
       } catch (e) {
-        console.warn('[Vela DB] 添加 canon_plot unique 约束失败:', e)
+        console.warn('[Luobi DB] 添加 canon_plot unique 约束失败:', e)
       }
     }
   }

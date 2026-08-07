@@ -1,18 +1,19 @@
 /**
- * Vela 向量数据库封装 — 基于 LanceDB
+ * Luobi 向量数据库封装 — 基于 LanceDB
  *
  * 提供本地嵌入式向量数据库能力，替代旧的 vectors.json 方案。
  * 支持两种检索模式：
  * - FTS-only（BM25 全文检索，零配置默认可用）
  * - 混合检索（FTS + 向量近邻，需要 Embedding 模型）
  *
- * 存储位置：{projectPath}/.vela/lancedb/
+ * 存储位置：{projectPath}/.luobi/lancedb/
  */
 import * as lancedb from '@lancedb/lancedb'
 import { Field, FixedSizeList as ArrowFixedSizeList, Float32, Int32, Utf8, Schema as ArrowSchema } from 'apache-arrow'
 import fs from 'node:fs'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
+import { ensureProjectStorage } from './utils/project-storage'
 
 // ===== 类型定义 =====
 
@@ -69,7 +70,7 @@ const connectionPool = new Map<string, lancedb.Connection>()
 
 /** 获取 LanceDB 连接（惰性创建） */
 export async function getConnection(projectPath: string): Promise<lancedb.Connection> {
-  const dbPath = path.join(projectPath, '.vela', 'lancedb')
+  const dbPath = path.join(ensureProjectStorage(projectPath), 'lancedb')
   
   const cached = connectionPool.get(dbPath)
   if (cached) return cached
@@ -84,7 +85,7 @@ export async function getConnection(projectPath: string): Promise<lancedb.Connec
 
 /** 关闭指定项目的连接 */
 export function closeConnection(projectPath: string): void {
-  const dbPath = path.join(projectPath, '.vela', 'lancedb')
+  const dbPath = path.join(projectPath, '.luobi', 'lancedb')
   connectionPool.delete(dbPath)
 }
 
@@ -212,7 +213,7 @@ export async function addChunks(
 
     return { success: true, chunkCount: chunks.length }
   } catch (error) {
-    console.error('[Vela VectorStore] 写入失败:', error)
+    console.error('[Luobi VectorStore] 写入失败:', error)
     return { success: false, chunkCount: 0, error: String(error) }
   }
 }
@@ -240,7 +241,7 @@ export async function removeDocument(
 
     return true
   } catch (error) {
-    console.error('[Vela VectorStore] 删除失败:', error)
+    console.error('[Luobi VectorStore] 删除失败:', error)
     return false
   }
 }
@@ -329,11 +330,11 @@ export async function searchWithScope(
         fileName: r.fileName,
       }))
     } catch (e) {
-      console.warn('[Vela VectorStore] 纯文本检索失败:', e)
+      console.warn('[Luobi VectorStore] 纯文本检索失败:', e)
       return []
     }
   } catch (error) {
-    console.error('[Vela VectorStore] 检索失败:', error)
+    console.error('[Luobi VectorStore] 检索失败:', error)
     return []
   }
 }
@@ -437,7 +438,7 @@ export async function getChunksWithoutVectors(
     })
     return { count: missing.length }
   } catch (e) {
-    console.error('[Vela KB] getChunksWithoutVectors error:', e)
+    console.error('[Luobi KB] getChunksWithoutVectors error:', e)
     return { count: 0 }
   }
 }
@@ -509,7 +510,7 @@ export async function updateChunkVectors(
             values: { vector: update.vector },
           })
         } catch (e) {
-          console.warn(`[Vela VectorStore] 更新块 ${update.id} 向量失败:`, e)
+          console.warn(`[Luobi VectorStore] 更新块 ${update.id} 向量失败:`, e)
         }
       }
       return { success: true, count: updates.length }
@@ -546,13 +547,13 @@ export async function updateChunkVectors(
         const newTable = await db.openTable(TABLE_NAME)
         await newTable.createIndex('text', { config: lancedb.Index.fts() })
       } catch (e) {
-        console.warn('[Vela VectorStore] 回填覆写后 FTS 重建失败:', e)
+        console.warn('[Luobi VectorStore] 回填覆写后 FTS 重建失败:', e)
       }
 
       return { success: true, count: updates.length }
     }
   } catch (error) {
-    console.error('[Vela VectorStore] 批量更新向量失败:', error)
+    console.error('[Luobi VectorStore] 批量更新向量失败:', error)
     return { success: false, count: 0 }
   }
 }
@@ -563,14 +564,14 @@ export async function updateChunkVectors(
 export async function migrateFromJSON(
   projectPath: string,
 ): Promise<{ success: boolean; migrated: number; error?: string }> {
-  const jsonPath = path.join(projectPath, '.vela', 'vectors.json')
+  const jsonPath = path.join(ensureProjectStorage(projectPath), 'vectors.json')
   
   if (!fs.existsSync(jsonPath)) {
     return { success: true, migrated: 0 }
   }
 
   try {
-    console.log('[Vela VectorStore] 检测到旧 vectors.json，开始迁移...')
+    console.log('[Luobi VectorStore] 检测到旧 vectors.json，开始迁移...')
     const raw = fs.readFileSync(jsonPath, 'utf-8')
     const store = JSON.parse(raw) as {
       documents: Array<{ id: string; fileName: string; importedAt: string; chunkCount: number; filePath: string }>
@@ -612,11 +613,11 @@ export async function migrateFromJSON(
 
     // 迁移完成，重命名旧文件
     fs.renameSync(jsonPath, jsonPath + '.migrated')
-    console.log(`[Vela VectorStore] 迁移完成：${migrated} 个块已写入 LanceDB`)
+    console.log(`[Luobi VectorStore] 迁移完成：${migrated} 个块已写入 LanceDB`)
     
     return { success: true, migrated }
   } catch (error) {
-    console.error('[Vela VectorStore] 迁移失败:', error)
+    console.error('[Luobi VectorStore] 迁移失败:', error)
     return { success: false, migrated: 0, error: String(error) }
   }
 }

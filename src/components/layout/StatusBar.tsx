@@ -52,7 +52,9 @@ export default function StatusBar() {
           title={t('statusBar.sponsorTooltip')}
           onClick={openSettings}
         >
-          <span className="font-medium" style={{ color: '#ff4d4f' }}>{t('statusBar.supportAuthor')}</span>
+          <span className="font-medium" style={{ color: '#A53D32' }}>
+            {t('statusBar.supportAuthor')}
+          </span>
         </StatusBarSegment>
 
       </div>

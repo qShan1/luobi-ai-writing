@@ -12,8 +12,8 @@ import type {
   EventChannel,
 } from '../shared/ipc-channels'
 
-/** 从 preload 暴露的 velaAPI */
-interface VelaAPI {
+/** 从 preload 暴露的 luobiAPI */
+interface LuobiAPI {
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
   on: (channel: string, callback: (...args: unknown[]) => void) => () => void
   once: (channel: string, callback: (...args: unknown[]) => void) => void
@@ -23,12 +23,12 @@ interface VelaAPI {
   getZoomLevel: () => number
 }
 
-/** 获取 velaAPI（由 preload 注入到 window） */
-function getAPI(): VelaAPI {
-  const api = (window as unknown as { velaAPI: VelaAPI }).velaAPI
+/** 获取 luobiAPI（由 preload 注入到 window） */
+function getAPI(): LuobiAPI {
+  const api = (window as unknown as { luobiAPI: LuobiAPI }).luobiAPI
   if (!api) {
     // 浏览器模式下的降级处理（开发时直接浏览器打开的情况）
-    console.warn('[Vela IPC] velaAPI 未注入，可能不在 Electron 环境中运行')
+    console.warn('[Luobi IPC] luobiAPI 未注入，可能不在 Electron 环境中运行')
     return {
       invoke: async () => { throw new Error('不在 Electron 环境中') },
       on: () => () => {},
@@ -90,7 +90,7 @@ export const ipc = {
 
   /** 是否在 Electron 环境中 */
   get isElectron(): boolean {
-    return !!(window as unknown as { velaAPI: VelaAPI }).velaAPI
+    return !!(window as unknown as { luobiAPI: LuobiAPI }).luobiAPI
   },
 
   /** 设置窗口缩放级别 */

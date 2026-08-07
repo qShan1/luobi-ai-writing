@@ -1,8 +1,8 @@
 /**
- * Vela 知识库管理 — 主进程使用
+ * Luobi 知识库管理 — 主进程使用
  *
  * 管理文档导入、向量化和检索
- * 底层存储已从 vectors.json 迁移至 LanceDB（{projectPath}/.vela/lancedb/）
+ * 底层存储已从 vectors.json 迁移至 LanceDB（{projectPath}/.luobi/lancedb/）
  *
  * 检索模式：
  * - 默认：BM25 全文检索（FTS），零配置即可用
@@ -14,6 +14,7 @@ import { randomUUID } from 'node:crypto'
 import * as lancedb from '@lancedb/lancedb'
 import { Field, FixedSizeList as ArrowFixedSizeList, Float32, Int32, Utf8, Schema as ArrowSchema } from 'apache-arrow'
 import { chunkText, generateEmbeddings } from './embedding'
+import { ensureProjectStorage } from './utils/project-storage'
 import {
   addChunks,
   removeDocument as removeDocFromStore,
@@ -34,7 +35,7 @@ async function ensureMigration(projectPath: string): Promise<void> {
   if (migratedProjects.has(projectPath)) return
   migratedProjects.add(projectPath)
 
-  const jsonPath = path.join(projectPath, '.vela', 'vectors.json')
+  const jsonPath = path.join(ensureProjectStorage(projectPath), 'vectors.json')
   if (fs.existsSync(jsonPath)) {
     await migrateFromJSON(projectPath)
   }
@@ -81,7 +82,7 @@ export async function importDocument(
         onProgress?.(20, `正在向量化 ${chunks.length} 个块...`)
         vectors = await generateEmbeddings(chunks, protocol, model)
       } catch (e) {
-        console.warn('[Vela KB] Embedding 调用失败，降级为 FTS-only:', e)
+        console.warn('[Luobi KB] Embedding 调用失败，降级为 FTS-only:', e)
         // 不影响导入，仅 FTS
       }
     }
@@ -261,7 +262,7 @@ export async function importText(
       try {
         vectors = await generateEmbeddings(chunks, protocol, model)
       } catch (e) {
-        console.warn('[Vela KB] importText Embedding 失败，降级 FTS-only:', e)
+        console.warn('[Luobi KB] importText Embedding 失败，降级 FTS-only:', e)
       }
     }
 
@@ -393,7 +394,7 @@ export async function backfillVectors(
 
     return { success: true, processed: idToVector.size, failed: total - idToVector.size }
   } catch (error) {
-    console.error('[Vela KB] 向量回填异常:', error)
+    console.error('[Luobi KB] 向量回填异常:', error)
     return { success: false, processed: 0, failed: 0, error: String(error) }
   }
 }

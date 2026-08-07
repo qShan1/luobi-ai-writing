@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Vela project control layer.
+ * Luobi project control layer.
  *
  * The CLI and MCP server intentionally share the same read/export functions.
- * Nothing here mutates the Vela database or submits content to a platform.
+ * Nothing here mutates the Luobi database or submits content to a platform.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -36,9 +36,17 @@ function parseArgs(argv) {
 
 function requireProject(projectPath) {
   const resolved = path.resolve(projectPath || process.cwd())
-  const dbPath = path.join(resolved, '.vela', 'vela.db')
+  const currentDir = path.join(resolved, '.luobi')
+  const legacyDir = path.join(resolved, '.vela')
+  if (!fs.existsSync(currentDir) && fs.existsSync(legacyDir)) {
+    fs.cpSync(legacyDir, currentDir, { recursive: true, errorOnExist: false, force: false })
+  }
+  fs.mkdirSync(currentDir, { recursive: true })
+  const dbPath = path.join(currentDir, 'luobi.db')
+  const legacyDbPath = path.join(currentDir, 'vela.db')
+  if (!fs.existsSync(dbPath) && fs.existsSync(legacyDbPath)) fs.copyFileSync(legacyDbPath, dbPath)
   if (!fs.existsSync(dbPath)) {
-    fail(`不是有效的 Vela 项目，找不到 ${dbPath}`)
+    fail(`不是有效的 Luobi 项目，找不到 ${dbPath}`)
   }
   return { root: resolved, dbPath }
 }
@@ -175,7 +183,7 @@ function exportNovel(projectPath, options) {
     const chapters = selectChapterRange(finalizedChapters(project), options)
     if (!chapters.length) fail('没有已定稿章节，不能导出。')
 
-    const outputDir = path.resolve(options.output || path.join(project.root, '.vela', 'exports'))
+    const outputDir = path.resolve(options.output || path.join(project.root, '.luobi', 'exports'))
     fs.mkdirSync(outputDir, { recursive: true })
     const title = core.project_name || path.basename(project.root)
     const format = options.format || 'md'
@@ -213,11 +221,11 @@ function preparePublish(projectPath, options) {
     const chapters = selectChapterRange(finalizedChapters(project), options)
     if (!chapters.length) fail('没有已定稿章节，不能生成发布包。')
 
-    const outputDir = path.resolve(options.output || path.join(project.root, '.vela', 'publish', platform))
+    const outputDir = path.resolve(options.output || path.join(project.root, '.luobi', 'publish', platform))
     const chapterDir = path.join(outputDir, 'chapters')
     fs.mkdirSync(chapterDir, { recursive: true })
     const manifest = {
-      schema: 'vela-publish-task/v1',
+      schema: 'luobi-publish-task/v1',
       platform,
       mode: 'manual-review-required',
       title: core.project_name || path.basename(project.root),
@@ -249,7 +257,7 @@ function preparePublish(projectPath, options) {
     }
     fs.writeFileSync(path.join(outputDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
     fs.writeFileSync(path.join(outputDir, 'publish-task.json'), `${JSON.stringify({
-      schema: 'vela-publish-task-state/v1',
+      schema: 'luobi-publish-task-state/v1',
       status: 'ready-for-manual-review',
       platform,
       createdAt: manifest.generatedAt,
@@ -260,7 +268,7 @@ function preparePublish(projectPath, options) {
     fs.writeFileSync(path.join(outputDir, 'REVIEW-BEFORE-PUBLISH.md'), [
       `# ${manifest.title} - ${platform} 发布任务`,
       '',
-      '> 此目录只是一份待人工审核的发布包，Vela 不会自动提交公开发布。',
+      '> 此目录只是一份待人工审核的发布包，Luobi 不会自动提交公开发布。',
       '',
       `- 章节数：${manifest.chapters.length}`,
       `- 来源项目：${manifest.sourceProject}`,
@@ -278,15 +286,15 @@ function preparePublish(projectPath, options) {
 }
 
 function help() {
-  return `Vela Control ${VERSION}
+  return `Luobi Control ${VERSION}
 
 Usage:
-  node tools/vela-control.mjs --project <path> status
-  node tools/vela-control.mjs --project <path> chapters
-  node tools/vela-control.mjs --project <path> export --format md|txt|split-md --output <dir> [--from N --to N]
-  node tools/vela-control.mjs --project <path> prepare-publish --platform qimao|fanqie --output <dir> [--from N --to N]
+  node tools/luobi-control.mjs --project <path> status
+  node tools/luobi-control.mjs --project <path> chapters
+  node tools/luobi-control.mjs --project <path> export --format md|txt|split-md --output <dir> [--from N --to N]
+  node tools/luobi-control.mjs --project <path> prepare-publish --platform qimao|fanqie --output <dir> [--from N --to N]
     [--author NAME --genre GENRE --synopsis TEXT --cover PATH]
-  node tools/vela-control.mjs --project <path> mcp
+  node tools/luobi-control.mjs --project <path> mcp
 `
 }
 
@@ -295,9 +303,9 @@ function jsonRpcResult(id, result) {
 }
 
 const toolDefinitions = [
-  { name: 'novel_status', description: '读取 Vela 小说项目状态和定稿进度。', inputSchema: { type: 'object', properties: { project_path: { type: 'string' } }, required: ['project_path'] } },
+  { name: 'novel_status', description: '读取 Luobi 小说项目状态和定稿进度。', inputSchema: { type: 'object', properties: { project_path: { type: 'string' } }, required: ['project_path'] } },
   { name: 'novel_list_chapters', description: '列出章节蓝图、定稿状态和字数。', inputSchema: { type: 'object', properties: { project_path: { type: 'string' } }, required: ['project_path'] } },
-  { name: 'novel_export', description: '导出已定稿章节，不修改 Vela 数据库。', inputSchema: { type: 'object', properties: { project_path: { type: 'string' }, format: { type: 'string', enum: ['md', 'txt', 'split-md'] }, output: { type: 'string' }, from: { type: 'integer' }, to: { type: 'integer' } }, required: ['project_path'] } },
+  { name: 'novel_export', description: '导出已定稿章节，不修改 Luobi 数据库。', inputSchema: { type: 'object', properties: { project_path: { type: 'string' }, format: { type: 'string', enum: ['md', 'txt', 'split-md'] }, output: { type: 'string' }, from: { type: 'integer' }, to: { type: 'integer' } }, required: ['project_path'] } },
   { name: 'novel_prepare_publish', description: '生成七猫或番茄的人工审核发布包，不自动登录或提交。', inputSchema: { type: 'object', properties: { project_path: { type: 'string' }, platform: { type: 'string', enum: ['qimao', 'fanqie'] }, output: { type: 'string' }, from: { type: 'integer' }, to: { type: 'integer' }, author: { type: 'string' }, genre: { type: 'string' }, synopsis: { type: 'string' }, cover: { type: 'string' } }, required: ['project_path', 'platform'] } },
 ]
 
@@ -313,7 +321,7 @@ async function runMcp(defaultProject) {
       try { request = JSON.parse(line) } catch { continue }
       if (request.method === 'notifications/initialized') continue
       if (request.method === 'initialize') {
-        process.stdout.write(jsonRpcResult(request.id, { protocolVersion: '2024-11-05', capabilities: { tools: {} }, serverInfo: { name: 'vela-control', version: VERSION } }) + '\n')
+        process.stdout.write(jsonRpcResult(request.id, { protocolVersion: '2024-11-05', capabilities: { tools: {} }, serverInfo: { name: 'luobi-control', version: VERSION } }) + '\n')
         continue
       }
       if (request.method === 'tools/list') {
@@ -360,6 +368,6 @@ async function main() {
 }
 
 main().catch(error => {
-  console.error(`[vela-control] ${error.message}`)
+  console.error(`[luobi-control] ${error.message}`)
   process.exitCode = error.exitCode || 1
 })

@@ -1,5 +1,5 @@
 /**
- * Vela Spacing Scale
+ * Luobi Spacing Scale
  *
  * Usage:
  *   import { spacing } from '@/tokens/spacing'

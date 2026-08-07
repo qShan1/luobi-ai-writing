@@ -63,18 +63,18 @@ export interface FinalizeOnlyParams {
 // ==========================================
 
 export function getDraftDir(_projectPath: string, chapterNumber: number): string {
-  return `vela://draft/ch${chapterNumber}`
+  return `luobi://draft/ch${chapterNumber}`
 }
 
 export function getDraftPath(_projectPath: string, chapterNumber: number, version: number): string {
-  return `vela://draft/ch${chapterNumber}/v${version}`
+  return `luobi://draft/ch${chapterNumber}/v${version}`
 }
 
 export async function parseDraftMeta(filePath: string): Promise<DraftMeta | null> {
   const { ipc } = await import('../ipc-client')
 
-  // 优先处理 vela://draft/{id} 纯数字 ID 格式（DB 化后的标准路径）
-  const idMatch = filePath.match(/^vela:\/\/(?:draft|manuscript)\/(\d+)$/)
+  // 优先处理 luobi://draft/{id} 纯数字 ID 格式（DB 化后的标准路径）
+  const idMatch = filePath.match(/^luobi:\/\/(?:draft|manuscript)\/(\d+)$/)
   if (idMatch) {
     const draftId = parseInt(idMatch[1])
     const dbMeta = await ipc.invoke('db:draft-get-meta', draftId)
@@ -84,11 +84,11 @@ export async function parseDraftMeta(filePath: string): Promise<DraftMeta | null
       status: dbMeta.status as DraftStatus,
       source: dbMeta.source as 'write' | 'rewrite',
       fileName: `draft_v${dbMeta.version}.md`,
-      filePath: `vela://draft/${dbMeta.id}`,
+      filePath: `luobi://draft/${dbMeta.id}`,
     } as unknown as DraftMeta
   }
 
-  // 兼容旧格式 draft_v(\d+).md 和 vela://draft/ch{N}/v{V}
+  // 兼容旧格式 draft_v(\d+).md 和 luobi://draft/ch{N}/v{V}
   const versionMatch = filePath.match(/v(\d+)(?:\.md)?$/)
   if (!versionMatch) return null
   const version = parseInt(versionMatch[1])
@@ -247,7 +247,7 @@ export function createFinalizeWorkflow(params: FinalizeOnlyParams): WorkflowDefi
             const bp = await ipc.invoke('db:blueprint-get', params.chapterNumber)
             if (bp?.title) displayTitle = bp.title
           } catch { /* 蓝图读取失败时回退到 params */ }
-          const dbPath = `vela://manuscript/${draftMeta.id}`
+          const dbPath = `luobi://manuscript/${draftMeta.id}`
           useEditorStore.getState().openFile({
             id: dbPath,
             name: t('generateDraft.chapterNumberTitle', { chapter: params.chapterNumber, title: displayTitle }),

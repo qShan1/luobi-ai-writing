@@ -44,7 +44,7 @@
     "viewAIDetails": "Click to view AI output details"
   },
   "agent": {
-    "helpTitle": "## Vela AI Assistant — Help",
+    "helpTitle": "## Luobi AI Assistant — Help",
     "availableCommands": "### Available Commands",
     "cmdClear": "/clear — Clear current conversation",
     "cmdNew": "/new — Start a new conversation",
@@ -73,10 +73,10 @@
     "confirmClearBtn": "Confirm Clear",
     "closeAgentPanel": "Close Agent Panel",
     "noMcpServers": "No MCP servers",
-    "mcpConfigHint": "Configure in ~/.vela/mcp_config.json",
+    "mcpConfigHint": "Configure in ~/.luobi/mcp_config.json",
     "mcpToolsRegistered": "{{count}} MCP tool(s) registered",
     "noAvailableSkills": "No available skills",
-    "skillsDirHint": "Place SKILL.md files in ~/.vela/skills/ directory",
+    "skillsDirHint": "Place SKILL.md files in ~/.luobi/skills/ directory",
     "builtin": "Built-in",
     "userScope": "User",
     "projectScope": "Project",
@@ -175,7 +175,7 @@
         "getFailed": "Fetch failed: {{error}}"
       },
       "openEditor": {
-        "desc": "Open a specified file's tab in the Vela editor. Users can view and edit content directly in the editor.",
+        "desc": "Open a specified file's tab in the Luobi editor. Users can view and edit content directly in the editor.",
         "filePathDesc": "File path relative to project root",
         "tabTypeDesc": "Tab type",
         "missingFilePath": "Missing file_path parameter",
@@ -261,7 +261,7 @@
         "foundCount": "Found {{count}} related results:"
       },
       "startWorkflow": {
-        "desc": "Trigger a Vela creative workflow. Supports writing, revision, review, finalization, blueprint generation, and architecture generation workflows. This executes the corresponding multi-step creative process in the AI output panel.",
+        "desc": "Trigger a Luobi creative workflow. Supports writing, revision, review, finalization, blueprint generation, and architecture generation workflows. This executes the corresponding multi-step creative process in the AI output panel.",
         "workflowDesc": "Workflow type",
         "chapterNumberDesc": "Chapter number (required for writing/revision/review/finalization)",
         "missingWorkflow": "Missing workflow parameter",

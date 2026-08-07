@@ -1,11 +1,11 @@
 import { ipcRenderer, contextBridge, webFrame } from 'electron'
 
 /**
- * Vela Preload Script — 安全地暴露 IPC 通信能力到渲染进程
+ * Luobi Preload Script — 安全地暴露 IPC 通信能力到渲染进程
  *
  * 通过 contextBridge 暴露类型安全的 API，避免直接暴露 ipcRenderer
  */
-contextBridge.exposeInMainWorld('velaAPI', {
+contextBridge.exposeInMainWorld('luobiAPI', {
   // ===== 双向请求/响应（invoke/handle） =====
   /** 调用主进程并等待结果 */
   invoke: (channel: string, ...args: unknown[]) => {

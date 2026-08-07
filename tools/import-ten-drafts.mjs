@@ -13,7 +13,7 @@ const blueprints = [
   [10,'避难所不是国家','林砚拒绝屈服，带回净水设备和联盟契约。','契约要求三十天内攻下灰墙城。'],
 ]
 const script = `import sqlite3, pathlib, json
-root=pathlib.Path(r'''${project}'''); db=root/'.vela'/'vela.db'; con=sqlite3.connect(db)
+root=pathlib.Path(r'''${project}'''); db=root/'.luobi'/'luobi.db'; con=sqlite3.connect(db)
 items=json.loads(r'''${JSON.stringify(blueprints)}''')
 for n,t,p,h in items: con.execute('INSERT OR REPLACE INTO blueprints (chapter_number,title,purpose,suspense_hook) VALUES (?,?,?,?)',(n,t,p,h))
 for n in range(1,11):

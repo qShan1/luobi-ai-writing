@@ -64,7 +64,7 @@ export default function DraftEditor({ filePath, content }: Props) {
       const bp = Array.isArray(bps) ? bps.find((b: unknown) => (b as { chapterNumber?: number }).chapterNumber === m.chapterNumber) : null
       setMeta({ ...m, chapterTitle: bp ? (bp as { title?: string }).title : t('chapterCard.unnamed'), filePath, fileName: `v${m.version}`, createdAt: m.updatedAt ?? m.createdAt })
       // 使用 DB 化的虚拟 chapterDir（用于 draft-index 兼容层解析章节号）
-      const chapterDir = `vela://draft/ch${m.chapterNumber}`
+      const chapterDir = `luobi://draft/ch${m.chapterNumber}`
       // 检查待合并修稿
       const pending = await getPendingRevisions(chapterDir, m.version)
       if (!cancelled) setPendingRevisions(pending)
@@ -111,12 +111,12 @@ export default function DraftEditor({ filePath, content }: Props) {
 
   const currentProject = useProjectStore(s => s.currentProject)
 
-  /** 保存（vela://draft/ 走 DB，其他走 FS） */
+  /** 保存（luobi://draft/ 走 DB，其他走 FS） */
   const doSave = async (text: string) => {
     setSaving(true)
     try {
-      if (filePath.startsWith('vela://draft/') || filePath.startsWith('vela://manuscript/')) {
-        const prefix = filePath.startsWith('vela://draft/') ? 'vela://draft/' : 'vela://manuscript/'
+      if (filePath.startsWith('luobi://draft/') || filePath.startsWith('luobi://manuscript/')) {
+        const prefix = filePath.startsWith('luobi://draft/') ? 'luobi://draft/' : 'luobi://manuscript/'
         const draftId = parseInt(filePath.replace(prefix, ''))
         await ipc.invoke('db:draft-update-content', draftId, text, text.length)
       } else {
@@ -223,8 +223,8 @@ export default function DraftEditor({ filePath, content }: Props) {
   /** 打开待合并修稿 —— 弹出式合并视图，不占用原草稿 Tab */
   const openPendingRevision = async (rev: RevisionEntry) => {
     if (!meta) return
-    // 使用 vela://revision/{id} 协议路径读取修稿内容
-    const revPath = `vela://revision/${rev.id}`
+    // 使用 luobi://revision/{id} 协议路径读取修稿内容
+    const revPath = `luobi://revision/${rev.id}`
 
     // 读取原稿和修稿
     const [origContent, revContent] = await Promise.all([
@@ -244,7 +244,7 @@ export default function DraftEditor({ filePath, content }: Props) {
   /** 合并完成回调 —— 就地覆写原草稿（不新建版本，仅蓝图写稿时才产生新版本） */
   const handleMergeComplete = async (mergedText: string) => {
     if (!meta || !mergeData) return
-    const chapterDir = `vela://draft/ch${meta.chapterNumber}`
+    const chapterDir = `luobi://draft/ch${meta.chapterNumber}`
 
     try {
       const { useDraftStore } = await import('../../stores/draft-store')
@@ -275,13 +275,13 @@ export default function DraftEditor({ filePath, content }: Props) {
   /** 打开最新的审稿报告 */
   const openLatestReview = async () => {
     if (!meta) return
-    const chapterDir = `vela://draft/ch${meta.chapterNumber}`
+    const chapterDir = `luobi://draft/ch${meta.chapterNumber}`
     const { getLatestReview } = await import('../../services/draft-index')
     const latest = await getLatestReview(chapterDir, meta.version)
     if (!latest) return
 
     // 使用 review 的数据库 ID 读取审稿报告内容
-    const reportContent = await readDraftBody(`vela://review/${latest.id}`)
+    const reportContent = await readDraftBody(`luobi://review/${latest.id}`)
     if (!reportContent) return
 
     useEditorStore.getState().openFile({

@@ -44,7 +44,7 @@
     "viewAIDetails": "点击查看 AI 输出详情"
   },
   "agent": {
-    "helpTitle": "## Vela AI 助手 — 帮助",
+    "helpTitle": "## 落笔 AI 助手 — 帮助",
     "availableCommands": "### 可用命令",
     "cmdClear": "/clear — 清空当前对话",
     "cmdNew": "/new — 开始新对话",
@@ -73,10 +73,10 @@
     "confirmClearBtn": "确认清空",
     "closeAgentPanel": "关闭 Agent 面板",
     "noMcpServers": "暂无 MCP 服务器",
-    "mcpConfigHint": "在 ~/.vela/mcp_config.json 中配置",
+    "mcpConfigHint": "在 ~/.luobi/mcp_config.json 中配置",
     "mcpToolsRegistered": "共 {{count}} 个 MCP 工具已注册",
     "noAvailableSkills": "暂无可用技能",
-    "skillsDirHint": "在 ~/.vela/skills/ 目录放入 SKILL.md 文件",
+    "skillsDirHint": "在 ~/.luobi/skills/ 目录放入 SKILL.md 文件",
     "builtin": "内置",
     "userScope": "用户",
     "projectScope": "项目",
@@ -175,7 +175,7 @@
         "getFailed": "获取失败: {{error}}"
       },
       "openEditor": {
-        "desc": "在 Vela 编辑器中打开指定文件的 Tab 页。用户可以直接在编辑器中查看和编辑内容。",
+        "desc": "在落笔编辑器中打开指定文件的 Tab 页。用户可以直接在编辑器中查看和编辑内容。",
         "filePathDesc": "相对于项目根目录的文件路径",
         "tabTypeDesc": "Tab 类型",
         "missingFilePath": "缺少 file_path 参数",
@@ -261,7 +261,7 @@
         "foundCount": "找到 {{count}} 条相关结果："
       },
       "startWorkflow": {
-        "desc": "触发 Vela 创作工作流。支持写稿、修稿、审稿、定稿、生成蓝图等工作流。这将在 AI 输出面板中执行对应的多步骤创作流程。",
+        "desc": "触发落笔创作工作流。支持写稿、修稿、审稿、定稿、生成蓝图等工作流。这将在 AI 输出面板中执行对应的多步骤创作流程。",
         "workflowDesc": "工作流类型",
         "chapterNumberDesc": "章节号（写稿/修稿/审稿/定稿必填）",
         "missingWorkflow": "缺少 workflow 参数",

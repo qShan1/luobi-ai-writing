@@ -53,9 +53,9 @@ async function readChapterTitle(filePath: string, fallback: string, chapterNumbe
 
   // fallback: 读取正文首行
   let fileContent = ''
-  if (filePath.startsWith('vela://')) {
-    const { readVelaContent } = await import('../../../services/vela-protocol')
-    fileContent = await readVelaContent(filePath)
+  if (filePath.startsWith('luobi://')) {
+    const { readLuobiContent } = await import('../../../services/luobi-protocol')
+    fileContent = await readLuobiContent(filePath)
   } else {
     const result = await ipc.invoke('fs:read-file', filePath)
     if (result.success) fileContent = result.content

@@ -1,5 +1,5 @@
 /**
- * Vela 内置 Prompt 模板库
+ * Luobi 内置 Prompt 模板库
  *
  * 包含全流程创作所需的全部提示词模板
  * 支持三级覆盖：内置 → 全局自定义 → 项目级覆盖
@@ -2682,39 +2682,39 @@ Requirements:
   },
 ]
 
-/** 全局自定义覆盖 Prompt 缓存（~/.vela/prompts/） */
+/** 全局自定义覆盖 Prompt 缓存（~/.luobi/prompts/） */
 const customPrompts: Map<string, PromptTemplate> = new Map()
 let customPromptsLoaded = false
 
-/** 项目级自定义覆盖 Prompt 缓存（{project}/.vela/prompts/） */
+/** 项目级自定义覆盖 Prompt 缓存（{project}/.luobi/prompts/） */
 const projectCustomPrompts: Map<string, PromptTemplate> = new Map()
 
-/** 加载全局自定义 Prompt 覆盖（从 ~/.vela/prompts/ 目录） */
+/** 加载全局自定义 Prompt 覆盖（从 ~/.luobi/prompts/ 目录） */
 export async function loadCustomPrompts(): Promise<void> {
   try {
     const { ipc } = await import('./ipc-client')
     if (!ipc.isElectron) return
 
-    const velaHome = await ipc.invoke('config:get-vela-home')
-    const promptsDir = `${velaHome}/prompts`
+    const luobiHome = await ipc.invoke('config:get-luobi-home')
+    const promptsDir = `${luobiHome}/prompts`
 
     await _loadPromptsFromDir(promptsDir, customPrompts)
     customPromptsLoaded = true
-    console.log(`[Vela Prompts] 已加载 ${customPrompts.size} 个全局自定义覆盖`)
+    console.log(`[Luobi Prompts] 已加载 ${customPrompts.size} 个全局自定义覆盖`)
   } catch {
     // prompts 目录可能不存在，忽略
     customPromptsLoaded = true
   }
 }
 
-/** 加载项目级自定义 Prompt 覆盖（从 {projectPath}/.vela/prompts/ 目录） */
+/** 加载项目级自定义 Prompt 覆盖（从 {projectPath}/.luobi/prompts/ 目录） */
 export async function loadProjectCustomPrompts(projectPath: string): Promise<void> {
   try {
     projectCustomPrompts.clear()
-    const promptsDir = `${projectPath}/.vela/prompts`
+    const promptsDir = `${projectPath}/.luobi/prompts`
 
     await _loadPromptsFromDir(promptsDir, projectCustomPrompts)
-    console.log(`[Vela Prompts] 已加载 ${projectCustomPrompts.size} 个项目级自定义覆盖`)
+    console.log(`[Luobi Prompts] 已加载 ${projectCustomPrompts.size} 个项目级自定义覆盖`)
   } catch {
     // 目录不存在时忽略
   }
@@ -2789,12 +2789,12 @@ export function getAllPromptTemplates(): PromptTemplate[] {
   return all
 }
 
-/** 保存全局自定义 Prompt 到 ~/.vela/prompts/ */
+/** 保存全局自定义 Prompt 到 ~/.luobi/prompts/ */
 export async function saveCustomPrompt(template: PromptTemplate): Promise<boolean> {
   try {
     const { ipc } = await import('./ipc-client')
-    const velaHome = await ipc.invoke('config:get-vela-home')
-    const dirPath = `${velaHome}/prompts`
+    const luobiHome = await ipc.invoke('config:get-luobi-home')
+    const dirPath = `${luobiHome}/prompts`
     // 确保目录存在
     const exists = await ipc.invoke('fs:check-exists', dirPath)
     if (!exists) await ipc.invoke('fs:mkdir', dirPath)
@@ -2808,15 +2808,15 @@ export async function saveCustomPrompt(template: PromptTemplate): Promise<boolea
   }
 }
 
-/** 保存项目级自定义 Prompt 到 {projectPath}/.vela/prompts/ */
+/** 保存项目级自定义 Prompt 到 {projectPath}/.luobi/prompts/ */
 export async function saveProjectCustomPrompt(projectPath: string, template: PromptTemplate): Promise<boolean> {
   try {
     const { ipc } = await import('./ipc-client')
-    const dirPath = `${projectPath}/.vela/prompts`
+    const dirPath = `${projectPath}/.luobi/prompts`
     // 确保目录存在
     const exists = await ipc.invoke('fs:check-exists', dirPath)
     if (!exists) {
-      await ipc.invoke('fs:mkdir', `${projectPath}/.vela`)
+      await ipc.invoke('fs:mkdir', `${projectPath}/.luobi`)
       await ipc.invoke('fs:mkdir', dirPath)
     }
     const filePath = `${dirPath}/${template.key}.json`
@@ -2833,8 +2833,8 @@ export async function saveProjectCustomPrompt(projectPath: string, template: Pro
 export async function deleteCustomPrompt(key: string): Promise<boolean> {
   try {
     const { ipc } = await import('./ipc-client')
-    const velaHome = await ipc.invoke('config:get-vela-home')
-    const filePath = `${velaHome}/prompts/${key}.json`
+    const luobiHome = await ipc.invoke('config:get-luobi-home')
+    const filePath = `${luobiHome}/prompts/${key}.json`
     const exists = await ipc.invoke('fs:check-exists', filePath)
     if (exists) await ipc.invoke('fs:write-file', filePath, '')
     customPrompts.delete(key)
@@ -2848,7 +2848,7 @@ export async function deleteCustomPrompt(key: string): Promise<boolean> {
 export async function deleteProjectCustomPrompt(projectPath: string, key: string): Promise<boolean> {
   try {
     const { ipc } = await import('./ipc-client')
-    const filePath = `${projectPath}/.vela/prompts/${key}.json`
+    const filePath = `${projectPath}/.luobi/prompts/${key}.json`
     const exists = await ipc.invoke('fs:check-exists', filePath)
     if (exists) await ipc.invoke('fs:write-file', filePath, '')
     projectCustomPrompts.delete(key)

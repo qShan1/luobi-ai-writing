@@ -13,6 +13,8 @@
 
 [Download](#installation) | [Sponsor](#sponsor)
 
+**Maintainer of this distribution: qShan1** · This distribution is based on the upstream Luobi project; see [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for authorship and source notices.
+
 </div>
 
 ---
@@ -23,11 +25,11 @@
 
 ## Screenshots
 
-|<img src="public/screenshot/1.png" width="800" alt="Vela AI Novel Writing IDE - Main Editor Interface"/>|
+|<img src="public/screenshot/1.png" width="800" alt="Luobi AI Novel Writing IDE - Main Editor Interface"/>|
 |:---:|
 |*Immersive writing workspace with side-by-side AI panel, IDE-grade window management*|
 
-|<img src="public/screenshot/2.png" width="800" alt="Vela AI Writing Workflow - Outline and Chapter Generation"/>|
+|<img src="public/screenshot/2.png" width="800" alt="Luobi AI Writing Workflow - Outline and Chapter Generation"/>|
 |:---:|
 |*End-to-end AI novel writing pipeline: from worldbuilding to chapter generation*|
 
@@ -35,13 +37,13 @@
 <summary><b>More Screenshots</b></summary>
 <br>
 
-<img src="public/screenshot/3.png" width="800" alt="Vela AI Writer - Character Management and World Building"/>
+<img src="public/screenshot/3.png" width="800" alt="Luobi AI Writer - Character Management and World Building"/>
 <br/><br/>
-<img src="public/screenshot/4.png" width="800" alt="Vela Novel IDE - AI Rewrite and Refinement Pipeline"/>
+<img src="public/screenshot/4.png" width="800" alt="Luobi Novel IDE - AI Rewrite and Refinement Pipeline"/>
 <br/><br/>
-<img src="public/screenshot/5.png" width="800" alt="Vela Writing Tool - Local RAG Knowledge Base Search"/>
+<img src="public/screenshot/5.png" width="800" alt="Luobi Writing Tool - Local RAG Knowledge Base Search"/>
 <br/><br/>
-<img src="public/screenshot/6.png" width="800" alt="Vela Creative Writing IDE - Dark Theme Full View"/>
+<img src="public/screenshot/6.png" width="800" alt="Luobi Creative Writing IDE - Dark Theme Full View"/>
 
 </details>
 
@@ -49,7 +51,7 @@
 
 ## Key Features
 
-Vela is not just another chat-based text editor — it is a **production-grade novel writing engine** that deeply integrates LLM capabilities, long-context retrieval (RAG), and automated pipelines for fiction authoring.
+Luobi is not just another chat-based text editor — it is a **production-grade novel writing engine** that deeply integrates LLM capabilities, long-context retrieval (RAG), and automated pipelines for fiction authoring.
 
 ### AI-Powered Novel Writing Pipeline
 
@@ -94,7 +96,7 @@ Vela is not just another chat-based text editor — it is a **production-grade n
 
 ### Direct Download
 
-Go to [Releases](https://github.com/Izya12/vela/releases) to download the latest version for your OS:
+Go to [Luobi Releases](https://github.com/qShan1/luobi-ai-writing/releases) to download the latest version for your OS:
 - **macOS**: `.dmg` installer
 - **Windows**: `.exe` installer (NSIS)
 
@@ -104,8 +106,8 @@ Go to [Releases](https://github.com/Izya12/vela/releases) to download the latest
 # Requirements: Node.js >= 18, npm >= 9
 
 # 1. Clone the project
-git clone https://github.com/Izya12/vela.git
-cd vela
+git clone https://github.com/qShan1/luobi-ai-writing.git
+cd luobi-ai-writing
 
 # 2. Install dependencies
 npm install
@@ -123,7 +125,7 @@ npm run build
 
 ## Model Configuration
 
-Vela supports multiple mainstream LLM providers. Quick setup:
+Luobi supports multiple mainstream LLM providers. Quick setup:
 
 1. Open the app → click **Settings** in the bottom-left
 2. Go to **Model Configuration**
@@ -141,7 +143,7 @@ Vela supports multiple mainstream LLM providers. Quick setup:
 
 ## Sponsor
 
-Vela's open-source edition is driven by passion in spare time. If this tool has improved your writing efficiency or you see its commercial potential, feel free to sponsor! Your support is my biggest motivation to keep iterating.
+This Luobi distribution is maintained by qShan1. If it has improved your writing efficiency, sponsorship helps fund continued maintenance.
 
 ---
 
@@ -167,7 +169,7 @@ We welcome community contributions, including but not limited to:
 - Internationalization (i18n) translations
 - Documentation improvements
 
-> For major feature refactors, please discuss with the author first in [Issues](https://github.com/Izya12/vela/issues) to avoid direction conflicts.
+> For major feature refactors, please discuss with the maintainer in [Issues](https://github.com/qShan1/luobi-ai-writing/issues) first.
 
 ---
 
@@ -181,7 +183,7 @@ For closed-source commercial licensing, please contact the author via email.
 
 <div align="center">
 
-*Vela — Your AI-powered novel writing companion. Write smarter, not harder.*
+*Luobi — Your AI-powered novel writing companion. Write smarter, not harder.*
 
 </div>
 

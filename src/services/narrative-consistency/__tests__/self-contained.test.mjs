@@ -5,7 +5,7 @@
  * 与自动修复行为全部正确。
  *
  * 用法：
- *   node vela-repo/src/services/narrative-consistency/__tests__/self-contained.test.mjs
+ *   node luobi-repo/src/services/narrative-consistency/__tests__/self-contained.test.mjs
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

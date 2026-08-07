@@ -1,4 +1,4 @@
-# CHANGELOG — PR #13「Vela Lite」修复
+# CHANGELOG — PR #13「Luobi Lite」修复
 
 > 审计 + 修复 + 验证：5 个 patch 文件 + 23 个漏洞 + 72 个回归测试
 

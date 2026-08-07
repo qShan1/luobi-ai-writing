@@ -109,7 +109,7 @@ class MCPManagerImpl {
 
   /** 获取 MCP 配置文件默认路径 */
   getDefaultConfigPath(): string {
-    return join(app.getPath('home'), '.vela', 'mcp_config.json')
+    return join(app.getPath('home'), '.luobi', 'mcp_config.json')
   }
 
   /**
@@ -300,7 +300,7 @@ class MCPManagerImpl {
       protocolVersion: '2024-11-05',
       capabilities: {},
       clientInfo: {
-        name: 'vela',
+        name: 'luobi',
         version: '1.0.0',
       },
     })

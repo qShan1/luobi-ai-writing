@@ -13,7 +13,7 @@
   },
   "importNovel": {
     "title": "Import Existing Novel",
-    "description": "Select novel files and Vela will automatically split chapters and reverse-engineer all structured data via AI.",
+    "description": "Select novel files and Luobi will automatically split chapters and reverse-engineer all structured data via AI.",
     "selectFile": "Select novel files",
     "filesSelected": "{{count}} file(s) selected",
     "supportedFormats": "Supports .txt / .md files (single or multiple)",

@@ -18,13 +18,13 @@ interface PartialArchData {
 }
 
 async function loadPartialData(projectPath: string): Promise<PartialArchData> {
-  const result = await ipc.invoke('fs:read-json', `${projectPath}/.vela/partial_arch.json`)
+  const result = await ipc.invoke('fs:read-json', `${projectPath}/.luobi/partial_arch.json`)
   if (result.success && result.data) return result.data as PartialArchData
   return {}
 }
 
 async function savePartialData(projectPath: string, data: PartialArchData): Promise<void> {
-  await ipc.invoke('fs:write-json', `${projectPath}/.vela/partial_arch.json`, data)
+  await ipc.invoke('fs:write-json', `${projectPath}/.luobi/partial_arch.json`, data)
 }
 
 function getNovelConfig(): { project: NonNullable<ReturnType<typeof useProjectStore.getState>['currentProject']>; config: NovelConfig } {
@@ -282,7 +282,7 @@ export class GeneratePlotArchitectureCommand extends BaseWorkflowCommand<string>
 
     if (this.selectedSteps.includes('premise') && this.selectedSteps.includes('characters') &&
       this.selectedSteps.includes('worldbuilding') && this.selectedSteps.includes('synopsis')) {
-      await ipc.invoke('fs:write-file', `${project.path}/.vela/partial_arch.json`, '{}')
+      await ipc.invoke('fs:write-file', `${project.path}/.luobi/partial_arch.json`, '{}')
     }
 
     callbacks.log(i18n.t('architecture.synopsisSaved', { ns: 'commands' }))

@@ -117,11 +117,11 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: 'dark',
-      resolvedTheme: 'dark',
+      theme: 'light',
+      resolvedTheme: 'light',
       zoom: 1.0,
       writingFont: 'lxgw-wenkai',
-      uiFont: 'inter',
+      uiFont: 'system',
 
       setTheme: (theme: Theme) => {
         const resolved = resolveTheme(theme)
@@ -148,10 +148,10 @@ export const useThemeStore = create<ThemeState>()(
         // 为了安全起见这里不再强转 dark -> galaxy，如果是直接跳版的用户，就把旧版的 dark 继承成新的黑夜 dark 也合情合理。
         // 但根据需求：“原本的深蓝色改叫 galaxy”，如果用户之前存的是旧版 'dark' (深蓝)，最好迁移。
         // 如何判断？如果 localStorage 中没有存到某处特征，我们可以直接迁移：
-        if ((theme as string) === 'dark' && localStorage.getItem('vela-theme-migrated') !== '1') {
+        if ((theme as string) === 'dark' && localStorage.getItem('luobi-theme-migrated') !== '1') {
           theme = 'galaxy'
           set({ theme })
-          localStorage.setItem('vela-theme-migrated', '1')
+          localStorage.setItem('luobi-theme-migrated', '1')
         }
 
         const resolved = resolveTheme(theme)
@@ -196,7 +196,7 @@ export const useThemeStore = create<ThemeState>()(
       },
     }),
     {
-      name: 'vela-theme',
+      name: 'luobi-theme',
       partialize: (state) => ({
         theme: state.theme,
         zoom: state.zoom,

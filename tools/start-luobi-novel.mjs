@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const target = 'E:/Agent/Project/小说/落笔首作'
-const configPath = 'C:/Users/21115/.vela/models.json'
+const configPath = 'C:/Users/21115/.luobi/models.json'
 const models = JSON.parse(fs.readFileSync(configPath, 'utf8'))
 const flash = models.find((model) => model.modelName === 'deepseek-v4-flash')
 if (!flash) throw new Error('未找到 DeepSeek Flash 配置')
@@ -97,7 +97,7 @@ if (generationError) {
   fs.writeFileSync(path.join(target, 'generation-report.json'), `${JSON.stringify({ title: architecture.title, model: flash.modelName, generatedAt: new Date().toISOString(), chapter: 1, status: 'failed-validation', error: generationError, preview: chapterText.slice(0, 1000) }, null, 2)}\n`, 'utf8')
   throw new Error(generationError)
 }
-fs.mkdirSync(path.join(target, '.vela'), { recursive: true })
+fs.mkdirSync(path.join(target, '.luobi'), { recursive: true })
 fs.mkdirSync(path.join(target, 'manuscript'), { recursive: true })
 fs.writeFileSync(path.join(target, 'architecture.json'), `${JSON.stringify(architecture, null, 2)}\n`, 'utf8')
 fs.writeFileSync(path.join(target, '选题卡.md'), `# ${architecture.title}\n\n- 类型：${architecture.genre} / ${architecture.subGenre}\n- 目标读者：${architecture.targetAudience}\n- 核心卖点：规则怪谈 × 末日公路求生 × 代价可视化升级\n\n## 故事前提\n${architecture.premise}\n\n## 金手指\n${architecture.goldenFinger}\n\n## 创作指导\n${architecture.writingGuidance}\n`, 'utf8')

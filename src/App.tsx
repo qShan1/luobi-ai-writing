@@ -27,7 +27,7 @@ import { actionToast } from './components/ui/ActionToast'
 import { globalEventBus } from './shared/event-bus'
 
 /**
- * Vela 主应用组件
+ * Luobi 主应用组件
  * 使用 react-resizable-panels 实现可拖拽调整大小的四区布局
  */
 export default function App() {
@@ -58,7 +58,7 @@ export default function App() {
     // 初始化 MCP Store
     useMCPStore.getState().init().catch(e => console.warn('[MCP] 初始化失败:', e))
     if (ipc.isElectron) {
-      const savedZoom = localStorage.getItem('vela-zoom-level')
+      const savedZoom = localStorage.getItem('luobi-zoom-level')
       if (savedZoom) ipc.setZoomLevel(parseFloat(savedZoom))
     }
     // 初始化 ProjectService — 注册全局事件监听（生命周期与 App 一致）

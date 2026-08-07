@@ -13,7 +13,7 @@
   },
   "importNovel": {
     "title": "导入已有小说",
-    "description": "选择小说文件，Vela 将自动拆章并通过 AI 逆向推演全部结构化数据",
+    "description": "选择小说文件，落笔将自动拆章并通过 AI 逆向推演全部结构化数据",
     "selectFile": "选择小说文件",
     "filesSelected": "{{count}} 个文件已选择",
     "supportedFormats": "支持 .txt / .md 文件（单个或多个）",

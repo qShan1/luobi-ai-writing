@@ -153,7 +153,7 @@ export class RefineFromReviewCommand extends BaseWorkflowCommand<string> {
       content: finalRefined,
       revisionPath: String(createRes.id),
       chapterNumber: this.params.chapterNumber,
-      chapterDir: `vela://draft/ch${this.params.chapterNumber}`,
+      chapterDir: `luobi://draft/ch${this.params.chapterNumber}`,
     })
 
     callbacks.log(t('refineFromReview.completed', { length: finalRefined.length, version: revIndex }))

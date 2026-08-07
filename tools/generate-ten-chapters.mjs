@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const project = 'E:/Agent/Project/小说/我在末世建了个国'
-const config = JSON.parse(fs.readFileSync('C:/Users/21115/.vela/models.json', 'utf8').replace(/^\uFEFF/, ''))
+const config = JSON.parse(fs.readFileSync('C:/Users/21115/.luobi/models.json', 'utf8').replace(/^\uFEFF/, ''))
 const model = config.find((item) => item.id === 'deepseek-v4-flash' && item.modelName === 'deepseek-v4-flash')
 if (!model) throw new Error('本机 Flash 配置未生效')
 

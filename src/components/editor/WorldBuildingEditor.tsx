@@ -128,7 +128,7 @@ export default function WorldBuildingEditor() {
   /** 打开单个架构文件（arch-file 类型；若 tab 已存在则刷新磁盘内容） */
   const openArchFile = async (f: typeof ARCH_FILES[number]) => {
     if (!currentProject) return
-    const filePath = `vela://core/${f.key}`
+    const filePath = `luobi://core/${f.key}`
     const core = (await ipc.invoke('db:project-core-get')) as Record<string, unknown> | null
     const propertyKey = f.key === 'characters' ? 'charactersArch' : f.key
     const content = (core && (core[propertyKey] as string)) || ''

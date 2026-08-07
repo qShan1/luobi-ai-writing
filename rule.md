@@ -2,16 +2,16 @@
 trigger: always_on
 ---
 
-# Vela IDE — AI 驱动的小说创作 IDE 开发规范
+# Luobi IDE — AI 驱动的小说创作 IDE 开发规范
 
-> 本文档是 Vela 项目的完整开发规范，供 AI 编码助手和开发者共同遵循。
+> 本文档是 Luobi 项目的完整开发规范，供 AI 编码助手和开发者共同遵循。
 > 所有新代码、重构、组件开发都必须严格遵循以下规则。
 
 ---
 
 ## 一、项目概述
 
-**Vela** 是一款基于 Electron + React + TypeScript 的 AI 深度驱动小说创作 IDE。
+**Luobi** 是一款基于 Electron + React + TypeScript 的 AI 深度驱动小说创作 IDE。
 界面风格对标 JetBrains IDE（Darcula Warm / IntelliJ Light Warm），追求专业、紧凑、沉浸式写作体验。
 
 ### 技术栈
@@ -376,7 +376,7 @@ if (ok) { /* 执行删除 */ }
 import { alertError } from '../ui/AlertDialog'
 
 // fire-and-forget（不阻塞）
-alertError('不是有效的 Vela 项目目录', { title: '打开项目失败' })
+alertError('不是有效的 Luobi 项目目录', { title: '打开项目失败' })
 
 // 或等待用户确认后继续
 await alertError('写入失败，请检查磁盘权限。')
@@ -682,7 +682,7 @@ async function clearEditorTabs() {
 
 - `theme-store` 使用 `zustand/middleware/persist` 自动持久化到 `localStorage`
 - 项目数据通过 IPC 持久化到文件系统（`project:save`）
-- 模型配置通过 IPC 持久化到 `~/.vela/` 目录
+- 模型配置通过 IPC 持久化到 `~/.luobi/` 目录
 
 ---
 
@@ -748,7 +748,7 @@ import { CONFIG_FILE, DIR_ARCHITECTURE, DIR_CHARACTERS, ... } from '../shared/pr
 // 06_drafts/             — 草稿
 // 07_manuscript/         — 定稿正文
 // 08_prompts/            — 项目提示词
-// .vela/                 — 内部系统（数据库等）
+// .luobi/                 — 内部系统（数据库等）
 
 // ✅ 正确：通过常量拼接路径
 const configPath = `${project.path}/${CONFIG_FILE}`
@@ -766,7 +766,7 @@ const configPath = `${project.path}/01_novel_config.json`
 Prompt 模板定义在 `src/services/prompt-templates.ts`，支持三级覆盖：
 
 ```
-内置模板 → 全局自定义（~/.vela/prompts/） → 项目级覆盖（08_prompts/）
+内置模板 → 全局自定义（~/.luobi/prompts/） → 项目级覆盖（08_prompts/）
 ```
 
 ### 9.2 模板结构
@@ -830,7 +830,7 @@ const rendered = renderPrompt(template, {
 ```typescript
 import { saveCustomPrompt, deleteCustomPrompt } from '../services/prompt-templates'
 
-// 保存自定义覆盖（存到 ~/.vela/prompts/xxx.json）
+// 保存自定义覆盖（存到 ~/.luobi/prompts/xxx.json）
 await saveCustomPrompt({
   key: 'core_seed',  // 同名覆盖内置
   name: '自定义故事前提',
@@ -939,7 +939,7 @@ try {
 ```typescript
 // 使用 console 命名空间前缀
 console.log('[Project] 打开成功:', path)
-console.warn('[Vela IPC] velaAPI 未注入')
+console.warn('[Luobi IPC] luobiAPI 未注入')
 console.error('[ErrorBoundary] 组件崩溃:', error)
 
 // 工作流日志通过 workflow-store

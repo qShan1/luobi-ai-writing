@@ -26,7 +26,7 @@ interface Props {
 }
 
 /** 章节创作参数持久化路径（相对于项目路径） */
-const CREATION_LOG_REL = '.vela/chapter_creation_log.json'
+const CREATION_LOG_REL = '.luobi/chapter_creation_log.json'
 
 /** 章节创作对话框 — 配置并启动章节创作工作流（步进式，每步等待用户确认） */
 export default function ChapterCreationDialog({ isOpen, onClose, prefill }: Props) {
@@ -64,7 +64,7 @@ export default function ChapterCreationDialog({ isOpen, onClose, prefill }: Prop
     return unsub
   }, [isOpen, onClose])
 
-  /** 从项目本地 .vela/chapter_creation_log.json 读取上次参数 */
+  /** 从项目本地 .luobi/chapter_creation_log.json 读取上次参数 */
   const loadLastParams = useCallback(async () => {
     if (!currentProject) return
     try {

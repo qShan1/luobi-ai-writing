@@ -84,7 +84,7 @@ export default function VersionHistory() {
       type: 'diff',
       originalContent: oldContent,
       content: currentContent,
-      filePath: `vela://draft/ch${chapter.chapter_number}`, // 不再指向实体文件
+      filePath: `luobi://draft/ch${chapter.chapter_number}`, // 不再指向实体文件
     })
   }
 

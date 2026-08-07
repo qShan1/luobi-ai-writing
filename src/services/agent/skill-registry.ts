@@ -3,9 +3,9 @@
  *
  * 管理所有可用的 Skill（基于 SKILL.md 的模块化知识包）。
  * 支持：
- * - 内置 Skill（随 Vela 发布的预设 Skill）
- * - 用户 Skill（用户放在 ~/.vela/skills/ 下的自定义 Skill）
- * - 项目 Skill（放在项目的 .vela/skills/ 下的项目级 Skill）
+ * - 内置 Skill（随 Luobi 发布的预设 Skill）
+ * - 用户 Skill（用户放在 ~/.luobi/skills/ 下的自定义 Skill）
+ * - 项目 Skill（放在项目的 .luobi/skills/ 下的项目级 Skill）
  *
  * Skill 格式兼容 Cursor 的 SKILL.md 生态。
  */
@@ -135,10 +135,10 @@ class SkillRegistryImpl {
     // 注册内置 Skill
     registerBuiltinSkills(this)
 
-    // 加载用户 Skill（~/.vela/skills/）
+    // 加载用户 Skill（~/.luobi/skills/）
     try {
-      const velaHome = await ipc.invoke('config:get-vela-home')
-      const userSkillsDir = `${velaHome}/skills`
+      const luobiHome = await ipc.invoke('config:get-luobi-home')
+      const userSkillsDir = `${luobiHome}/skills`
       const userCount = await this.loadFromDirectory(userSkillsDir, 'user')
       if (userCount > 0) {
         console.log(`[Skills] 加载了 ${userCount} 个用户 Skill`)
@@ -147,10 +147,10 @@ class SkillRegistryImpl {
       // 静默处理
     }
 
-    // 加载项目 Skill（项目/.vela/skills/）
+    // 加载项目 Skill（项目/.luobi/skills/）
     const project = useProjectStore.getState().currentProject
     if (project) {
-      const projectSkillsDir = `${project.path}/.vela/skills`
+      const projectSkillsDir = `${project.path}/.luobi/skills`
       const projectCount = await this.loadFromDirectory(projectSkillsDir, 'project')
       if (projectCount > 0) {
         console.log(`[Skills] 加载了 ${projectCount} 个项目 Skill`)

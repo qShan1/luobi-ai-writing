@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { execFileSync } from 'node:child_process'
-import { readJsonFile, writeJsonFile, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG, VELA_HOME } from '../utils/config-utils'
+import { readJsonFile, writeJsonFile, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG, LUOBI_HOME } from '../utils/config-utils'
 import { GlobalConfig } from '../../src/shared/ipc-channels'
 
 export function registerConfigController() {
@@ -21,9 +21,9 @@ export function registerConfigController() {
     }
   })
 
-  /** 获取 ~/.vela 路径 */
-  ipcMain.handle('config:get-vela-home', async () => {
-    return VELA_HOME
+  /** 获取 ~/.luobi 路径 */
+  ipcMain.handle('config:get-luobi-home', async () => {
+    return LUOBI_HOME
   })
 
   /** Windows 读取已安装字体名称；其他系统交由浏览器默认字体回退。 */

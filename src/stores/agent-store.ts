@@ -411,7 +411,7 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
           maxTokens: 4096,     // Agent 需要足够 Token 空间来输出推理 + tool_call
           temperature: 0.7,    // 创作场景适度随机
         }
-        const response = await (window as unknown as { velaAPI: { invoke: (ch: string, ...args: unknown[]) => Promise<unknown> } }).velaAPI.invoke('llm:generate', request)
+        const response = await (window as unknown as { luobiAPI: { invoke: (ch: string, ...args: unknown[]) => Promise<unknown> } }).luobiAPI.invoke('llm:generate', request)
         const res = response as { success: boolean; content: string; error?: string }
         if (!res.success) {
           throw new Error(res.error ?? 'LLM 生成失败')

@@ -362,7 +362,7 @@ describe('Pages Translation Keys', () => {
   })
 
   it('should have welcome page text in zh-CN', () => {
-    expect(i18n.t('welcome.title', { ns: 'pages' })).toBe('欢迎使用 Vela')
+    expect(i18n.t('welcome.title', { ns: 'pages' })).toBe('欢迎使用落笔')
     expect(i18n.t('welcome.subtitle', { ns: 'pages' })).toBe('AI 深度驱动的小说创作 IDE')
     expect(i18n.t('welcome.newProject', { ns: 'pages' })).toBe('新建项目')
     expect(i18n.t('welcome.openProject', { ns: 'pages' })).toBe('打开项目')
@@ -371,7 +371,7 @@ describe('Pages Translation Keys', () => {
 
   it('should have welcome page text in en', async () => {
     await i18n.changeLanguage('en')
-    expect(i18n.t('welcome.title', { ns: 'pages' })).toBe('Welcome to Vela')
+    expect(i18n.t('welcome.title', { ns: 'pages' })).toBe('Welcome to Luobi')
     expect(i18n.t('welcome.subtitle', { ns: 'pages' })).toBe('AI-powered novel writing IDE')
     expect(i18n.t('welcome.newProject', { ns: 'pages' })).toBe('New Project')
     expect(i18n.t('welcome.openProject', { ns: 'pages' })).toBe('Open Project')

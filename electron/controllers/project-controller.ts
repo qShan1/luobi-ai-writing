@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { readJsonFile, writeJsonFile, RECENT_PROJECTS_PATH } from '../utils/config-utils'
 import { ProjectData } from '../../src/shared/ipc-channels'
-import { DIR_VELA_INTERNAL, DIR_PROMPTS } from '../../src/shared/project-paths'
+import { DIR_LUOBI_INTERNAL, DIR_PROMPTS } from '../../src/shared/project-paths'
 import { initProjectDatabase } from '../database'
 import { ProjectCoreRepository } from '../repositories/project-core-repository'
 
@@ -36,7 +36,7 @@ export function registerProjectController() {
       const projectDir = path.join(config.path, config.name)
 
       // 仅创建必要的系统目录
-      fs.mkdirSync(path.join(projectDir, DIR_VELA_INTERNAL), { recursive: true })
+      fs.mkdirSync(path.join(projectDir, DIR_LUOBI_INTERNAL), { recursive: true })
       fs.mkdirSync(path.join(projectDir, DIR_PROMPTS), { recursive: true })
 
       // 初始化 DB 底座

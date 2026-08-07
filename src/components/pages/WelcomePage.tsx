@@ -1,5 +1,4 @@
-import { FolderOpen, Clock, BookOpen, FileUp, ArrowRight } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import { FolderOpen, Clock, BookOpen, FileUp, Plus } from 'lucide-react'
 import { useProjectStore } from '../../stores/project-store'
 
 interface WelcomePageProps {
@@ -10,7 +9,6 @@ interface WelcomePageProps {
 
 /** 欢迎页面 — 无项目打开时显示 */
 export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel }: WelcomePageProps) {
-  const { t } = useTranslation('pages')
   const recentProjects = useProjectStore(s => s.recentProjects)
   const openProject = useProjectStore(s => s.openProject)
   const currentProject = useProjectStore(s => s.currentProject)
@@ -18,31 +16,30 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
   return (
     <div className="welcome-shell w-full h-full overflow-y-auto">
       <div className="welcome-content max-w-4xl w-full mx-auto px-10 py-12">
-        <div className="welcome-hero mb-12">
+        <div className="welcome-hero mb-8">
           <div className="welcome-brand-row">
-            <img className="welcome-logo" src="./luobi-logo.svg" alt="落笔 LUOBI AI WRITING" />
+            <img className="welcome-logo" src="./luobi-icon.svg" alt="落笔" />
             <div>
-              <div className="welcome-kicker">LUOBI / AI WRITING DESK</div>
-              <h1 className="text-3xl font-semibold" style={{ color: 'var(--color-text)' }}>
-            {currentProject ? currentProject.name : t('welcome.title')}
+              <h1 className="welcome-title" style={{ color: 'var(--color-text)' }}>
+                {currentProject ? currentProject.name : '开始一部作品'}
               </h1>
-              <p className="text-sm mt-2" style={{ color: 'var(--color-text-secondary)' }}>
-            {currentProject ? currentProject.path : t('welcome.subtitle')}
+              <p className="welcome-subtitle" style={{ color: 'var(--color-text-secondary)' }}>
+                {currentProject ? currentProject.path : '创建、续写或导入一个小说项目'}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="welcome-actions mb-12">
+        <div className="welcome-actions mb-10">
           <button
             onClick={onNewProject}
             className="welcome-primary group"
           >
             <span>
-              <span className="welcome-action-label">{t('welcome.newProject')}</span>
-              <span className="welcome-action-desc">{t('welcome.newProjectDesc')}</span>
+              <span className="welcome-action-label">新建作品</span>
+              <span className="welcome-action-desc">从题材、设定和章节蓝图开始</span>
             </span>
-            <ArrowRight size={20} strokeWidth={1.8} />
+            <Plus size={20} strokeWidth={1.8} />
           </button>
 
           <button
@@ -50,7 +47,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             className="welcome-secondary group"
           >
             <FolderOpen size={18} strokeWidth={1.8} />
-            <span><span className="welcome-action-label">{t('welcome.openProject')}</span><span className="welcome-action-desc">{t('welcome.openProjectDesc')}</span></span>
+            <span><span className="welcome-action-label">打开项目</span><span className="welcome-action-desc">继续本地作品</span></span>
           </button>
 
           <button
@@ -58,7 +55,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             className="welcome-secondary group"
           >
             <FileUp size={18} strokeWidth={1.8} />
-            <span><span className="welcome-action-label">{t('welcome.importNovel')}</span><span className="welcome-action-desc">{t('welcome.importNovelDesc')}</span></span>
+            <span><span className="welcome-action-label">导入旧稿</span><span className="welcome-action-desc">把现有章节带入工作台</span></span>
           </button>
         </div>
 
@@ -68,7 +65,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             <div className="flex items-center gap-1.5 mb-3 welcome-section-label">
               <Clock size={14} style={{ color: 'var(--color-text-muted)' }} />
               <span className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
-                {t('welcome.recentProjects')}
+                最近项目
               </span>
             </div>
             <div className="space-y-1">
@@ -102,9 +99,9 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
           </div>
         )}
 
-        <div className="mt-12">
-          <p className="text-xs" style={{ color: 'var(--color-text-muted)', opacity: 0.7 }}>
-            {t('welcome.footer')}
+        <div className="mt-10">
+          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+            落笔将项目文件保存在本地目录中
           </p>
         </div>
       </div>

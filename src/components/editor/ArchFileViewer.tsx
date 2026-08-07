@@ -7,7 +7,7 @@ import { useEditorStore } from '../../stores/editor-store'
 import ArchitectureConfirmDialog from '../dialogs/ArchitectureConfirmDialog'
 import { Button } from '../ui/Button'
 import { ipc } from '../../services/ipc-client'
-import { readCoreContent, writeCoreContent } from '../../services/vela-protocol'
+import { readCoreContent, writeCoreContent } from '../../services/luobi-protocol'
 import CodeMirrorEditor from './CodeMirrorEditor'
 import { useProjectStore } from '../../stores/project-store'
 import { useCharacterStore } from '../../stores/character-store'
@@ -95,12 +95,12 @@ export default function ArchFileViewer({ filePath, content: initialContent }: Pr
     }
   }, [filePath])
 
-  /** 保存（统一走 vela://core/ DB 路径） */
+  /** 保存（统一走 luobi://core/ DB 路径） */
   const handleSave = useCallback(async (md: string) => {
     setSaving(true)
     try {
       let success = true
-      if (filePath.startsWith('vela://core/')) {
+      if (filePath.startsWith('luobi://core/')) {
         success = await writeCoreContent(filePath, md)
       } else {
         // DB 化后架构文件不应有物理路径；如果意外触发，尝试 FS 写入兜底
@@ -122,7 +122,7 @@ export default function ArchFileViewer({ filePath, content: initialContent }: Pr
   const handleReload = useCallback(async () => {
     setLoading(true)
     let newContent = ''
-    if (filePath.startsWith('vela://core/')) {
+    if (filePath.startsWith('luobi://core/')) {
       newContent = await readCoreContent(filePath)
     } else {
       // DB 化后架构文件不应有物理路径

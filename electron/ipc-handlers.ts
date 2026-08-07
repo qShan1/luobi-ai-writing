@@ -1,4 +1,4 @@
-import { ensureVelaHome, VELA_HOME } from './utils/config-utils'
+import { ensureLuobiHome, LUOBI_HOME } from './utils/config-utils'
 
 import { registerConfigController } from './controllers/config-controller'
 import { registerProjectController } from './controllers/project-controller'
@@ -14,7 +14,7 @@ import { registerImportController } from './controllers/import-controller'
  */
 export function registerIPCHandlers() {
   // 确保全局配置目录结构存在
-  ensureVelaHome()
+  ensureLuobiHome()
 
   // 挂载控制器路由
   registerConfigController()
@@ -25,5 +25,5 @@ export function registerIPCHandlers() {
   registerKBController()
   registerImportController()
 
-  console.log(`[Luobi IPC] 所有 Controller 已注册完成 | 本地工作区: ${VELA_HOME}`)
+  console.log(`[Luobi IPC] 所有 Controller 已注册完成 | 本地工作区: ${LUOBI_HOME}`)
 }
