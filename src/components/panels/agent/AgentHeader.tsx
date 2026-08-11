@@ -235,9 +235,9 @@ function MCPSubView({
                 className="flex-shrink-0 w-1.5 h-1.5 rounded-full"
                 style={{
                   backgroundColor:
-                    server.status === 'connected' ? '#22c55e'
-                    : server.status === 'connecting' ? '#f59e0b'
-                    : server.status === 'error' ? '#ef4444'
+                    server.status === 'connected' ? 'var(--color-success)'
+                    : server.status === 'connecting' ? 'var(--color-warning)'
+                    : server.status === 'error' ? 'var(--color-error)'
                     : 'var(--color-text-muted)',
                 }}
               />
@@ -289,9 +289,9 @@ function SkillSubView({
   /** 来源徽章颜色 */
   const sourceBadge = (source: string) => {
     switch (source) {
-      case 'builtin': return { bg: 'rgba(59,130,246,0.12)', color: '#3b82f6', label: t('agent.builtin') }
-      case 'user': return { bg: 'rgba(168,85,247,0.12)', color: '#a855f7', label: t('agent.userScope') }
-      case 'project': return { bg: 'rgba(34,197,94,0.12)', color: '#22c55e', label: t('agent.projectScope') }
+      case 'builtin': return { bg: 'color-mix(in srgb, var(--color-accent) 12%, transparent)', color: 'var(--color-accent)', label: t('agent.builtin') }
+      case 'user': return { bg: 'color-mix(in srgb, var(--color-accent) 12%, transparent)', color: 'var(--color-accent)', label: t('agent.userScope') }
+      case 'project': return { bg: 'color-mix(in srgb, var(--color-success) 12%, transparent)', color: 'var(--color-success)', label: t('agent.projectScope') }
       default: return { bg: 'var(--color-hover)', color: 'var(--color-text-muted)', label: source }
     }
   }

@@ -565,33 +565,6 @@
  * ===================================================================== */
 @layer components {
 
-  /* ===== 分隔条（拖拽调整大小）— 白色微光风格 ===== */
-  .sash {
-    position: absolute;
-    z-index: 10;
-    background: var(--color-sash);
-    transition: background var(--transition-fast);
-  }
-
-  .sash:hover,
-  .sash.active {
-    background: var(--color-sash-hover);
-  }
-
-  .sash-vertical {
-    width: 4px;
-    cursor: col-resize;
-    top: 0;
-    bottom: 0;
-  }
-
-  .sash-horizontal {
-    height: 4px;
-    cursor: row-resize;
-    left: 0;
-    right: 0;
-  }
-
   /* ===== 面板标题栏 — JetBrains 风格：紧凑、全大写、弱化 ===== */
   .panel-header {
     @apply flex items-center px-3 gap-2;
@@ -1218,9 +1191,9 @@
 
 /* 玻璃态效果 */
 .glass {
-  background: rgba(var(--color-bg), 0.8);
+  background: color-mix(in srgb, var(--color-bg) 80%, transparent);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(var(--color-border), 0.5);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
 }
 
 /* 渐变文字效果 */
@@ -1242,14 +1215,14 @@
   .welcome-subtitle { font-size: 13px; margin: 6px 0 0; }
   .welcome-actions { display: grid; grid-template-columns: minmax(220px, 1.35fr) repeat(2, minmax(180px, 1fr)); gap: 12px; }
   .welcome-primary, .welcome-secondary { min-height: 92px; border-radius: 4px; display: flex; align-items: center; text-align: left; gap: 14px; padding: 18px 20px; transition: border-color 160ms ease, background-color 160ms ease; }
-  .welcome-primary { justify-content: space-between; color: #FFFFFF; background: #171717; border: 1px solid #171717; box-shadow: none; }
-  .welcome-primary:hover { background: #34312D; }
+  .welcome-primary { justify-content: space-between; color: #fff; background: var(--color-accent); border: 1px solid var(--color-accent); box-shadow: none; }
+  .welcome-primary:hover { background: var(--color-accent-hover); }
   .welcome-secondary { color: var(--color-text); background: transparent; border: 1px solid var(--color-border); }
   .welcome-secondary:hover { border-color: var(--color-text-secondary); background: var(--color-hover); }
   .welcome-action-label, .welcome-action-desc { display: block; }
   .welcome-action-label { font-size: 13px; font-weight: 600; }
   .welcome-action-desc { color: color-mix(in srgb, currentColor 65%, transparent); font-size: 11px; line-height: 1.5; margin-top: 5px; }
-  .welcome-primary .welcome-action-desc { color: rgba(24, 32, 29, 0.72); }
+  .welcome-primary .welcome-action-desc { color: rgba(255, 255, 255, 0.72); }
   .welcome-section-label { color: var(--color-text-muted); font-size: 11px; letter-spacing: 0; }
   @media (max-width: 900px) { .welcome-actions { grid-template-columns: 1fr; } .welcome-content { padding: 32px 24px; } }
 

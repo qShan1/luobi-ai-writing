@@ -22,20 +22,7 @@ export default function BottomPanel() {
     models: t('bottomPanel.tabs.models'),
   }
 
-  // A) 懒卸载：面板关闭时保持挂载，仅视觉隐藏，避免切换时的短暂状态错乱
-  const [visible, setVisible] = useState(bottomPanelOpen)
-  useEffect(() => {
-    if (bottomPanelOpen) {
-      /* intentionally deferred to avoid cascading render */
-      setTimeout(() => setVisible(true), 0)
-    } else {
-      // 等待动画完成后再卸载
-      const t = setTimeout(() => setVisible(false), 300)
-      return () => clearTimeout(t)
-    }
-  }, [bottomPanelOpen])
-
-  if (!visible) return null
+  if (!bottomPanelOpen) return null
 
   const activeTab = bottomTab || 'tasks'
   const label = TAB_LABELS[activeTab] ?? activeTab
@@ -49,10 +36,6 @@ export default function BottomPanel() {
       style={{
         backgroundColor: 'var(--color-panel)',
         borderTop: '1px solid var(--color-border)',
-        // A) 懒卸载过渡：关闭时先动画淡出再完全隐藏
-        opacity: bottomPanelOpen ? 1 : 0,
-        transition: 'opacity 0.25s ease',
-        pointerEvents: bottomPanelOpen ? 'auto' : 'none',
       }}
     >
       {/* 面板标题头 */}

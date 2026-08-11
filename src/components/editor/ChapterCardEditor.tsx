@@ -341,7 +341,7 @@ export default function ChapterCardEditor() {
                   {bp.userGuidance && (
                     <span
                       className="text-[0.7rem] px-1 py-0.5 rounded"
-                      style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.15)', color: 'var(--color-accent)' }}
+                      style={{ backgroundColor: 'rgba(var(--color-accent-rgb), 0.15)', color: 'var(--color-accent)' }}
                       title={t('chapterCard.hasGuidanceTooltip')}
                     >
                       {t('chapterCard.hasGuidance')}
@@ -470,7 +470,7 @@ export default function ChapterCardEditor() {
                   className="p-3 rounded-lg border"
                   style={{
                     borderColor: 'var(--color-accent)',
-                    backgroundColor: 'rgba(var(--accent-rgb, 99 102 241), 0.06)',
+                    backgroundColor: 'rgba(var(--color-accent-rgb, 99 102 241), 0.06)',
                   }}
                 >
                   <Label className="flex items-center gap-1.5">

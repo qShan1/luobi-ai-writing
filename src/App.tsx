@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels'
+import { useEffect, useRef } from 'react'
+import { Panel, Group as PanelGroup, Separator as PanelResizeHandle, type PanelImperativeHandle } from 'react-resizable-panels'
 import { useTranslation } from 'react-i18next'
 import { useThemeStore } from './stores/theme-store'
 import { useLayoutStore } from './stores/layout-store'
@@ -27,6 +27,36 @@ import { actionToast } from './components/ui/ActionToast'
 import { globalEventBus } from './shared/event-bus'
 
 /**
+ * 底部面板宿主：始终挂载 Panel，但通过 collapsible + panelRef 真折叠
+ * （关闭时折叠到 0，不保留死区；开启时还原上次尺寸）
+ */
+function BottomPanelHost() {
+  const ref = useRef<PanelImperativeHandle>(null)
+  const bottomPanelOpen = useLayoutStore(s => s.bottomPanelOpen)
+  const bottomPanelHeight = useLayoutStore(s => s.bottomPanelHeight)
+
+  useEffect(() => {
+    const panel = ref.current
+    if (!panel) return
+    if (bottomPanelOpen) panel.expand()
+    else panel.collapse()
+  }, [bottomPanelOpen])
+
+  return (
+    <Panel
+      panelRef={ref}
+      id="bottom"
+      collapsible
+      collapsedSize={0}
+      minSize={8}
+      defaultSize={bottomPanelHeight}
+    >
+      <BottomPanel />
+    </Panel>
+  )
+}
+
+/**
  * Luobi 主应用组件
  * 使用 react-resizable-panels 实现可拖拽调整大小的四区布局
  */
@@ -34,7 +64,10 @@ export default function App() {
   const { t } = useTranslation('common')
   const initTheme = useThemeStore((s) => s.initTheme)
   const sidebarOpen = useLayoutStore(s => s.sidebarOpen)
+  const sidebarWidth = useLayoutStore(s => s.sidebarWidth)
   const aiPanelOpen = useLayoutStore(s => s.aiPanelOpen)
+  const aiPanelWidth = useLayoutStore(s => s.aiPanelWidth)
+  const bottomPanelHeight = useLayoutStore(s => s.bottomPanelHeight)
   const rightView = useLayoutStore(s => s.rightView)
   const settingsOpen = useLayoutStore(s => s.settingsOpen)
   const closeSettings = useLayoutStore(s => s.closeSettings)
@@ -127,16 +160,40 @@ export default function App() {
         <LeftToolWindowBar />
 
         {/* 纵向 PanelGroup：上层主区域 + 下层底部面板 */}
-        <PanelGroup orientation="vertical" className="flex-1">
+        <PanelGroup
+          orientation="vertical"
+          className="flex-1"
+          onLayoutChanged={(layout) => {
+            // layout = [top%, bottom%]，仅在有底部面板时持久化
+            if (layout.length >= 2) {
+              useLayoutStore.getState().setBottomPanelHeight(layout[1])
+            }
+          }}
+        >
 
           {/* 上层：侧边栏 | 编辑区 | AI 面板（水平分割） */}
-          <Panel id="top" defaultSize={75} minSize={30}>
-            <PanelGroup orientation="horizontal" className="flex-1 h-full">
+          <Panel id="top" defaultSize={100 - bottomPanelHeight} minSize={30}>
+            <PanelGroup
+              orientation="horizontal"
+              className="flex-1 h-full"
+              onLayoutChanged={(layout) => {
+                // layout 顺序随开闭变化：根据当前状态映射到 sidebar / editor / ai-panel
+                const { sidebarOpen: so, aiPanelOpen: ao } = useLayoutStore.getState()
+                if (so) {
+                  useLayoutStore.getState().setSidebarWidth(layout[0])
+                  if (ao && layout.length >= 3) {
+                    useLayoutStore.getState().setAIPanelWidth(layout[2])
+                  }
+                } else if (ao && layout.length >= 2) {
+                  useLayoutStore.getState().setAIPanelWidth(layout[1])
+                }
+              }}
+            >
 
               {/* 左侧边栏 */}
               {sidebarOpen && (
                 <>
-                  <Panel id="sidebar" defaultSize={20} minSize={10}>
+                  <Panel id="sidebar" collapsible collapsedSize={0} minSize={10} defaultSize={sidebarWidth}>
                     <ErrorBoundary fallbackLabel={t('sidebarRenderError')}>
                       <Sidebar />
                     </ErrorBoundary>
@@ -156,7 +213,7 @@ export default function App() {
               {aiPanelOpen && (
                 <>
                   <PanelResizeHandle />
-                  <Panel id="ai-panel" defaultSize={20} minSize={10}>
+                  <Panel id="ai-panel" collapsible collapsedSize={0} minSize={10} defaultSize={aiPanelWidth}>
                     <ErrorBoundary fallbackLabel={t('aiPanelRenderError')}>
                       {rightView === 'ai-output' ? <AIOutputPanel /> : <AIPanel />}
                     </ErrorBoundary>
@@ -166,11 +223,9 @@ export default function App() {
             </PanelGroup>
           </Panel>
 
-          {/* 下层：底部面板（铺满整个 PanelGroup 宽度）— 始终挂载，面板控制显隐 */}
+          {/* 下层：底部面板 — 始终挂载但可折叠到 0，不保留死区 */}
           <PanelResizeHandle />
-          <Panel id="bottom" defaultSize={25} minSize={8}>
-            <BottomPanel />
-          </Panel>
+          <BottomPanelHost />
         </PanelGroup>
 
         {/* 右侧工具窗口栏（全高，包括底部面板区域） */}

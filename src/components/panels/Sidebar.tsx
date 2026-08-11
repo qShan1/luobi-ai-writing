@@ -46,9 +46,12 @@ export default function Sidebar() {
         borderRight: '1px solid var(--color-border)',
       }}
     >
-      <div className="panel-header">
-        <span>{viewTitles[sidebarView]}</span>
-      </div>
+      {/* 知识库 / 角色视图自带标题头，避免重复 */}
+      {sidebarView !== 'knowledge' && sidebarView !== 'characters' && (
+        <div className="panel-header">
+          <span>{viewTitles[sidebarView]}</span>
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto py-1">
         {sidebarView === 'home'       && <HomeSidebarPanel />}
         {sidebarView === 'project'    && <ProjectTree />}

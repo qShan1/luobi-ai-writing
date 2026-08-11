@@ -229,7 +229,7 @@
 
 .artifact-card:hover {
   border-color: var(--color-accent);
-  background-color: rgba(var(--accent-rgb, 99, 102, 241), 0.06);
+  background-color: rgba(var(--color-accent-rgb, 99, 102, 241), 0.06);
 }
 
 .artifact-icon {

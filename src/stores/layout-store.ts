@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 /** 左侧活动栏的视图类型 */
 export type SidebarView = 'home' | 'project' | 'knowledge' | 'characters' | 'settings'
@@ -16,10 +17,12 @@ interface LayoutState {
   // ===== 侧边栏 =====
   sidebarOpen: boolean
   sidebarView: SidebarView
+  /** 侧边栏宽度百分比 (10-40) */
   sidebarWidth: number
 
   // ===== AI 对话面板 =====
   aiPanelOpen: boolean
+  /** 右侧面板宽度百分比 (10-40) */
   aiPanelWidth: number
   /** 右侧面板当前视图：Agent 对话 / AI 输出 */
   rightView: RightView
@@ -27,6 +30,7 @@ interface LayoutState {
   // ===== 底部面板 =====
   bottomPanelOpen: boolean
   bottomTab: BottomTab
+  /** 底部面板高度百分比 (10-60) */
   bottomPanelHeight: number
 
   // ===== 全局弹窗状态（替代 window.dispatchEvent 事件总线）=====
@@ -71,61 +75,93 @@ interface LayoutState {
   closeChapterCreation: () => void
 }
 
-export const useLayoutStore = create<LayoutState>()((set) => ({
-  // 默认值
+const DEFAULT_STATE = {
   sidebarOpen: true,
-  sidebarView: 'project',
-  sidebarWidth: 260,
-
+  sidebarView: 'project' as SidebarView,
+  sidebarWidth: 20,
   aiPanelOpen: true,
-  aiPanelWidth: 320,
-  rightView: 'agent',
-
+  aiPanelWidth: 20,
+  rightView: 'agent' as RightView,
   bottomPanelOpen: true,
-  bottomTab: 'tasks',
-  bottomPanelHeight: 200,
-
-  // 全局弹窗默认关闭
+  bottomTab: 'tasks' as BottomTab,
+  bottomPanelHeight: 25,
   settingsOpen: false,
   newProjectOpen: false,
   exportOpen: false,
   importNovelOpen: false,
   chapterCreationOpen: false,
   chapterCreationPrefill: null,
+}
 
-  // Actions
-  toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-  setSidebarView: (view) =>
-    set((s) => ({
-      sidebarView: view,
-      sidebarOpen: s.sidebarView === view ? !s.sidebarOpen : true,
-    })),
-  setSidebarWidth: (width) => set({ sidebarWidth: Math.max(200, Math.min(500, width)) }),
+export const useLayoutStore = create<LayoutState>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_STATE,
 
-  toggleAIPanel: () => set((s) => ({ aiPanelOpen: !s.aiPanelOpen })),
-  setAIPanelOpen: (open) => set({ aiPanelOpen: open }),
-  setAIPanelWidth: (width) => set({ aiPanelWidth: Math.max(260, Math.min(600, width)) }),
-  setRightView: (view) => set({ rightView: view }),
-  openRightPanel: (view) => set({ aiPanelOpen: true, rightView: view }),
+      // Actions
+      toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+      setSidebarView: (view) =>
+        set((s) => ({
+          sidebarView: view,
+          sidebarOpen: s.sidebarView === view ? !s.sidebarOpen : true,
+        })),
+      setSidebarWidth: (width) => set({ sidebarWidth: Math.max(10, Math.min(40, width)) }),
 
-  toggleBottomPanel: () => set((s) => ({ bottomPanelOpen: !s.bottomPanelOpen })),
-  setBottomTab: (tab) =>
-    set((s) => ({
-      bottomTab: tab,
-      bottomPanelOpen: s.bottomTab === tab ? !s.bottomPanelOpen : true,
-    })),
-  setBottomPanelHeight: (height) => set({ bottomPanelHeight: Math.max(100, Math.min(500, height)) }),
-  openBottomTab: (tab) => set({ bottomPanelOpen: true, bottomTab: tab }),
+      toggleAIPanel: () => set((s) => ({ aiPanelOpen: !s.aiPanelOpen })),
+      setAIPanelOpen: (open) => set({ aiPanelOpen: open }),
+      setAIPanelWidth: (width) => set({ aiPanelWidth: Math.max(10, Math.min(40, width)) }),
+      setRightView: (view) => set({ rightView: view }),
+      openRightPanel: (view) => set({ aiPanelOpen: true, rightView: view }),
 
-  // 全局弹窗 Actions
-  openSettings: () => set({ settingsOpen: true }),
-  closeSettings: () => set({ settingsOpen: false }),
-  openNewProject: () => set({ newProjectOpen: true }),
-  closeNewProject: () => set({ newProjectOpen: false }),
-  openExport: () => set({ exportOpen: true }),
-  closeExport: () => set({ exportOpen: false }),
-  openImportNovel: () => set({ importNovelOpen: true }),
-  closeImportNovel: () => set({ importNovelOpen: false }),
-  openChapterCreation: (prefill = null) => set({ chapterCreationOpen: true, chapterCreationPrefill: prefill }),
-  closeChapterCreation: () => set({ chapterCreationOpen: false, chapterCreationPrefill: null }),
-}))
+      toggleBottomPanel: () => set((s) => ({ bottomPanelOpen: !s.bottomPanelOpen })),
+      setBottomTab: (tab) =>
+        set((s) => ({
+          bottomTab: tab,
+          bottomPanelOpen: s.bottomTab === tab ? !s.bottomPanelOpen : true,
+        })),
+      setBottomPanelHeight: (height) => set({ bottomPanelHeight: Math.max(10, Math.min(60, height)) }),
+      openBottomTab: (tab) => set({ bottomPanelOpen: true, bottomTab: tab }),
+
+      // 全局弹窗 Actions
+      openSettings: () => set({ settingsOpen: true }),
+      closeSettings: () => set({ settingsOpen: false }),
+      openNewProject: () => set({ newProjectOpen: true }),
+      closeNewProject: () => set({ newProjectOpen: false }),
+      openExport: () => set({ exportOpen: true }),
+      closeExport: () => set({ exportOpen: false }),
+      openImportNovel: () => set({ importNovelOpen: true }),
+      closeImportNovel: () => set({ importNovelOpen: false }),
+      openChapterCreation: (prefill = null) => set({ chapterCreationOpen: true, chapterCreationPrefill: prefill }),
+      closeChapterCreation: () => set({ chapterCreationOpen: false, chapterCreationPrefill: null }),
+    }),
+    {
+      name: 'luobi-layout',
+      // 弹窗状态每次启动重置，不持久化
+      partialize: (s) => ({
+        sidebarOpen: s.sidebarOpen,
+        sidebarView: s.sidebarView,
+        sidebarWidth: s.sidebarWidth,
+        aiPanelOpen: s.aiPanelOpen,
+        aiPanelWidth: s.aiPanelWidth,
+        rightView: s.rightView,
+        bottomPanelOpen: s.bottomPanelOpen,
+        bottomTab: s.bottomTab,
+        bottomPanelHeight: s.bottomPanelHeight,
+      }),
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<LayoutState>
+        return {
+          ...current,
+          ...p,
+          // 弹窗状态永远从默认值开始
+          settingsOpen: false,
+          newProjectOpen: false,
+          exportOpen: false,
+          importNovelOpen: false,
+          chapterCreationOpen: false,
+          chapterCreationPrefill: null,
+        }
+      },
+    },
+  ),
+)
