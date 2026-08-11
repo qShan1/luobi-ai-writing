@@ -16,7 +16,7 @@
   },
   "statusBar": {
     "supportAuthor": "❤️ Support the Author",
-    "sponsorTooltip": "Business & Sponsorship",
+    "sponsorTooltip": "About Luobi",
     "currentModel": "Current model: {{name}}",
     "clickToConfigModel": "Click to configure model",
     "noModel": "No model configured",

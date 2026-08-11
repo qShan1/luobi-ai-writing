@@ -1,6 +1,6 @@
 <div align="center">
 
-# Luobi — LUOBI AI WRITING
+# 落笔 LUOBI AI WRITING — AI Novel Writing IDE
 
 **The next-generation AI-powered novel & fiction writing IDE for web novel authors, indie writers and creative professionals.**
 
@@ -11,41 +11,13 @@
 
 [Read in Chinese (中文)](README.md) | [Read in Russian (Русский)](README_RU.md)
 
-[Download](#installation) | [Sponsor](#sponsor)
-
-**Maintainer of this distribution: qShan1** · This distribution is based on the upstream Luobi project; see [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for authorship and source notices.
+[Download](#installation)
 
 </div>
 
 ---
 
 > **Luobi** is an open-source, privacy-first, local-first AI writing IDE purpose-built for **novel writing**, **web fiction**, and **creative writing**. It deeply integrates LLM-powered workflows (outline generation, chapter drafting, intelligent rewriting, automated review) with a local RAG knowledge base, giving authors an IDE-level immersive creative experience — all running on your own machine with your own API keys (BYOK).
-
----
-
-## Screenshots
-
-|<img src="public/screenshot/1.png" width="800" alt="Luobi AI Novel Writing IDE - Main Editor Interface"/>|
-|:---:|
-|*Immersive writing workspace with side-by-side AI panel, IDE-grade window management*|
-
-|<img src="public/screenshot/2.png" width="800" alt="Luobi AI Writing Workflow - Outline and Chapter Generation"/>|
-|:---:|
-|*End-to-end AI novel writing pipeline: from worldbuilding to chapter generation*|
-
-<details>
-<summary><b>More Screenshots</b></summary>
-<br>
-
-<img src="public/screenshot/3.png" width="800" alt="Luobi AI Writer - Character Management and World Building"/>
-<br/><br/>
-<img src="public/screenshot/4.png" width="800" alt="Luobi Novel IDE - AI Rewrite and Refinement Pipeline"/>
-<br/><br/>
-<img src="public/screenshot/5.png" width="800" alt="Luobi Writing Tool - Local RAG Knowledge Base Search"/>
-<br/><br/>
-<img src="public/screenshot/6.png" width="800" alt="Luobi Creative Writing IDE - Dark Theme Full View"/>
-
-</details>
 
 ---
 
@@ -88,7 +60,7 @@ Luobi is not just another chat-based text editor — it is a **production-grade 
 | Resizable Panels | File tree + editor + AI panel + bottom terminal, flexible combination like VSCode/JetBrains |
 | Dark Theme | Optimized dark mode with custom floating title bar and status bar micro-interactions |
 | Keyboard Shortcuts | Global shortcuts: Cmd+N new, Cmd+O open, Cmd+=/- zoom |
-| Cross-Platform | macOS (dmg) / Windows (nsis) / Linux (AppImage) |
+| Cross-Platform Desktop | macOS (dmg) / Windows (nsis & portable) / Linux (AppImage) — a native desktop app out of the box |
 
 ---
 
@@ -96,30 +68,31 @@ Luobi is not just another chat-based text editor — it is a **production-grade 
 
 ### Direct Download
 
-Go to [Luobi Releases](https://github.com/qShan1/luobi-ai-writing/releases) to download the latest version for your OS:
+Go to [Releases](https://github.com/qShan1/luobi-ai-writing/releases) to download the latest version for your OS:
 - **macOS**: `.dmg` installer
-- **Windows**: `.exe` installer (NSIS)
+- **Windows**: `.exe` installer (NSIS) or `.exe` portable build
+- **Linux**: `.AppImage`
 
 ### Build from Source
 
 ```bash
-# Requirements: Node.js >= 18, npm >= 9
+# Requirements: Node.js >= 20, pnpm >= 9
 
 # 1. Clone the project
 git clone https://github.com/qShan1/luobi-ai-writing.git
 cd luobi-ai-writing
 
 # 2. Install dependencies
-npm install
+pnpm install
 
 # 3. Start dev server (with hot reload)
-npm run dev
+pnpm dev
 
-# 4. Build for distribution
-npm run build
+# 4. Build desktop distribution
+pnpm build
 ```
 
-> **Note**: You need build tools for native SQLite modules (macOS: Xcode Command Line Tools, Windows: Visual Studio Build Tools).
+> **Note**: Luobi is packaged as a native desktop application (Electron) — no Docker or server-side dependencies required. You need build tools for native SQLite modules (macOS: Xcode Command Line Tools, Windows: Visual Studio Build Tools).
 
 ---
 
@@ -138,12 +111,6 @@ Luobi supports multiple mainstream LLM providers. Quick setup:
 **Supported LLM Providers:**
 
 `OpenAI` · `DeepSeek` · `Google Gemini` · `Anthropic Claude` · `Ollama (Local)` · `Zhipu GLM` · `MiniMax` · `SiliconFlow` · `Any OpenAI-compatible API`
-
----
-
-## Sponsor
-
-This Luobi distribution is maintained by qShan1. If it has improved your writing efficiency, sponsorship helps fund continued maintenance.
 
 ---
 
@@ -175,15 +142,13 @@ We welcome community contributions, including but not limited to:
 
 ## License
 
-This project is licensed under [GPL-3.0 License](LICENSE). You are free to run, study, share, and modify the code, but new software based on this modified distribution **must also be open-sourced under GPL-3.0**.
-
-For closed-source commercial licensing, please contact the author via email.
+This project is licensed under [GPL-3.0 License](LICENSE). You are free to run, study, share, and modify the code, but new software based on this modified distribution **must also be open-sourced under GPL-3.0**. Upstream authorship and source notices are listed in [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
 
 ---
 
 <div align="center">
 
-*Luobi — Your AI-powered novel writing companion. Write smarter, not harder.*
+*LUOBI — Your AI-powered novel writing companion. Write smarter, not harder.*
 
 </div>
 

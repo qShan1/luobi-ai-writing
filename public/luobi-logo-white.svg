@@ -1,12 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="240" viewBox="0 0 720 240" fill="none">
-  <g transform="translate(16 16)">
-    <path d="M43 58C43 45 53 35 66 35H174C187 35 197 45 197 58V139C197 152 187 162 174 162H116L77 199V162H66C53 162 43 152 43 139V58Z" stroke="#FFFFFF" stroke-width="17" stroke-linejoin="round"/>
-    <path d="M82 91C82 82 89 75 98 75C107 75 114 82 114 91V103C114 112 107 119 98 119C89 119 82 112 82 103V91ZM126 91C126 82 133 75 142 75C151 75 158 82 158 91V103C158 112 151 119 142 119C133 119 126 112 126 103V91Z" fill="#FFFFFF"/>
-    <path d="M184 36L189 49L202 54L189 59L184 72L179 59L166 54L179 49L184 36Z" fill="#FFFFFF"/>
-    <path d="M143 174L176 141L194 159L161 192L143 198L149 180L143 174Z" fill="#FFFFFF"/>
-    <path d="M176 141L184 133L202 151L194 159L176 141Z" fill="#FFFFFF"/>
-    <path d="M149 180L161 192" stroke="#171717" stroke-width="6" stroke-linecap="round"/>
-  </g>
-  <text x="270" y="137" fill="#FFFFFF" font-family="Microsoft YaHei, Noto Sans SC, sans-serif" font-size="72" font-weight="600" letter-spacing="8">落笔</text>
-  <text x="276" y="177" fill="#B8B8B8" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">LUOBI AI WRITING</text>
+  <defs>
+    <linearGradient id="luobi-logo-w-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#37B0DE"/>
+      <stop offset="1" stop-color="#8A5FC7"/>
+    </linearGradient>
+    <linearGradient id="luobi-logo-w-bg-soft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <svg x="16" y="16" width="208" height="208" viewBox="0 0 240 240" overflow="visible">
+    <rect x="10" y="10" width="220" height="220" rx="56" fill="url(#luobi-logo-w-bg)"/>
+    <rect x="10" y="10" width="220" height="110" rx="56" fill="url(#luobi-logo-w-bg-soft)"/>
+    <g transform="translate(-28 -10)">
+      <path d="M 80 154 C 98 184 146 196 180 182 C 202 173 216 154 220 134" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round"/>
+      <g transform="rotate(45 120 112)">
+        <rect x="104" y="46" width="32" height="58" rx="13" fill="#FFFFFF"/>
+        <rect x="102.5" y="97" width="35" height="7" rx="3.5" fill="#DFF2FF"/>
+        <path d="M 96 104 C 96 122 108 146 120 168 C 132 146 144 122 144 104 Z" fill="#FFFFFF"/>
+        <line x1="120" y1="166" x2="120" y2="124" stroke="#2E7FB8" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="120" cy="127" r="4.5" fill="#2E7FB8"/>
+      </g>
+    </g>
+  </svg>
+
+  <text x="258" y="140" fill="#FFFFFF" font-family="Microsoft YaHei, Noto Sans SC, sans-serif" font-size="76" font-weight="600" letter-spacing="8">落笔</text>
+  <text x="264" y="182" fill="#C7C7C7" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">LUOBI AI WRITING</text>
 </svg>

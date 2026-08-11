@@ -16,7 +16,7 @@
   },
   "statusBar": {
     "supportAuthor": "❤️ Поддержать автора",
-    "sponsorTooltip": "Бизнес и спонсорство",
+    "sponsorTooltip": "О Luobi",
     "currentModel": "Текущая модель: {{name}}",
     "clickToConfigModel": "Нажмите для настройки модели",
     "noModel": "Модель не настроена",

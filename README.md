@@ -2,64 +2,30 @@
 
 # 落笔 LUOBI AI WRITING — AI 小说创作 IDE
 
-**The next-generation AI-powered novel & fiction writing IDE for web novel authors, indie writers and creative professionals.**
-
 **为网文作者、独立作家与创意写作者设计的下一代 AI 驱动小说创作集成开发环境。**
 
-[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
-[![Electron](https://img.shields.io/badge/Electron-Latest-black.svg)](https://www.electronjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
+[![Electron](https://img.shields.io/badge/Electron-41-black.svg)](https://www.electronjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6.svg)](https://www.typescriptlang.org/)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
 
-[🚀 下载客户端 / Download](#-安装与使用--installation) • [☕ 赞助作者 / Sponsor](#-赞助与支持--sponsor)
-
-**当前发行版维护者：qShan1** · 本发行版基于上游 Luobi 项目，完整归属与来源见 [ATTRIBUTIONS.md](ATTRIBUTIONS.md)。
+[🚀 下载客户端 / Download](#-安装与使用--installation)
 
 </div>
 
 ---
 
-> **落笔** 是一款开源、隐私优先、本地优先的 AI 写作 IDE，专为**长篇小说创作 (Novel Writing)**、**网文写手 (Web Fiction)**与**创意写作 (Creative Writing)** 而生。它将大语言模型驱动的全流程工作流（大纲生成、章节起草、智能重写、自动审阅）与本地 RAG 知识库深度融合，为作者提供 IDE 级别的沉浸式创作体验——所有数据和模型调用都运行在您自己的计算机上，使用您自己的 API Key (BYOK)。
+> **落笔** 是一款开源、隐私优先、本地优先的 AI 写作 IDE，专为**长篇小说创作 (Novel Writing)**、**网文写手 (Web Fiction)** 与**创意写作 (Creative Writing)** 而生。它将大语言模型驱动的全流程工作流（大纲生成、章节起草、智能重写、自动审阅）与本地 RAG 知识库深度融合，为作者提供 IDE 级别的沉浸式创作体验——所有数据和模型调用都运行在您自己的计算机上，使用您自己的 API Key (BYOK)。
 
 <!-- SEO: Luobi is an open-source, privacy-first, local-first AI writing IDE purpose-built for novel writing, fiction writing, web novel creation, and long-form creative writing. -->
 
 ---
 
-## 🎨 界面预览 / Screenshots
-
-|<img src="public/screenshot/1.png" width="800" alt="Luobi AI Novel Writing IDE - Main Editor Interface"/>|
-|:---:|
-|*沉浸式写作空间：编辑器 + AI 助手并排布局，支持 JetBrains/VSCode 级窗口管理*|
-|*Immersive writing workspace with side-by-side AI panel, IDE-grade window management*|
-
-|<img src="public/screenshot/2.png" width="800" alt="Luobi AI Writing Workflow - Outline and Chapter Generation"/>|
-|:---:|
-|*全自动小说创作工作流：从世界观到正文的端到端 AI 管线*|
-|*End-to-end AI novel writing pipeline: from worldbuilding to chapter generation*|
-
-<details>
-<summary><b>点击查看更多截图 / More Screenshots 📸</b></summary>
-<br>
-
-<img src="public/screenshot/3.png" width="800" alt="Luobi AI Writer - Character Management and World Building"/>
-<br/><br/>
-<img src="public/screenshot/4.png" width="800" alt="Luobi Novel IDE - AI Rewrite and Refinement Pipeline"/>
-<br/><br/>
-<img src="public/screenshot/5.png" width="800" alt="Luobi Writing Tool - Local RAG Knowledge Base Search"/>
-<br/><br/>
-<img src="public/screenshot/6.png" width="800" alt="Luobi Creative Writing IDE - Dark Theme Full View"/>
-
-</details>
-
----
-
 ## ✨ 核心特性 / Key Features
-
-Luobi is not just another chat-based text editor — it is a **production-grade novel writing engine** that deeply integrates LLM capabilities, long-context retrieval (RAG), and automated pipelines for fiction authoring.
 
 落笔不是又一个带对话框的文本编辑器——它是一套深度融合了**大语言模型能力、长文本上下文检索 (RAG)、自动化创作管线**的专业级小说写作引擎。
 
-### 🧬 AI-Powered Novel Writing Pipeline / AI 小说创作全流程
+### 🧬 AI 小说创作全流程 / AI Novel Writing Pipeline
 
 | 能力 / Capability | 说明 / Description |
 |---|---|
@@ -94,7 +60,7 @@ Luobi is not just another chat-based text editor — it is a **production-grade 
 | 🖥️ 可拖拽四分屏布局 (Resizable Panels) | 文件树 + 编辑器 + AI 面板 + 底部终端，像 VSCode/JetBrains 一样灵活组合 |
 | 🌙 沉浸深色主题 (Dark Theme) | 极致优化的暗色模式，自定义悬浮标题栏与状态栏微交互 |
 | ⌨️ 快捷键体系 (Keyboard Shortcuts) | 全局快捷键：Cmd+N 新建、Cmd+O 打开、Cmd+=/- 缩放 |
-| 📦 跨平台 (Cross-Platform) | macOS (dmg) / Windows (nsis) / Linux (AppImage) |
+| 📦 跨平台桌面端 (Cross-Platform Desktop) | macOS (dmg) / Windows (nsis & portable) / Linux (AppImage)，开箱即用的原生桌面应用 |
 
 ---
 
@@ -102,14 +68,15 @@ Luobi is not just another chat-based text editor — it is a **production-grade 
 
 ### 方式一：直接下载 / Direct Download
 
-前往 [Luobi Releases](https://github.com/qShan1/luobi-ai-writing/releases) 下载对应操作系统的最新版本：
+前往 [Releases](https://github.com/qShan1/luobi-ai-writing/releases) 下载对应操作系统的最新版本：
 - **macOS**: `.dmg` 安装包
-- **Windows**: `.exe` 安装程序 (NSIS)
+- **Windows**: `.exe` 安装程序 (NSIS) 或 `.exe` 免安装便携版 (Portable)
+- **Linux**: `.AppImage`
 
 ### 方式二：源码构建 / Build from Source
 
 ```bash
-# 环境要求：Node.js >= 18, pnpm >= 8
+# 环境要求：Node.js >= 20, pnpm >= 9
 
 # 1. 克隆项目
 git clone https://github.com/qShan1/luobi-ai-writing.git
@@ -121,11 +88,11 @@ pnpm install
 # 3. 启动开发服务器 (含热更新)
 pnpm dev
 
-# 4. 打包分发
+# 4. 打包桌面端分发
 pnpm build
 ```
 
-> **Note**: 需要确保本地系统安装了构建 SQLite 的前置依赖（macOS: Xcode Command Line Tools, Windows: windows-build-tools）。
+> **Note**: 落笔直接构建为原生桌面应用（Electron），无需 Docker 或其他服务端依赖，本地构建后即可分发。需要确保本地系统安装了构建 SQLite 的前置依赖（macOS: Xcode Command Line Tools, Windows: Visual Studio Build Tools）。
 
 ---
 
@@ -147,48 +114,13 @@ pnpm build
 
 ---
 
-## 🤝 赞助与支持 / Sponsor
-
-落笔发行版由 qShan1 持续维护。如果这个工具有效提升了您的小说创作效率，欢迎扫码赞助！您的每一份支持都是后续迭代的动力 ❤️
-
-### 📢 微信群交流 / WeChat Group
-
-<p align="left">
-  <img src="public/buyme/group.png" width="300" alt="落笔微信群 WeChat Group"/>
-</p>
-
-### 👤 技术交流与合作 / Contact
-
-如果您对本项目的商业化落地（SaaS 授权）、AI 写作技术实现或产品方向感兴趣，欢迎扫码加我个人微信：
-
-<p align="left">
-  <img src="public/buyme/wechat.jpg" width="200" alt="个人微信 Author WeChat"/>
-</p>
-
-### 💰 赞助二维码 / Donate QR Codes
-
-<p align="left">
-  <img src="public/buyme/wepay.jpg" width="200" alt="微信赞助 WeChat Donate"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="public/buyme/alipay.jpg" width="200" alt="支付宝赞助 Alipay Donate"/>
-</p>
-
-### 🎁 推荐 API 服务商 / Recommended API Providers
-
-以下是经过测试、与落笔兼容的 API 服务商，使用推荐链接注册可享受专属优惠，同时也是对本项目的支持：
-
-* **智谱 AI (GLM Coding)**：国内顶流编程大模型，20+ 主流工具全适配 👉 [立即参与「拼好模」](https://www.bigmodel.cn/glm-coding?ic=7IJ2G7AE6W)
-* **MiniMax (海螺 AI)**：Token Plan 含语音/视频/生图权益，新用户 **9折** 优惠 👉 [立即订阅](https://platform.minimaxi.com/subscribe/token-plan?code=EjhLD7uCvT&source=link)
-
----
-
 ## 🏗️ 技术架构 / Tech Stack
 
 | 层级 / Layer | 技术 / Technology |
 |---|---|
-| **UI 框架** | React 18 + TypeScript + Zustand |
-| **样式** | Tailwind CSS + Radix UI + Lucide Icons |
-| **桌面端** | Electron + Vite |
+| **UI 框架** | React 19 + TypeScript + Zustand |
+| **样式** | Tailwind CSS v4 + Radix UI + Lucide Icons |
+| **桌面端** | Electron 41 + Vite 8 |
 | **本地存储** | better-sqlite3 (关系型) + 轻量向量引擎 (RAG) |
 | **IPC 通信** | 强类型频道契约 (Type-safe IPC Channels) |
 | **AI 集成** | OpenAI-compatible + Gemini Protocol + MCP |
@@ -210,26 +142,22 @@ pnpm build
 
 ## 📄 开源协议 / License
 
-本项目采用 [GPL-3.0 License](LICENSE) 开源。您可以自由地运行、研究、分享和修改代码，但基于此修改分发的新软件**必须同样遵循 GPL-3.0 协议开源**。
-
-如需闭源商用授权，请通过微信或邮件联系作者。
+本项目采用 [GPL-3.0 License](LICENSE) 开源。您可以自由地运行、研究、分享和修改代码，但基于此修改分发的新软件**必须同样遵循 GPL-3.0 协议开源**。上游来源与版权声明见 [ATTRIBUTIONS.md](ATTRIBUTIONS.md)。
 
 ---
 
 <div align="center">
 
-**Maintained with care by [qShan1](https://github.com/qShan1)**
-
-*Luobi — Your AI-powered novel writing companion. Write smarter, not harder.*
-
 *落笔 — 你的 AI 小说创作伙伴。让写作更智能，而非更辛苦。*
+
+*LUOBI — Your AI-powered novel writing companion. Write smarter, not harder.*
 
 </div>
 
-<!-- 
-  SEO Keywords (GitHub indexed): 
-  AI novel writing, AI writer, novel writing tool, fiction writing software, 
-  web novel, 网文写作, AI小说, 小说创作工具, creative writing IDE, 
+<!--
+  SEO Keywords (GitHub indexed):
+  AI novel writing, AI writer, novel writing tool, fiction writing software,
+  web novel, 网文写作, AI小说, 小说创作工具, creative writing IDE,
   AI story generator, novel outline generator, RAG knowledge base,
   LLM writing assistant, Electron writing app, open source writing tool,
   DeepSeek writing, Claude writing, Ollama writing, BYOK AI,
