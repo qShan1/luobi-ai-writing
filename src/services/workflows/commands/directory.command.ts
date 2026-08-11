@@ -3,6 +3,7 @@ import { useProjectStore } from '../../../stores/project-store'
 import { getPromptTemplate } from '../../prompt-templates'
 import { DirectoryPromptBuilder } from '../../prompts/prompt-builder'
 import { DirectoryWorkflowParams, ChapterBlueprint, parseTextBlueprints, saveAllBlueprints } from '../directory-workflow'
+import { computeBatchSize } from '../workflow-utils'
 import i18n from '../../../i18n'
 
 export class GenerateDirectoryCommand extends BaseWorkflowCommand<ChapterBlueprint[]> {
@@ -39,9 +40,7 @@ export class GenerateDirectoryCommand extends BaseWorkflowCommand<ChapterBluepri
     const llmStore = (await import('../../../stores/llm-store')).useLLMStore.getState()
     const defaultModel = llmStore.models.find(m => m.id === llmStore.defaultModelId)
     const modelMaxTokens = defaultModel?.maxTokens || 4096
-    const outputBudget = Math.floor(modelMaxTokens * 0.6)  // 预留 40% 给 prompt + 思考
-    const tokensPerChapter = 200
-    const batchSize = Math.min(50, Math.max(5, Math.floor(outputBudget / tokensPerChapter)))
+    const batchSize = computeBatchSize(modelMaxTokens)
 
     const newBlueprints: ChapterBlueprint[] = []
     // 使用游标追踪生成进度，支持 AI 超额返回时智能跳过后续批次

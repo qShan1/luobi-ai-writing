@@ -12,6 +12,7 @@ import { useProjectStore } from '../../../stores/project-store'
 import { getPromptTemplate } from '../../prompt-templates'
 import { ImportPromptBuilder } from '../../prompts/prompt-builder'
 import { ipc } from '../../ipc-client'
+import { runWithConcurrency } from '../workflow-utils'
 import i18n from '../../../i18n'
 import type { CharacterData } from '../../../../electron/repositories/character-repository'
 
@@ -292,19 +293,6 @@ export class InferBlueprintsPerChapterCommand extends BaseWorkflowCommand<void> 
 
     let completedCount = 0
     let failedCount = 0
-
-    // 限流并发执行器
-    const runWithConcurrency = async (tasks: (() => Promise<void>)[], limit: number) => {
-      const executing = new Set<Promise<void>>()
-      for (const task of tasks) {
-        const p = task().then(() => { executing.delete(p) })
-        executing.add(p)
-        if (executing.size >= limit) {
-          await Promise.race(executing)
-        }
-      }
-      await Promise.all(executing)
-    }
 
     const tasks = chapters.map((ch) => async () => {
       try {

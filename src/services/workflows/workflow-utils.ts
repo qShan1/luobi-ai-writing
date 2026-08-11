@@ -27,6 +27,63 @@ export function stripThinkingTags(text: string): string {
   return text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim()
 }
 
+/**
+ * 根据当前默认模型的最大 Token 预算计算「单批可安全生成的章节数」。
+ *
+ * 从 llm-store 读取（而非在 command 内直接 import store），避免命令与 store 紧耦合。
+ *
+ * @param modelMaxTokens 模型最大输出 Token（缺省 4096）
+ * @param tokensPerItem 单个章节预估 Token 消耗（缺省 200）
+ * @param minBatch 最小批次（缺省 5）
+ * @param maxBatch 最大批次（缺省 50）
+ */
+export function computeBatchSize(
+  modelMaxTokens: number = 4096,
+  tokensPerItem: number = 200,
+  minBatch: number = 5,
+  maxBatch: number = 50,
+): number {
+  const outputBudget = Math.floor(modelMaxTokens * 0.6) // 预留 40% 给 prompt + 思考
+  return Math.min(maxBatch, Math.max(minBatch, Math.floor(outputBudget / tokensPerItem)))
+}
+
+/**
+ * 通用限流并发执行器
+ *
+ * 在保证并发上限（limit）的同时执行一批异步任务，任一完成即推进下一个。
+ * 取代此前 import-novel 内硬编码的并发实现，供所有批量工作流复用。
+ *
+ * @param tasks 待执行任务列表
+ * @param limit 最大并发数
+ * @param onProgress 可选进度回调（completed 为已完成数量）
+ */
+export async function runWithConcurrency<T>(
+  tasks: Array<() => Promise<T>>,
+  limit: number,
+  onProgress?: (completed: number, total: number) => void,
+): Promise<Array<{ ok: boolean; value?: T; error?: unknown }>> {
+  const results: Array<{ ok: boolean; value?: T; error?: unknown }> = new Array(tasks.length)
+  let cursor = 0
+  let completed = 0
+
+  const worker = async () => {
+    while (cursor < tasks.length) {
+      const index = cursor++
+      try {
+        results[index] = { ok: true, value: await tasks[index]() }
+      } catch (error) {
+        results[index] = { ok: false, error }
+      }
+      completed++
+      onProgress?.(completed, tasks.length)
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(limit, tasks.length) }, () => worker())
+  await Promise.all(workers)
+  return results
+}
+
 // ===== 流式调用统一封装 =====
 
 export interface StreamToFullTextOptions {

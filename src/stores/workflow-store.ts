@@ -295,11 +295,16 @@ export const useWorkflowStore = create<WorkflowState>()((set, get) => ({
         const result = await stepDef.executor(run.steps[i], context, callbacks)
         // 流式缓冲收尾：确保最后一批文本已写入后再标记完成
         flushAppendBuffer()
+        // 类型契约：step.result 必须是 string，否则 AIOutputPanel 渲染会崩溃。
+        // 命令返回非字符串时安全序列化，并丢弃非字符串返回值。
+        const safeResult = typeof result === 'string'
+          ? result
+          : (result === undefined || result === null ? undefined : JSON.stringify(result))
         updateStepById(set, run.id, i, {
           status: 'completed',
           completedAt: new Date().toISOString(),
           progress: 100,
-          result: result || get().activeRuns.find(r => r.id === run.id)?.steps[i].result,
+          result: safeResult || get().activeRuns.find(r => r.id === run.id)?.steps[i].result,
         })
         get().addLog('info', i18n.t('workflow.stepComplete', { ns: 'stores', title: definition.title, step: stepDef.name }))
 
