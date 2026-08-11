@@ -1,9 +1,36 @@
 import { ILLMProvider, LLMGenerateOptions, LLMResponse, LLMStreamOptions } from './provider.interface'
 import { ModelProfile } from '../../src/shared/ipc-channels'
-
+import {
+  fetchWithRetry,
+  SSELineBuffer,
+  extractSSEData,
+  isRetryableNetworkError,
+  sleep,
+  createTimeoutSignal,
+  STREAM_FIRST_BYTE_TIMEOUT_MS,
+  readErrorBody,
+} from './http-utils'
+/**
+ * OpenAI 兼容协议 Provider（DeepSeek / 智谱 / Ollama / SiliconFlow / 自定义）
+ *
+ * 统一语义：
+ * - 非流式与流式都剥离 <think> 思维链标签，保证落盘纯净
+ * - thinking 模式下不传 temperature
+ * - Ollama（provider === 'ollama'）不发送 Authorization 头
+ * - 请求带超时 + 指数退避重试
+ * - SSE 行缓冲，避免跨分片丢数据
+ */
 export class OpenAIProvider implements ILLMProvider {
-  private buildUrl(baseUrl: string): string {
+  private isOllama(model: ModelProfile): boolean {
+    return model.provider === 'ollama'
+  }
+
+  private buildUrl(baseUrl: string, isOllama: boolean): string {
     const base = baseUrl.replace(/\/$/, '')
+    // Ollama 原生聊天端点（不走 OpenAI 兼容层时）
+    if (isOllama && /\/api\/chat$/.test(base)) {
+      return base
+    }
     // 已包含完整路径
     if (base.endsWith('/chat/completions')) {
       return base
@@ -20,118 +47,154 @@ export class OpenAIProvider implements ILLMProvider {
     return `${base}/v1/chat/completions`
   }
 
-  async generate(model: ModelProfile, messages: Array<{ role: string; content: string }>, opts: LLMGenerateOptions): Promise<LLMResponse> {
-    const url = this.buildUrl(model.baseUrl)
-
+  private buildBody(
+    model: ModelProfile,
+    messages: Array<{ role: string; content: string }>,
+    opts: LLMGenerateOptions,
+    stream: boolean,
+  ): Record<string, unknown> {
     const body: Record<string, unknown> = {
       model: model.modelName,
       messages,
       max_tokens: opts.maxTokens ?? model.maxTokens,
-      stream: false,
+      stream,
     }
 
     // 思考模式下 temperature/top_p 等参数不生效（DeepSeek 会静默忽略），仅在非思考模式下传递
     if (opts.thinking) {
-      // thinking 参数直接放在请求体顶层（非 extra_body，那是 OpenAI SDK 层概念）
       body.thinking = { type: 'enabled' }
     } else {
       body.temperature = opts.temperature ?? model.temperature
     }
 
-    if (opts.responseFormat) body.response_format = opts.responseFormat
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${model.apiKey}`,
-      },
-      body: JSON.stringify(body),
-    })
-
-    if (!res.ok) {
-      const text = await res.text()
-      return { success: false, content: '', error: `API 调用失败 (${res.status}): ${text}` }
+    if (opts.responseFormat?.type === 'json_object') {
+      body.response_format = { type: 'json_object' }
     }
 
-    const data = await res.json() as {
-      choices: Array<{ message: { content: string; reasoning_content?: string } }>
-      usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number }
-    }
-
-    let finalContent = data.choices?.[0]?.message?.content ?? ''
-    finalContent = finalContent.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim()
-
-    return {
-      success: true,
-      content: finalContent,
-      usage: data.usage ? {
-        promptTokens: data.usage.prompt_tokens,
-        completionTokens: data.usage.completion_tokens,
-        totalTokens: data.usage.total_tokens,
-      } : undefined,
-    }
+    return body
   }
 
-  async generateStream(model: ModelProfile, messages: Array<{ role: string; content: string }>, opts: LLMStreamOptions): Promise<void> {
+  private buildHeaders(model: ModelProfile): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+    if (!this.isOllama(model) && model.apiKey) {
+      headers['Authorization'] = `Bearer ${model.apiKey}`
+    }
+    return headers
+  }
+
+  /** 剥离 <think> 标签（含未闭合的情况） */
+  private stripThinkingTags(text: string): string {
+    return text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim()
+  }
+
+  async generate(model: ModelProfile, messages: Array<{ role: string; content: string }>, opts: LLMGenerateOptions): Promise<LLMResponse> {
     try {
-      const url = this.buildUrl(model.baseUrl)
+      const url = this.buildUrl(model.baseUrl, this.isOllama(model))
+      const body = this.buildBody(model, messages, opts, false)
 
-      const body: Record<string, unknown> = {
-        model: model.modelName,
-        messages,
-        max_tokens: opts.maxTokens ?? model.maxTokens,
-        stream: true,
-      }
-
-      // 思考模式下 temperature/top_p 等参数不生效（DeepSeek 会静默忽略），仅在非思考模式下传递
-      if (opts.thinking) {
-        body.thinking = { type: 'enabled' }
-      } else {
-        body.temperature = opts.temperature ?? model.temperature
-      }
-
-      if (opts.responseFormat) body.response_format = opts.responseFormat
-
-      const res = await fetch(url, {
+      const res = await fetchWithRetry(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${model.apiKey}`,
-        },
+        headers: this.buildHeaders(model),
         body: JSON.stringify(body),
         signal: opts.signal,
       })
 
       if (!res.ok) {
-        const text = await res.text()
-        opts.onError(`API 调用失败 (${res.status}): ${text}`)
+        return { success: false, content: '', error: await readErrorBody(res, 'API 调用失败') }
+      }
+
+      const data = await res.json() as {
+        choices: Array<{ message: { content: string; reasoning_content?: string } }>
+        usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number }
+      }
+
+      let finalContent = data.choices?.[0]?.message?.content ?? ''
+      finalContent = this.stripThinkingTags(finalContent)
+
+      return {
+        success: true,
+        content: finalContent,
+        usage: data.usage ? {
+          promptTokens: data.usage.prompt_tokens,
+          completionTokens: data.usage.completion_tokens,
+          totalTokens: data.usage.total_tokens,
+        } : undefined,
+      }
+    } catch (error) {
+      if (opts.signal?.aborted || (error instanceof Error && error.name === 'AbortError' && opts.signal?.aborted)) {
+        return { success: false, content: '', error: '已取消生成' }
+      }
+      return { success: false, content: '', error: error instanceof Error ? error.message : String(error) }
+    }
+  }
+
+  async generateStream(model: ModelProfile, messages: Array<{ role: string; content: string }>, opts: LLMStreamOptions): Promise<void> {
+    try {
+      const url = this.buildUrl(model.baseUrl, this.isOllama(model))
+      const body = this.buildBody(model, messages, opts, true)
+
+      // 流式：仅在「尚未产出任何 chunk」时对连接失败 / 限流 / 5xx 做有限重试。
+      // 每次尝试使用独立的首字节超时信号，避免一次超时毒化后续重试。
+      let res: Response | null = null
+      let activeCleanup: (() => void) | null = null
+      for (let attempt = 0; attempt <= 2; attempt++) {
+        const { signal, cleanup } = createTimeoutSignal(opts.signal, STREAM_FIRST_BYTE_TIMEOUT_MS)
+        activeCleanup?.()
+        activeCleanup = cleanup
+        try {
+          res = await fetch(url, {
+            method: 'POST',
+            headers: this.buildHeaders(model),
+            body: JSON.stringify(body),
+            signal,
+          })
+          if (res.ok || attempt >= 2) break
+          // 可重试状态码：读取并丢弃响应体释放连接后重试
+          await res.text().catch(() => {})
+          res = null
+          await sleep(500 * 2 ** attempt)
+        } catch (error) {
+          if (attempt < 2 && isRetryableNetworkError(error) && !opts.signal?.aborted) {
+            await sleep(500 * 2 ** attempt)
+            continue
+          }
+          throw error
+        }
+      }
+
+      if (!res) throw new Error('无法建立连接')
+
+      if (!res.ok) {
+        activeCleanup?.()
+        opts.onError(await readErrorBody(res, 'API 调用失败'))
         return
       }
 
       const reader = res.body?.getReader()
       if (!reader) {
+        activeCleanup?.()
         opts.onError('无法读取响应流')
         return
       }
 
-      const decoder = new TextDecoder()
+      const lineBuffer = new SSELineBuffer()
       let fullText = ''
       let isThinking = false
 
-      const hasMore = true
-      while (hasMore) {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
-        const text = decoder.decode(value, { stream: true })
-        const lines = text.split('\n').filter((l) => l.startsWith('data: '))
-
-        for (const line of lines) {
-          const json = line.slice(6).trim()
-          if (json === '[DONE]') continue
+        const lines = lineBuffer.push(value)
+        for (const rawLine of lines) {
+          const data = extractSSEData(rawLine)
+          if (data === null) continue
+          if (data === '[DONE]') continue
           try {
-            const parsed = JSON.parse(json) as {
+            const parsed = JSON.parse(data) as {
               choices: Array<{ delta: { content?: string, reasoning_content?: string } }>
             }
             const delta = parsed.choices?.[0]?.delta
@@ -145,8 +208,8 @@ export class OpenAIProvider implements ILLMProvider {
                 emitChunk += '<think>\n'
               }
               emitChunk += delta.reasoning_content
-            } 
-            
+            }
+
             // 如果开始输出正文
             if (delta?.content !== undefined && delta?.content !== null) {
               if (isThinking) {
@@ -163,8 +226,26 @@ export class OpenAIProvider implements ILLMProvider {
               opts.onChunk(emitChunk)
             }
           } catch {
-            // ignore
+            // ignore malformed JSON
           }
+        }
+      }
+
+      const tailLines = lineBuffer.flush()
+      for (const rawLine of tailLines) {
+        const data = extractSSEData(rawLine)
+        if (!data || data === '[DONE]') continue
+        try {
+          const parsed = JSON.parse(data) as {
+            choices: Array<{ delta: { content?: string } }>
+          }
+          const delta = parsed.choices?.[0]?.delta
+          if (delta?.content) {
+            fullText += delta.content
+            opts.onChunk(delta.content)
+          }
+        } catch {
+          // ignore
         }
       }
 
@@ -174,12 +255,13 @@ export class OpenAIProvider implements ILLMProvider {
         opts.onChunk(closeTag)
       }
 
-      opts.onDone(fullText.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim())
+      activeCleanup?.()
+      opts.onDone(this.stripThinkingTags(fullText))
     } catch (error) {
-      if ((error as Error).name === 'AbortError') {
+      if (opts.signal?.aborted || (error instanceof Error && error.name === 'AbortError' && opts.signal?.aborted)) {
         opts.onError('已取消生成')
       } else {
-        opts.onError(String(error))
+        opts.onError(error instanceof Error ? error.message : String(error))
       }
     }
   }

@@ -8,7 +8,8 @@
  */
 
 import i18n from '../i18n'
-
+// 延迟导入避免循环依赖（prompt-builder 反向依赖 prompt-templates）
+import { BasePromptBuilder } from './prompts/prompt-builder'
 export interface PromptTemplate {
   /** 模板唯一标识 */
   key: string
@@ -2858,29 +2859,16 @@ export async function deleteProjectCustomPrompt(projectPath: string, key: string
   }
 }
 
-/** 渲染 Prompt 模板（填充变量 + 自动追加内置 systemSuffix + 空段落裁剪） */
+/**
+ * 渲染 Prompt 模板（填充变量 + 自动追加内置 systemSuffix + 空段落裁剪）
+ *
+ * 统一委托给 BasePromptBuilder 渲染，保证 {{}} 转义、systemSuffix 追加、
+ * 空段落裁剪等规则只存在一份实现，避免两套逻辑漂移。
+ */
 export function renderPrompt(template: PromptTemplate, variables: Record<string, string>): string {
-  let content = getLocalizedContent(template)
+  const builder = new BasePromptBuilder(template)
   for (const [key, value] of Object.entries(variables)) {
-    content = content.replaceAll(`{{${key}}}`, value)
+    builder.withVariable(key, value)
   }
-
-  // 自动追加系统约束（始终从内置模板获取，不受用户自定义影响）
-  const builtinTemplate = BUILTIN_PROMPTS.find(p => p.key === template.key)
-  const suffix = builtinTemplate ? getLocalizedSystemSuffix(builtinTemplate) : undefined
-  if (suffix) {
-    let renderedSuffix = suffix
-    for (const [key, value] of Object.entries(variables)) {
-      renderedSuffix = renderedSuffix.replaceAll(`{{${key}}}`, value)
-    }
-    content = content + '\n\n' + renderedSuffix
-  }
-
-  // 空变量段落裁剪：当可选变量为空时，清除残留的空标签段落，避免分散 LLM 注意力
-  content = content
-    .replace(/\n★【[^】]*】★[：:]\s*\n?\s*$/gm, '')   // 清除空的 ★【...】★ 标签行
-    .replace(/\n【[^】]*（如有[^）]*）[^】]*】\s*\n?\s*$/gm, '') // 清除空的 【...如有...】 标签行
-    .replace(/\n{3,}/g, '\n\n') // 合并多余空行
-
-  return content
+  return builder.build()
 }

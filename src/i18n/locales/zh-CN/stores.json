@@ -20,7 +20,9 @@
   },
   "llm": {
     "noDefaultModel": "未配置默认模型",
-    "connectionFailed": "连接失败"
+    "connectionFailed": "连接失败",
+    "streamWatchdogTimeout": "生成超时（60 秒无响应），已中断",
+    "streamFailedToStart": "生成任务未能启动（模型缺失或窗口已关闭）"
   },
   "agentEngine": {
     "timeout": "工具执行超时（{{seconds}}s）",

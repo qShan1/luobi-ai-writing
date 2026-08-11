@@ -138,6 +138,16 @@ export const useLLMStore = create<LLMState>()((set, get) => ({
 
     const requestId = crypto.randomUUID()
 
+    // 渲染端看门狗：防止主进程侧异常导致事件永不回传而挂起。
+    // 正常流式生成通常很快产出首个 chunk；60s 内无任何事件即视为失败。
+    let settled = false
+    const watchdog = setTimeout(() => {
+      if (settled) return
+      settled = true
+      cleanup()
+      callbacks.onError?.(i18n.t('llm.streamWatchdogTimeout', { ns: 'stores' }))
+    }, 60_000)
+
     // 注册流式事件监听
     const unsubChunk = ipc.on('llm:stream-chunk', (data) => {
       if (data.requestId === requestId) {
@@ -146,17 +156,19 @@ export const useLLMStore = create<LLMState>()((set, get) => ({
     })
 
     const unsubDone = ipc.on('llm:stream-done', (data) => {
-      if (data.requestId === requestId) {
-        callbacks.onDone?.(data.fullText, data.usage)
-        cleanup()
-      }
+      if (data.requestId !== requestId || settled) return
+      settled = true
+      clearTimeout(watchdog)
+      callbacks.onDone?.(data.fullText, data.usage)
+      cleanup()
     })
 
     const unsubError = ipc.on('llm:stream-error', (data) => {
-      if (data.requestId === requestId) {
-        callbacks.onError?.(data.error)
-        cleanup()
-      }
+      if (data.requestId !== requestId || settled) return
+      settled = true
+      clearTimeout(watchdog)
+      callbacks.onError?.(data.error)
+      cleanup()
     })
 
     const cleanup = () => {
@@ -174,13 +186,21 @@ export const useLLMStore = create<LLMState>()((set, get) => ({
     set({ activeRequests: reqs })
 
     // 发起流式请求
-    await ipc.invoke('llm:generate-stream', requestId, {
+    const result = await ipc.invoke('llm:generate-stream', requestId, {
       modelId: mid,
       messages,
       stream: true,
       responseFormat: options?.responseFormat as { type: 'json_object' | 'text' } | undefined,
       thinking: options?.thinking
-    })
+    }) as { requestId: string; started: boolean }
+
+    // 主进程明确告知未启动（模型缺失 / 窗口丢失）：立即报错并清理，防止挂起
+    if (!result?.started && !settled) {
+      settled = true
+      clearTimeout(watchdog)
+      cleanup()
+      callbacks.onError?.(i18n.t('llm.streamFailedToStart', { ns: 'stores' }))
+    }
 
     return requestId
   },

@@ -20,7 +20,9 @@
   },
   "llm": {
     "noDefaultModel": "No default model configured",
-    "connectionFailed": "Connection failed"
+    "connectionFailed": "Connection failed",
+    "streamWatchdogTimeout": "Generation timed out (no response for 60s), interrupted",
+    "streamFailedToStart": "Generation failed to start (model missing or window closed)"
   },
   "agentEngine": {
     "timeout": "Tool execution timed out ({{seconds}}s)",

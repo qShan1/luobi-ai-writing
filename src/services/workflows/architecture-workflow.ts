@@ -1,5 +1,4 @@
 import type { WorkflowDefinition, WorkflowContext, StepCallbacks } from '../../stores/workflow-store'
-import { useLLMStore } from '../../stores/llm-store'
 import { useProjectStore } from '../../stores/project-store'
 import { getPromptTemplate } from '../prompt-templates'
 import { ipc } from '../ipc-client'
@@ -7,7 +6,7 @@ import type { NovelConfig } from '../../shared/ipc-channels'
 import type { CharacterData } from '../../../electron/repositories/character-repository'
 import i18n from '../../i18n'
 
-import { runPostProcessPipeline, type PostProcessStep, stripThinkingTags } from './workflow-utils'
+import { runPostProcessPipeline, type PostProcessStep, stripThinkingTags, streamToFullText } from './workflow-utils'
 
 const t = (key: string, opts?: Record<string, unknown>) => i18n.t(key, { ns: 'commands', ...opts })
 
@@ -180,25 +179,21 @@ export function createCharacterExtractSteps(_projectPath: string, characterDynam
         const extractPrompt = new ArchitecturePromptBuilder(template).withCharacterDynamics(characterDynamicsContent).withGenre(genre).build()
         const systemRole = template.systemRole || t('workflowDefs.charExtractSystemRole')
 
-        const llmStore = useLLMStore.getState()
         cb.appendText(t('workflowDefs.charExtractingCards') + '\n')
 
         let fullContent = ''
-        await new Promise<void>((resolve, reject) => {
-          llmStore.generateStream(
+        try {
+          fullContent = await streamToFullText(
             [
               { role: 'system', content: systemRole },
               { role: 'user', content: extractPrompt }
             ],
-            {
-              onChunk: (chunk) => { fullContent += chunk; cb.appendText(chunk) },
-              onDone: () => resolve(),
-              onError: (err) => reject(new Error(err))
-            },
-            undefined,
-            { responseFormat: { type: 'json_object' } }
+            { appendText: cb.appendText },
+            { responseFormat: { type: 'json_object' } },
           )
-        })
+        } catch (err) {
+          throw new Error(err instanceof Error ? err.message : String(err))
+        }
 
         const cleanedCards = stripThinkingTags(fullContent)
         const jsonStr = cleanedCards.replace(/```json?\n?/g, '').replace(/```/g, '').trim()

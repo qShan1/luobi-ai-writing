@@ -54,9 +54,7 @@ export class AnalyzeWritingStyleCommand extends BaseWorkflowCommand<string> {
     if (!template) throw new Error(t('analyzeStyle.templateNotFound'))
 
     const sampleText = sampleTexts.join('\n\n---\n\n')
-    const prompt = new BasePromptBuilder(template)
-      // 使用 protected variables 需要通过子类或反射，这里使用 build 前手动设置
-      ; (prompt as unknown as { variables: { sample_text: string } }).variables = { sample_text: sampleText }
+    const prompt = new BasePromptBuilder(template).withSampleText(sampleText)
     const finalPrompt = prompt.build()
 
     callbacks.log(t('analyzeStyle.callingAI'))

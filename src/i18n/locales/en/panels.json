@@ -273,7 +273,11 @@
         "generateBlueprint": "Blueprint Generation",
         "generateArchitecture": "Architecture Generation",
         "chapterInfo": " (Chapter {{chapter}})",
-        "switched": "🚀 Switched to AI Output panel. Please start the \"{{name}}{{chapterInfo}}\" workflow in the panel."
+        "switched": "🚀 Switched to AI Output panel. Please start the \"{{name}}{{chapterInfo}}\" workflow in the panel.",
+        "started": "✅ Workflow started: {{name}}. Track progress in the AI Output panel.",
+        "chapterDefault": "Chapter {{chapter}}",
+        "unknownWorkflow": "Unknown workflow: {{workflow}}",
+        "failed": "Failed to start workflow: {{error}}"
       },
       "updateConfig": {
         "desc": "Update the novel project's configuration information, such as genre, target audience, outline, writing style, etc. This modifies core project settings and requires user confirmation.",

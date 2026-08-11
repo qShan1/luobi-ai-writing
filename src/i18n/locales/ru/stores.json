@@ -20,7 +20,9 @@
   },
   "llm": {
     "noDefaultModel": "Модель по умолчанию не настроена",
-    "connectionFailed": "Ошибка подключения"
+    "connectionFailed": "Ошибка подключения",
+    "streamWatchdogTimeout": "Генерация прервана по таймауту (нет ответа 60с)",
+    "streamFailedToStart": "Генерация не запустилась (модель отсутствует или окно закрыто)"
   },
   "agentEngine": {
     "timeout": "Тайм-аут выполнения инструмента ({{seconds}}с)",

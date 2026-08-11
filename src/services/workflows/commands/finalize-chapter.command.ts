@@ -1,7 +1,6 @@
 import i18n from '../../../i18n'
 import { BaseWorkflowCommand, CommandExecuteParams } from './base-command'
 import { useProjectStore } from '../../../stores/project-store'
-import { useLLMStore } from '../../../stores/llm-store'
 import type { StepCallbacks } from '../../../stores/workflow-store'
 
 const t = (key: string, opts?: Record<string, unknown>) => i18n.t(key, { ns: 'commands', ...opts })
@@ -12,7 +11,7 @@ import { ipc } from '../../ipc-client'
 import {
   runPostProcessPipeline,
   getChapterFinalizeScope,
-  stripThinkingTags,
+  streamToFullText,
   type PostProcessStep,
 } from '../workflow-utils'
 import type { ChapterInfo } from '../chapter-workflow'
@@ -36,28 +35,14 @@ async function callLLMForPostProcess(
   callbacks: { appendText: (text: string) => void },
   options?: { responseFormat?: { type: string } },
 ): Promise<string> {
-  const llmStore = useLLMStore.getState()
-  if (!llmStore.defaultModelId) throw new Error(t('base.noDefaultModel'))
-
-  return new Promise<string>((resolve, reject) => {
-    let fullContent = ''
-    llmStore.generateStream(
-      [
-        { role: 'system', content: builder.getSystemRole() },
-        { role: 'user', content: builder.build() },
-      ],
-      {
-        onChunk: (chunk) => { fullContent += chunk; callbacks.appendText(chunk) },
-        onDone: (text) => {
-          const raw = text || fullContent
-          resolve(stripThinkingTags(raw))
-        },
-        onError: (err) => reject(new Error(err || t('base.streamFailed'))),
-      },
-      undefined,
-      options,
-    )
-  })
+  return streamToFullText(
+    [
+      { role: 'system', content: builder.getSystemRole() },
+      { role: 'user', content: builder.build() },
+    ],
+    { appendText: callbacks.appendText },
+    options,
+  )
 }
 
 /** 容错 JSON 解析（剥离 Markdown 代码块 + 自动截取有效 JSON 边界） */

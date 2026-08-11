@@ -497,7 +497,13 @@ export interface MCPChannels {
 
 // ===== 合并所有频道 =====
 export type AllInvokeChannels = ConfigChannels & ProjectChannels & FileChannels & LLMChannels & DatabaseChannels & KnowledgeBaseChannels & ImportChannels & MCPChannels
-export type AllEventChannels = LLMStreamEvents
+
+/** 主进程 → 渲染进程事件 */
+export interface MCPStreamEvents {
+  'mcp:status-change': { serverId: string; status: string; error?: string }
+  'mcp:tools-change': { tools: unknown[] }
+}
+export type AllEventChannels = LLMStreamEvents & MCPStreamEvents
 
 /** 提取 invoke 频道名 */
 export type InvokeChannel = keyof AllInvokeChannels

@@ -259,6 +259,22 @@ export const useWorkflowStore = create<WorkflowState>()((set, get) => ({
       get().addLog('info', i18n.t('workflow.stepRunning', { ns: 'stores', title: definition.title, step: stepDef.name }))
 
       // 创建步骤回调
+      // 流式输出缓冲：逐 chunk 触发 set() 会导致全文级重渲染风暴（3k-8k 字章节尤其明显）。
+      // 采用 60ms 节流合并写入，兼顾「接近实时」与渲染性能。
+      let appendBuffer = ''
+      let appendTimer: ReturnType<typeof setTimeout> | null = null
+      const flushAppendBuffer = () => {
+        if (appendTimer) { clearTimeout(appendTimer); appendTimer = null }
+        if (!appendBuffer) return
+        const chunk = appendBuffer
+        appendBuffer = ''
+        const activeRun = get().activeRuns.find(r => r.id === run.id)
+        if (activeRun) {
+          const step = activeRun.steps[i]
+          updateStepById(set, run.id, i, { result: (step.result || '') + chunk })
+        }
+      }
+
       const callbacks: StepCallbacks = {
         log: (message) => {
           appendStepLogById(set, run.id, i, message)
@@ -268,16 +284,17 @@ export const useWorkflowStore = create<WorkflowState>()((set, get) => ({
           updateStepById(set, run.id, i, { progress })
         },
         appendText: (text) => {
-          const activeRun = get().activeRuns.find(r => r.id === run.id)
-          if (activeRun) {
-            const step = activeRun.steps[i]
-            updateStepById(set, run.id, i, { result: (step.result || '') + text })
+          appendBuffer += text
+          if (!appendTimer) {
+            appendTimer = setTimeout(flushAppendBuffer, 60)
           }
         },
       }
 
       try {
         const result = await stepDef.executor(run.steps[i], context, callbacks)
+        // 流式缓冲收尾：确保最后一批文本已写入后再标记完成
+        flushAppendBuffer()
         updateStepById(set, run.id, i, {
           status: 'completed',
           completedAt: new Date().toISOString(),
@@ -299,6 +316,7 @@ export const useWorkflowStore = create<WorkflowState>()((set, get) => ({
           updateRunById(set, run.id, { status: 'running' })
         }
       } catch (error) {
+        flushAppendBuffer()
         const errorMsg = error instanceof Error ? error.message : String(error)
         updateStepById(set, run.id, i, {
           status: 'failed',

@@ -72,6 +72,20 @@ export const useMCPStore = create<MCPState>()((set, get) => ({
 
   init: async () => {
     set({ loading: true, error: null })
+
+    // 订阅主进程推送（替代轮询）：状态 / Tool 变更即时更新
+    ipc.on('mcp:status-change', (payload) => {
+      const { serverId, status, error } = payload as { serverId: string; status: MCPConnectionStatus; error?: string }
+      set(s => ({
+        servers: s.servers.map(sv => sv.id === serverId ? { ...sv, status, error } : sv),
+      }))
+    })
+    ipc.on('mcp:tools-change', (payload) => {
+      const { tools } = payload as unknown as { tools: MCPToolData[] }
+      set({ tools })
+      get().registerMCPToolsToRegistry()
+    })
+
     try {
       // 获取配置文件路径
       const configPath = await ipc.invoke('mcp:get-config-path')

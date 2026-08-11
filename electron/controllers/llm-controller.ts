@@ -5,6 +5,8 @@ import { LLMFactory } from '../llm/llm-factory'
 
 const activeStreams = new Map<string, AbortController>()
 
+let proxyApplied = false
+
 function loadModelConfigs(): ModelProfile[] {
   return readJsonFile<ModelProfile[]>(MODELS_CONFIG_PATH, [])
 }
@@ -18,7 +20,39 @@ function getModelConfig(modelId: string): ModelProfile | null {
   return models.find((m) => m.id === modelId) ?? null
 }
 
+/** 记录一次 LLM 调用到项目库（若当前有打开的项目），静默失败 */
+async function logLlmCall(call: {
+  modelId: string
+  modelName: string
+  promptTokens?: number
+  completionTokens?: number
+  totalTokens?: number
+  durationMs: number
+  success: boolean
+  errorMessage?: string
+}) {
+  try {
+    const { LLMHistoryRepository } = await import('../repositories/llm-repository')
+    LLMHistoryRepository.logCall({
+      modelId: call.modelId,
+      modelName: call.modelName,
+      purpose: 'generation',
+      promptTokens: call.promptTokens ?? 0,
+      completionTokens: call.completionTokens ?? 0,
+      totalTokens: call.totalTokens ?? 0,
+      durationMs: call.durationMs,
+      success: call.success,
+      errorMessage: call.errorMessage,
+    })
+  } catch {
+    // 未打开项目或无 llm_calls 表时静默跳过
+  }
+}
+
 function applyProxyConfig() {
+  // 代理配置只应用一次（进程级 env 全局副作用），避免每次调用清空/重写 env
+  if (proxyApplied) return
+  proxyApplied = true
   try {
     const config = readJsonFile<GlobalConfig>(GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG)
     if (config.proxy?.enabled && config.proxy.host) {
@@ -39,35 +73,75 @@ function applyProxyConfig() {
 }
 
 export function registerLLMController() {
-  ipcMain.handle('llm:generate', async (_event, request: { modelId: string; messages: Array<{ role: string; content: string }>; temperature?: number; maxTokens?: number; responseFormat?: { type: string }; thinking?: boolean }) => {
+  ipcMain.handle('llm:generate', async (_event, request: { requestId?: string; modelId: string; messages: Array<{ role: string; content: string }>; temperature?: number; maxTokens?: number; responseFormat?: { type: string }; thinking?: boolean }) => {
+    const startedAt = Date.now()
     try {
       applyProxyConfig()
       const model = getModelConfig(request.modelId)
       if (!model) return { success: false, content: '', error: '未找到模型配置' }
 
-      const provider = LLMFactory.getProvider(model)
-      return await provider.generate(model, request.messages, {
-        temperature: request.temperature ?? model.temperature,
-        maxTokens: request.maxTokens ?? model.maxTokens,
-        responseFormat: request.responseFormat,
-        thinking: request.thinking,
-      })
+      // 支持 requestId 时注册可取消的非流式请求（Agent ReAct 循环用）
+      let signal: AbortSignal | undefined
+      if (request.requestId) {
+        const abortController = new AbortController()
+        activeStreams.set(request.requestId, abortController)
+        signal = abortController.signal
+      }
+
+      try {
+        const provider = LLMFactory.getProvider(model)
+        const result = await provider.generate(model, request.messages, {
+          temperature: request.temperature ?? model.temperature,
+          maxTokens: request.maxTokens ?? model.maxTokens,
+          responseFormat: request.responseFormat,
+          thinking: request.thinking,
+          signal,
+        })
+        if (signal?.aborted) {
+          logLlmCall({ modelId: model.id, modelName: model.modelName, durationMs: Date.now() - startedAt, success: false, errorMessage: '已取消生成' })
+          return { success: false, content: '', error: '已取消生成' }
+        }
+        logLlmCall({
+          modelId: model.id,
+          modelName: model.modelName,
+          promptTokens: result.usage?.promptTokens,
+          completionTokens: result.usage?.completionTokens,
+          totalTokens: result.usage?.totalTokens,
+          durationMs: Date.now() - startedAt,
+          success: result.success,
+          errorMessage: result.error,
+        })
+        return result
+      } finally {
+        if (request.requestId) activeStreams.delete(request.requestId)
+      }
     } catch (error) {
+      logLlmCall({ modelId: request.modelId, modelName: request.modelId, durationMs: Date.now() - startedAt, success: false, errorMessage: String(error) })
       return { success: false, content: '', error: String(error) }
     }
   })
 
   ipcMain.handle('llm:generate-stream', async (event, requestId: string, request: { modelId: string; messages: Array<{ role: string; content: string }>; temperature?: number; maxTokens?: number; responseFormat?: { type: string }; thinking?: boolean }) => {
     applyProxyConfig()
+    const win = BrowserWindow.fromWebContents(event.sender)
     const model = getModelConfig(request.modelId)
-    if (!model) return { requestId, started: false }
+
+    // 模型缺失：必须发出 stream-error，否则渲染端 Promise 永不 settle
+    if (!model) {
+      win?.webContents.send('llm:stream-error', { requestId, error: '未找到模型配置' })
+      return { requestId, started: false }
+    }
+    // 窗口丢失：同样需要通知，避免渲染端挂起
+    if (!win || win.isDestroyed()) {
+      return { requestId, started: false }
+    }
 
     const abortController = new AbortController()
     activeStreams.set(requestId, abortController)
-    const win = BrowserWindow.fromWebContents(event.sender)
 
     const provider = LLMFactory.getProvider(model)
-    
+    const startedAt = Date.now()
+
     // We do not await this globally since it's streaming independently
     provider.generateStream(model, request.messages, {
       temperature: request.temperature ?? model.temperature,
@@ -75,14 +149,32 @@ export function registerLLMController() {
       responseFormat: request.responseFormat,
       thinking: request.thinking,
       signal: abortController.signal,
-      onChunk: (chunk: string) => win?.webContents.send('llm:stream-chunk', { requestId, chunk }),
+      onChunk: (chunk: string) => {
+        if (!win.isDestroyed()) win.webContents.send('llm:stream-chunk', { requestId, chunk })
+      },
       onDone: (fullText: string, usage?: { promptTokens: number; completionTokens: number; totalTokens: number }) => {
-        win?.webContents.send('llm:stream-done', { requestId, fullText, usage })
+        if (!win.isDestroyed()) win.webContents.send('llm:stream-done', { requestId, fullText, usage })
         activeStreams.delete(requestId)
+        logLlmCall({
+          modelId: model.id,
+          modelName: model.modelName,
+          promptTokens: usage?.promptTokens,
+          completionTokens: usage?.completionTokens,
+          totalTokens: usage?.totalTokens,
+          durationMs: Date.now() - startedAt,
+          success: true,
+        })
       },
       onError: (error: string) => {
-        win?.webContents.send('llm:stream-error', { requestId, error })
+        if (!win.isDestroyed()) win.webContents.send('llm:stream-error', { requestId, error })
         activeStreams.delete(requestId)
+        logLlmCall({
+          modelId: model.id,
+          modelName: model.modelName,
+          durationMs: Date.now() - startedAt,
+          success: false,
+          errorMessage: error,
+        })
       },
     })
 

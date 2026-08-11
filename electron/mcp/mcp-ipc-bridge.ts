@@ -5,14 +5,35 @@
  * 让渲染进程能够通过 IPC 管理和调用 MCP 服务器。
  */
 
-import { ipcMain } from 'electron'
+import { ipcMain, BrowserWindow } from 'electron'
 import { mcpManager } from './mcp-manager'
+
+/**
+ * 向所有渲染窗口广播 MCP 事件
+ */
+function broadcast(channel: string, payload: unknown): void {
+  for (const win of BrowserWindow.getAllWindows()) {
+    if (!win.isDestroyed()) {
+      win.webContents.send(channel, payload)
+    }
+  }
+}
 
 /**
  * 注册所有 MCP IPC 处理器
  * 在 main.ts 中调用
  */
 export function registerMCPHandlers(): void {
+  // 状态/Tool 变更推送到渲染进程（替代轮询）
+  mcpManager.setCallbacks({
+    onStatusChange: (serverId, status, error) => {
+      broadcast('mcp:status-change', { serverId, status, error })
+    },
+    onToolsChange: (tools) => {
+      broadcast('mcp:tools-change', { tools })
+    },
+  })
+
   // 加载配置文件
   ipcMain.handle('mcp:load-config', async (_event, configPath?: string) => {
     try {

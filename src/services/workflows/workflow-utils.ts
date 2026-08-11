@@ -9,6 +9,7 @@
  */
 
 import type { StepCallbacks } from '../../stores/workflow-store'
+import { useLLMStore } from '../../stores/llm-store'
 import { ipc } from '../ipc-client'
 import i18n from '../../i18n'
 
@@ -24,6 +25,119 @@ export function stripThinkingTags(text: string): string {
   if (!text) return text
   // 支持只有 <think> 没有闭合标签的情况
   return text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim()
+}
+
+// ===== 流式调用统一封装 =====
+
+export interface StreamToFullTextOptions {
+  /** 请求可选项 */
+  responseFormat?: { type: string }
+  thinking?: boolean
+  /** 模型 ID，缺省使用默认模型 */
+  modelId?: string
+  /** 是否可取消（取消时向主进程发起 llm:cancel） */
+  cancelable?: boolean
+  /** 用于判断「是否已取消」的上下文（工作流取消时置 true） */
+  cancelled?: () => boolean
+  /** 每一步 chunk 的进度值（可选） */
+  progressStart?: number
+  progressEnd?: number
+  /** 进度回调 */
+  onProgress?: (progress: number) => void
+}
+
+/**
+ * 统一「流式调用 LLM → 返回完整文本」的封装。
+ *
+ * 替代此前分散在 base-command / finalize-chapter / architecture-workflow
+ * 的三套并行实现，统一：
+ * 1. 错误处理与 Promise 结算（失败/取消必 settle，绝不挂起）
+ * 2. 取消：cancelable 时主动调用 llm:cancel 中断主进程流
+ * 3. <think> 标签剥离
+ * 4. 进度回调
+ *
+ * @param messages LLM 消息
+ * @param callbacks 步骤回调（appendText / log）
+ * @param options 选项
+ * @returns 完整生成文本（已剥离思考标签）
+ */
+export async function streamToFullText(
+  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+  callbacks: { appendText?: (text: string) => void; log?: (message: string) => void } | undefined,
+  options?: StreamToFullTextOptions,
+): Promise<string> {
+  const llmStore = useLLMStore.getState()
+  const mid = options?.modelId ?? llmStore.defaultModelId
+  if (!mid) throw new Error(t('base.noDefaultModel'))
+
+  options?.onProgress?.(options.progressStart ?? 0)
+
+  return new Promise<string>((resolve, reject) => {
+    let fullContent = ''
+    let streamRequestId = ''
+    let settled = false
+
+    // 取消轮询定时器（仅 options.cancelled 时启用）
+    let cancelTimer: ReturnType<typeof setInterval> | null = null
+
+    const settle = (fn: () => void) => {
+      if (settled) return
+      settled = true
+      if (cancelTimer) {
+        clearInterval(cancelTimer)
+        cancelTimer = null
+      }
+      fn()
+    }
+
+    llmStore.generateStream(
+      messages,
+      {
+        onChunk: (chunk) => {
+          // 取消后不再追加输出
+          if (options?.cancelled?.()) return
+          fullContent += chunk
+          callbacks?.appendText?.(chunk)
+        },
+        onDone: (text) => {
+          settle(() => {
+            options?.onProgress?.(options.progressEnd ?? 100)
+            const raw = text || fullContent
+            resolve(stripThinkingTags(raw))
+          })
+        },
+        onError: (err) => {
+          settle(() => {
+            reject(new Error(err || t('base.streamFailed')))
+          })
+        },
+      },
+      mid,
+      {
+        responseFormat: options?.responseFormat,
+        thinking: options?.thinking,
+      },
+    ).then((requestId) => {
+      streamRequestId = requestId
+      // 如果流启动后立即发现已取消（例如流尚未建立时工作流已被取消）
+      if (options?.cancelled?.()) {
+        llmStore.cancelGeneration(requestId).catch(() => {})
+        settle(() => reject(new Error(t('base.workflowCancelled'))))
+      }
+    }).catch((err) => {
+      settle(() => reject(err instanceof Error ? err : new Error(String(err))))
+    })
+
+    // 取消检测：轮询 cancelled 状态，主动中断流
+    if (options?.cancelled) {
+      cancelTimer = setInterval(() => {
+        if (options.cancelled!() && streamRequestId) {
+          llmStore.cancelGeneration(streamRequestId).catch(() => {})
+          settle(() => reject(new Error(t('base.workflowCancelled'))))
+        }
+      }, 200)
+    }
+  })
 }
 
 // ===== 通用重试包装器 =====

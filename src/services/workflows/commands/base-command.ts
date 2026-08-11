@@ -2,6 +2,7 @@ import type { WorkflowContext, StepCallbacks } from '../../../stores/workflow-st
 import { useLLMStore } from '../../../stores/llm-store'
 import { globalEventBus, EventPayloadMap } from '../../../shared/event-bus'
 import type { BasePromptBuilder } from '../../prompts/prompt-builder'
+import { streamToFullText } from '../workflow-utils'
 import i18n from '../../../i18n'
 
 export interface CommandExecuteParams {
@@ -32,74 +33,22 @@ export abstract class BaseWorkflowCommand<TResult = string> {
 
     callbacks.setProgress(10)
 
-    return new Promise((resolve, reject) => {
-      let fullContent = ''
-      let streamRequestId = ''
-
-      // 取消监听：轮询 context.cancelled，主动中断 LLM 流
-      let cancelCheckTimer: ReturnType<typeof setInterval> | null = null
-      if (context) {
-        cancelCheckTimer = setInterval(() => {
-          if (context.cancelled && streamRequestId) {
-            clearInterval(cancelCheckTimer!)
-            cancelCheckTimer = null
-            llmStore.cancelGeneration(streamRequestId).catch(() => {})
-            reject(new Error(i18n.t('base.workflowCancelled', { ns: 'commands' })))
-          }
-        }, 200)
-      }
-
-      const cleanup = () => {
-        if (cancelCheckTimer) {
-          clearInterval(cancelCheckTimer)
-          cancelCheckTimer = null
-        }
-      }
-
-      llmStore.generateStream(
-        [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: prompt }
-        ],
-        {
-          onChunk: (chunk) => {
-            // 取消后不再追加输出
-            if (context?.cancelled) return
-            fullContent += chunk
-            callbacks.appendText(chunk)
-          },
-          onDone: (text) => {
-            cleanup()
-            // 取消后不 resolve，让 reject 生效
-            if (context?.cancelled) {
-              reject(new Error(i18n.t('base.workflowCancelled', { ns: 'commands' })))
-              return
-            }
-            callbacks.setProgress(90)
-            const raw = text || fullContent
-            const cleaned = this.stripThinkingTags(raw)
-            resolve(cleaned)
-          },
-          onError: (err) => {
-            cleanup()
-            reject(new Error(err || i18n.t('base.streamFailed', { ns: 'commands' })))
-          }
-        },
-        undefined,
-        options
-      ).then(reqId => {
-        streamRequestId = reqId
-        // 如果在 generateStream 返回前已经取消
-        if (context?.cancelled) {
-          llmStore.cancelGeneration(reqId).catch(() => {})
-          cleanup()
-          reject(new Error(i18n.t('base.workflowCancelled', { ns: 'commands' })))
-        }
-      }).catch(err => {
-        cleanup()
-        reject(err)
-      })
-    })
+    return streamToFullText(
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: prompt }
+      ],
+      {
+        appendText: callbacks.appendText,
+      },
+      {
+        ...options,
+        cancelled: context ? () => context.cancelled : undefined,
+        progressStart: 10,
+        progressEnd: 90,
+        onProgress: (p) => callbacks.setProgress(p),
+      },
+    )
   }
 
   /**

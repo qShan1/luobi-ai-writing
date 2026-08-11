@@ -2,6 +2,13 @@ import type { PromptTemplate } from '../prompt-templates'
 import { BUILTIN_PROMPTS, getLocalizedContent, getLocalizedSystemRole, getLocalizedSystemSuffix } from '../prompt-templates'
 
 /**
+ * 转义 value 中的 {{xxx}}，防止再次被 replaceAll 替换（prompt injection）
+ */
+function escapeTemplateVars(v: string): string {
+  return (v || '').toString().replace(/\{\{/g, '⦃⦃').replace(/\}\}/g, '⦄⦄')
+}
+
+/**
  * 基础抽象 Prompt 建造者
  * 用于安全地拼装 LLM 生成所需的不可变上下文片段，避免漏传变量。
  */
@@ -17,6 +24,18 @@ export class BasePromptBuilder {
     return this;
   }
 
+  /** 注入写作样本/文风分析样例（analyze_writing_style 模板） */
+  withSampleText(sampleText: string) {
+    this.variables.sample_text = sampleText;
+    return this;
+  }
+
+  /** 通用变量注入（供 renderPrompt 等动态渲染路径使用） */
+  withVariable(key: string, value: string) {
+    this.variables[key] = value;
+    return this;
+  }
+
   constructor(template: PromptTemplate) {
     this.template = template;
   }
@@ -29,16 +48,13 @@ export class BasePromptBuilder {
   /** 打包输出最终经过所有合法性替换的字符串 */
   public build(): string {
     let result = getLocalizedContent(this.template)
-    // 修复：转义 value 中的 {{xxx}}，防止再次被 replaceAll 替换（prompt injection）
-    const escapeTemplateVars = (v: string) =>
-      (v || '').toString().replace(/\{\{/g, '⦃⦃').replace(/\}\}/g, '⦄⦄')
     for (const [key, value] of Object.entries(this.variables)) {
       // 使用 replaceAll 避免正则注入风险，安全替换所有匹配项
       const safeValue = escapeTemplateVars(value)
       result = result.replaceAll(`{{${key}}}`, safeValue)
     }
 
-    // 自动追加 systemSuffix（始终从内置模板获取，与 renderPrompt 行为对齐）
+    // 自动追加 systemSuffix（始终从内置模板获取）
     const builtinTemplate = BUILTIN_PROMPTS.find(p => p.key === this.template.key)
     const suffix = builtinTemplate ? getLocalizedSystemSuffix(builtinTemplate) : undefined
     if (suffix) {

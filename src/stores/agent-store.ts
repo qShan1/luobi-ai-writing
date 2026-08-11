@@ -403,20 +403,29 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
         .slice(-16)
         .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
 
-      // LLM 生成函数（封装为非流式调用，Agent 专用参数）
+      // LLM 生成函数（封装为非流式调用，Agent 专用参数；支持 requestId 取消）
+      let agentRequestId: string | null = null
       const generateFn = async (messages: LLMMessage[], mid: string): Promise<string> => {
+        // 每次调用生成独立 requestId，注册到主进程 activeStreams，供 llm:cancel 中断
+        agentRequestId = crypto.randomUUID()
+        set({ activeRequestId: agentRequestId })
         const request = {
+          requestId: agentRequestId,
           modelId: mid,
           messages: messages.map(m => ({ role: m.role, content: m.content })),
           maxTokens: 4096,     // Agent 需要足够 Token 空间来输出推理 + tool_call
           temperature: 0.7,    // 创作场景适度随机
         }
-        const response = await (window as unknown as { luobiAPI: { invoke: (ch: string, ...args: unknown[]) => Promise<unknown> } }).luobiAPI.invoke('llm:generate', request)
-        const res = response as { success: boolean; content: string; error?: string }
-        if (!res.success) {
-          throw new Error(res.error ?? 'LLM 生成失败')
+        try {
+          const response = await (window as unknown as { luobiAPI: { invoke: (ch: string, ...args: unknown[]) => Promise<unknown> } }).luobiAPI.invoke('llm:generate', request)
+          const res = response as { success: boolean; content: string; error?: string }
+          if (!res.success) {
+            throw new Error(res.error ?? 'LLM 生成失败')
+          }
+          return res.content
+        } finally {
+          agentRequestId = null
         }
-        return res.content
       }
 
       // AbortController 用于取消（P1-7: 提升到模块级变量以便 cancelGeneration 访问）

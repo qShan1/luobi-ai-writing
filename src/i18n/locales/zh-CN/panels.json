@@ -273,7 +273,11 @@
         "generateBlueprint": "生成蓝图",
         "generateArchitecture": "生成架构",
         "chapterInfo": "（第 {{chapter}} 章）",
-        "switched": "🚀 已切换到 AI 输出面板。请在面板中启动「{{name}}{{chapterInfo}}」工作流。"
+        "switched": "🚀 已切换到 AI 输出面板。请在面板中启动「{{name}}{{chapterInfo}}」工作流。",
+        "started": "✅ 已启动工作流：{{name}}。你可以在右侧 AI 输出面板查看进度。",
+        "chapterDefault": "第 {{chapter}} 章",
+        "unknownWorkflow": "未知工作流：{{workflow}}",
+        "failed": "启动工作流失败：{{error}}"
       },
       "updateConfig": {
         "desc": "更新小说项目的配置信息，如类型、目标读者、大纲、写作风格等。这会修改项目核心设定，需要用户确认。",

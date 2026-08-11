@@ -5,6 +5,8 @@ export interface LLMGenerateOptions {
   maxTokens: number
   responseFormat?: { type: string }
   thinking?: boolean
+  /** 外部取消信号（非流式也可取消） */
+  signal?: AbortSignal
 }
 
 export interface LLMStreamOptions extends LLMGenerateOptions {
