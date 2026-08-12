@@ -98,15 +98,15 @@
   --spacing-activity-bar: 48px;
 
   /* Tailwind 动画 - 扩展更多交互动画 */
-  --animate-fade-in: fade-in 0.15s ease-out;
-  --animate-fade-in-up: fade-in-up 0.25s ease-out;
-  --animate-fade-in-down: fade-in-down 0.25s ease-out;
-  --animate-slide-in-right: slide-in-right 0.2s ease-out;
-  --animate-slide-in-left: slide-in-left 0.2s ease-out;
-  --animate-slide-in-up: slide-in-up 0.2s ease-out;
-  --animate-scale-in: scale-in 0.2s ease-out;
-  --animate-bounce-in: bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  --animate-shimmer: shimmer 2s linear infinite;
+    --animate-fade-in: fade-in 0.15s var(--ease-out);
+    --animate-fade-in-up: fade-in-up 0.25s var(--ease-out);
+    --animate-fade-in-down: fade-in-down 0.25s var(--ease-out);
+    --animate-slide-in-right: slide-in-right 0.2s var(--ease-out);
+    --animate-slide-in-left: slide-in-left 0.2s var(--ease-out);
+    --animate-slide-in-up: slide-in-up 0.2s var(--ease-out);
+    --animate-scale-in: scale-in 0.2s var(--ease-out);
+    --animate-bounce-in: bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --animate-shimmer: shimmer 2s linear infinite;
 
   @keyframes fade-in {
     0% { opacity: 0; }
@@ -144,9 +144,9 @@
   }
 
   @keyframes bounce-in {
-    0% { opacity: 0; transform: scale(0.3); }
+    0% { opacity: 0; transform: scale(0.95); }
     50% { transform: scale(1.05); }
-    70% { transform: scale(0.95); }
+    70% { transform: scale(0.97); }
     100% { opacity: 1; transform: scale(1); }
   }
 
@@ -264,9 +264,11 @@
     --shadow-popover: 0 16px 40px -8px rgba(10, 22, 40, 0.14), 0 4px 16px -4px rgba(10, 22, 40, 0.07);
     --shadow-tooltip: 0 4px 12px rgba(10, 22, 40, 0.18);
 
-    /* 过渡（加入顺滑阻尼） */
-    --transition-fast: 0.12s cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    /* 过渡 — 基于 Emil Kowalski 推荐的强 ease-out 曲线 */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --transition-fast: 0.12s var(--ease-out);
+    --transition-normal: 0.25s var(--ease-out);
     --transition-spring: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     /* 字体 */
@@ -596,7 +598,6 @@
 
   .tree-item:hover {
     background: var(--color-hover);
-    transform: translateX(2px);
   }
 
   /* 激活节点：背景 + 左侧 2px 品牌色竖线 */
@@ -615,14 +616,14 @@
     height: 22px;
     border-radius: var(--radius-sm);
     color: var(--color-text-secondary);
-    transition: all var(--transition-fast),
-                transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: background var(--transition-fast),
+                color var(--transition-fast),
+                transform 0.15s var(--ease-out);
   }
 
   .icon-btn:hover {
     background: var(--color-hover);
     color: var(--color-text);
-    transform: scale(1.1);
   }
 
   .icon-btn:active {
@@ -655,7 +656,7 @@
     color: var(--color-activity-icon);
     transition: color var(--transition-fast),
                 background var(--transition-fast),
-                transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                transform 0.2s var(--ease-out),
                 box-shadow 0.2s ease;
     cursor: pointer;
     border: none;
@@ -667,7 +668,6 @@
   .tool-btn:hover {
     background: rgba(var(--color-accent-rgb), 0.08);
     color: var(--color-text);
-    transform: scale(1.08);
   }
 
   .tool-btn.active {
@@ -734,7 +734,7 @@
 
   .ai-task-capsule--complete {
     color: var(--color-success);
-    animation: capsule-complete 1.8s ease-out forwards;
+    animation: capsule-complete 0.5s ease-out forwards;
   }
 
   /* ===== AI 输出面板 — 流式打字机光标 ===== */
@@ -767,17 +767,15 @@
       0 2px 4px rgba(0, 0, 0, 0.15),
       0 0 0 0 rgba(var(--color-accent-rgb), 0);
     transition: box-shadow var(--transition-normal),
-                transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                transform 0.2s var(--ease-out),
                 filter 0.15s ease;
   }
 
   .btn-primary:hover {
-    filter: brightness(1.12);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 1px 0 rgba(255,255,255,0.25),
       0 6px 20px rgba(var(--color-accent-rgb), 0.35),
       0 0 30px rgba(var(--color-accent-rgb), 0.15);
-    transform: translateY(-2px);
   }
 
   .btn-primary:active {
@@ -795,7 +793,7 @@
     color: #18201D;
     border: none;
     transition: box-shadow var(--transition-normal),
-                transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transform 0.2s var(--ease-out);
   }
 
   .ai-glow::before {
@@ -911,9 +909,9 @@
 
 /* 弹跳进入 - 用于成功状态 */
 @keyframes bounce-in {
-  0% { opacity: 0; transform: scale(0.3); }
-  50% { transform: scale(1.08); }
-  70% { transform: scale(0.96); }
+  0% { opacity: 0; transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.97); }
   100% { opacity: 1; transform: scale(1); }
 }
 
@@ -1021,7 +1019,9 @@
   cursor: pointer;
   padding: 2px 6px !important;
   border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
+  transition: background var(--transition-fast),
+              color var(--transition-fast),
+              border-color var(--transition-fast);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1119,17 +1119,17 @@
 
 /* 渐入动画 */
 .animate-fade-in {
-  animation: fade-in 0.2s ease-out forwards;
+  animation: fade-in 0.2s var(--ease-out) forwards;
 }
 
 /* 渐入上移动画 */
 .animate-fade-in-up {
-  animation: fade-in-up 0.25s ease-out forwards;
+  animation: fade-in-up 0.25s var(--ease-out) forwards;
 }
 
 /* 缩放入场动画 */
 .animate-scale-in {
-  animation: scale-in 0.2s ease-out forwards;
+  animation: scale-in 0.2s var(--ease-out) forwards;
 }
 
 /* 弹跳入场动画 */
@@ -1137,24 +1137,23 @@
   animation: bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* 交错渐入 - 用于列表项依次入场 */
+/* 交错渐入 - 用于列表项依次入场（35ms 间隔，Emil 推荐 30-40ms） */
 .stagger-enter > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-enter > *:nth-child(2) { animation-delay: 50ms; }
-.stagger-enter > *:nth-child(3) { animation-delay: 100ms; }
-.stagger-enter > *:nth-child(4) { animation-delay: 150ms; }
-.stagger-enter > *:nth-child(5) { animation-delay: 200ms; }
-.stagger-enter > *:nth-child(6) { animation-delay: 250ms; }
-.stagger-enter > *:nth-child(7) { animation-delay: 300ms; }
-.stagger-enter > *:nth-child(8) { animation-delay: 350ms; }
-.stagger-enter > *:nth-child(9) { animation-delay: 400ms; }
-.stagger-enter > *:nth-child(10) { animation-delay: 450ms; }
+.stagger-enter > *:nth-child(2) { animation-delay: 35ms; }
+.stagger-enter > *:nth-child(3) { animation-delay: 70ms; }
+.stagger-enter > *:nth-child(4) { animation-delay: 105ms; }
+.stagger-enter > *:nth-child(5) { animation-delay: 140ms; }
+.stagger-enter > *:nth-child(6) { animation-delay: 175ms; }
+.stagger-enter > *:nth-child(7) { animation-delay: 210ms; }
+.stagger-enter > *:nth-child(8) { animation-delay: 245ms; }
+.stagger-enter > *:nth-child(9) { animation-delay: 280ms; }
+.stagger-enter > *:nth-child(10) { animation-delay: 315ms; }
 
 /* 悬停上浮效果 */
 .hover-lift {
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
 }
 .hover-lift:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
@@ -1163,7 +1162,7 @@
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .hover-scale:hover {
-  transform: scale(1.02);
+  /* transform handled by @media (hover: hover) */
 }
 
 /* 按下缩放效果 */
@@ -1254,4 +1253,64 @@
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* =====================================================================
+ * Accessibility — Reduced Motion & Hover Gating
+ * ===================================================================== */
+
+/* Reduced motion: 移除 transform-based motion，保留 opacity/color 过渡 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hover 门控: 触屏设备不触发 hover transform 效果 */
+@media (hover: hover) and (pointer: fine) {
+  .tree-item:hover {
+    transform: translateX(2px);
+  }
+
+  .icon-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .tool-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+  }
+
+  .ai-glow:hover {
+    box-shadow: 0 6px 20px rgba(var(--color-accent-rgb), 0.22);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+}
+
+/* 非 hover 环境下清除 transform（触屏设备） */
+@media (hover: none) {
+  .tree-item:hover,
+  .icon-btn:hover,
+  .tool-btn:hover,
+  .btn-primary:hover,
+  .ai-glow:hover,
+  .hover-lift:hover,
+  .hover-scale:hover {
+    transform: none;
+  }
 }

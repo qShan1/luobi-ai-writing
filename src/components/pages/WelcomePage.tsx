@@ -36,7 +36,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
           className="welcome-actions mb-10"
           initial="hidden"
           animate="show"
-          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.03 } } }}
         >
           <motion.div
             variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } } }}

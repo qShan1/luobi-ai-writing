@@ -189,7 +189,9 @@
   font-weight: 500;
   border: none;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s var(--ease-out),
+              border-color 0.15s var(--ease-out),
+              color 0.15s var(--ease-out);
 }
 
 .confirm-card-btn.approve {
@@ -224,7 +226,8 @@
   background-color: var(--color-hover);
   font-size: 0.72rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: border-color 0.15s var(--ease-out),
+              background-color 0.15s var(--ease-out);
 }
 
 .artifact-card:hover {
@@ -262,7 +265,7 @@
 }
 
 .tool-spinner {
-  animation: tool-spin 1s linear infinite;
+  animation: tool-spin 0.6s linear infinite;
 }
 
 /* ===== 脉冲动画（等待确认） ===== */

@@ -132,7 +132,7 @@ function TaskRunView() {
                   key={run.id}
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, height: 0 }}
+                  exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
                   transition={{ duration: 0.2, ease: 'easeOut' }}
                   style={{ borderBottom: idx < activeRuns.length - 1 ? '1px solid var(--color-border)' : undefined }}
                 >
@@ -163,7 +163,7 @@ function TaskRunView() {
                   key={run.id}
                   initial={{ opacity: 0, x: -6 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, height: 0 }}
+                  exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
                   transition={{ duration: 0.18, ease: 'easeOut' }}
                   className="flex items-center gap-2 px-2 py-1.5 rounded transition-colors hover:bg-[var(--color-hover)]"
                 >
@@ -292,11 +292,11 @@ function ActiveRunPanel({
       {/* ── 步骤详情列表（展开时显示） ── */}
       {expanded && (
         <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
+          initial={{ clipPath: 'inset(0 0 100% 0)', opacity: 0 }}
+          animate={{ clipPath: 'inset(0 0 0% 0)', opacity: 1 }}
+          exit={{ clipPath: 'inset(0 0 100% 0)', opacity: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="overflow-hidden pb-2"
+          className="pb-2"
         >
           {/* 步骤列表——扁平连接器风格 */}
           <div className="px-4">
@@ -448,11 +448,11 @@ function WorkflowStepItem({
         {/* 详情区（展开时显示：日志 + 错误） */}
         {expanded && hasDetail && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ clipPath: 'inset(0 0 100% 0)', opacity: 0 }}
+            animate={{ clipPath: 'inset(0 0 0% 0)', opacity: 1 }}
+            exit={{ clipPath: 'inset(0 0 100% 0)', opacity: 0 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="overflow-hidden mb-1"
+            className="mb-1"
           >
             {step.error && (
               <div
