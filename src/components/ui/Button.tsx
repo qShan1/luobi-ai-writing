@@ -7,8 +7,8 @@ import { cn } from '../../lib/utils'
  
 
 export const buttonVariants = cva(
-  /* 基础：加入顺滑过渡和点击缩小回弹效果，提升交互手感 */
-  'inline-flex items-center justify-center gap-1.5 text-xs font-medium transition-all duration-200 ease-out active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
+  /* 基础：加入顺滑过渡和点击缩小回弹效果，提升交互手感（仅过渡具体属性，避免 transition: all） */
+  'inline-flex items-center justify-center gap-1.5 text-xs font-medium transition-[transform,background-color,color,border-color,box-shadow] duration-200 ease-out active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
   {
     variants: {
       variant: {
@@ -17,13 +17,13 @@ export const buttonVariants = cva(
         ai:
           'ai-glow text-white shadow-sm hover:shadow-md relative overflow-hidden',
         destructive:
-          'bg-[var(--color-error)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-error)]/30 transition-all duration-200 hover:brightness-110 active:scale-[0.96]',
+          'bg-[var(--color-error)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-error)]/30 transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 active:scale-[0.96]',
         outline:
-          'border border-[var(--color-border)] bg-transparent text-[var(--color-text)] hover:bg-[var(--color-hover)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all duration-200',
+          'border border-[var(--color-border)] bg-transparent text-[var(--color-text)] hover:bg-[var(--color-hover)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-[background-color,color,border-color] duration-200',
         ghost:
-          'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all duration-200',
+          'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] active:scale-[0.98] transition-[background-color,color,transform] duration-200',
         success:
-          'bg-[var(--color-success)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-success)]/30 transition-all duration-200 hover:brightness-110 active:scale-[0.96]',
+          'bg-[var(--color-success)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-success)]/30 transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 active:scale-[0.96]',
       },
       size: {
         default: 'h-7 px-3 py-1 rounded-[var(--radius-md)]',    /* 28px 高 */

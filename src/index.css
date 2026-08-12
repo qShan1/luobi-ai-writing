@@ -1228,7 +1228,7 @@
   .welcome-hero { border-bottom: 1px solid var(--color-border); padding-bottom: 24px; }
   .welcome-brand-row { display: flex; align-items: center; gap: 14px; }
   .welcome-logo { width: 150px; height: auto; object-fit: contain; }
-  .welcome-title { font-size: 24px; line-height: 1.2; font-weight: 650; margin: 0; letter-spacing: 0; }
+  .welcome-title { font-size: 24px; line-height: 1.2; font-weight: 650; margin: 0; letter-spacing: -0.02em; }
   .welcome-subtitle { font-size: 13px; margin: 6px 0 0; }
   .welcome-actions { display: grid; grid-template-columns: minmax(220px, 1.35fr) repeat(2, minmax(180px, 1fr)); gap: 12px; }
   .welcome-primary, .welcome-secondary { min-height: 92px; border-radius: 4px; display: flex; align-items: center; text-align: left; gap: 14px; padding: 18px 20px; transition: border-color 160ms ease, background-color 160ms ease; cursor: pointer; }
