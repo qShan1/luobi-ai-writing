@@ -93,6 +93,21 @@ const DEFAULT_STATE = {
   chapterCreationPrefill: null,
 }
 
+/**
+ * 面板尺寸钳制：输入必须是有限数字，否则回退到 fallback。
+ * 防止 onLayoutChanged 偶发传入 undefined/NaN 污染状态，
+ * 进而被 persist 序列化成 null 写进 localStorage（曾导致 defaultSize=null 白屏）。
+ */
+function clampNum(value: number, min: number, max: number, fallback: number): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return fallback
+  return Math.max(min, Math.min(max, value))
+}
+
+/** 从持久化数据中安全读取数字字段（null/NaN/缺失都回退默认） */
+function readNum(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback
+}
+
 export const useLayoutStore = create<LayoutState>()(
   persist(
     (set) => ({
@@ -105,11 +120,11 @@ export const useLayoutStore = create<LayoutState>()(
           sidebarView: view,
           sidebarOpen: s.sidebarView === view ? !s.sidebarOpen : true,
         })),
-      setSidebarWidth: (width) => set({ sidebarWidth: Math.max(10, Math.min(40, width)) }),
+      setSidebarWidth: (width) => set((s) => ({ sidebarWidth: clampNum(width, 10, 40, s.sidebarWidth) })),
 
       toggleAIPanel: () => set((s) => ({ aiPanelOpen: !s.aiPanelOpen })),
       setAIPanelOpen: (open) => set({ aiPanelOpen: open }),
-      setAIPanelWidth: (width) => set({ aiPanelWidth: Math.max(10, Math.min(40, width)) }),
+      setAIPanelWidth: (width) => set((s) => ({ aiPanelWidth: clampNum(width, 10, 40, s.aiPanelWidth) })),
       setRightView: (view) => set({ rightView: view }),
       openRightPanel: (view) => set({ aiPanelOpen: true, rightView: view }),
 
@@ -119,7 +134,7 @@ export const useLayoutStore = create<LayoutState>()(
           bottomTab: tab,
           bottomPanelOpen: s.bottomTab === tab ? !s.bottomPanelOpen : true,
         })),
-      setBottomPanelHeight: (height) => set({ bottomPanelHeight: Math.max(10, Math.min(60, height)) }),
+      setBottomPanelHeight: (height) => set((s) => ({ bottomPanelHeight: clampNum(height, 10, 60, s.bottomPanelHeight) })),
       openBottomTab: (tab) => set({ bottomPanelOpen: true, bottomTab: tab }),
 
       // 全局弹窗 Actions
@@ -153,6 +168,11 @@ export const useLayoutStore = create<LayoutState>()(
         return {
           ...current,
           ...p,
+          // 净化面板尺寸：历史数据可能被写成 null/NaN（JSON.stringify(NaN)=null），
+          // 若直接透传会导致 react-resizable-panels defaultSize=null 崩溃白屏
+          sidebarWidth: readNum(p.sidebarWidth, current.sidebarWidth),
+          aiPanelWidth: readNum(p.aiPanelWidth, current.aiPanelWidth),
+          bottomPanelHeight: readNum(p.bottomPanelHeight, current.bottomPanelHeight),
           // 弹窗状态永远从默认值开始
           settingsOpen: false,
           newProjectOpen: false,

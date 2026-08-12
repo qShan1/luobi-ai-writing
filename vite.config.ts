@@ -52,6 +52,7 @@ export default defineConfig({
     entries: ['index.html', 'src/**/*.{ts,tsx}']
   },
   build: {
+    sourcemap: false,
     rollupOptions: {
       onwarn(warning, defaultHandler) {
         // 过滤掉已知的无害警告
