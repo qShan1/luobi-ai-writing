@@ -75,6 +75,10 @@
     "noMcpServers": "暂无 MCP 服务器",
     "mcpConfigHint": "在 ~/.luobi/mcp_config.json 中配置",
     "mcpToolsRegistered": "共 {{count}} 个 MCP 工具已注册",
+    "mcpConnect": "连接",
+    "mcpDisconnect": "断开",
+    "mcpConnecting": "连接中",
+    "mcpDisconnectAll": "全部断开",
     "noAvailableSkills": "暂无可用技能",
     "skillsDirHint": "在 ~/.luobi/skills/ 目录放入 SKILL.md 文件",
     "builtin": "内置",
@@ -392,7 +396,12 @@
     "chunks": "{{count}} 块",
     "docsChunks": "({{docs}} 文档 / {{chunks}} 块)",
     "chapterTitle": "第{{chapter}}章 {{title}}",
-    "chapterOnly": "第{{chapter}}章"
+    "chapterOnly": "第{{chapter}}章",
+    "delete": "删除",
+    "deleteConfirmTitle": "删除文档",
+    "deleteConfirmMessage": "确定要删除文档「{{name}}」吗？\n此操作不可撤销。",
+    "deleteSuccess": "已删除",
+    "deleteFailed": "删除失败：{{error}}"
   },
   "draftStatus": {
     "draft": "草稿",

@@ -34,6 +34,8 @@ import type { AgentTool } from '../services/agent/tool-registry'
 interface MCPState {
   /** 服务器状态列表 */
   servers: MCPServerStatus[]
+  /** 完整服务器配置（从 load-config 缓存） */
+  configs: MCPServerConfig[]
   /** 所有 MCP Tool */
   tools: MCPToolData[]
   /** 所有 MCP 资源 */
@@ -48,6 +50,8 @@ interface MCPState {
   // ===== Actions =====
   /** 初始化（加载配置 + 自动连接） */
   init: () => Promise<void>
+  /** 获取指定服务器的完整配置 */
+  getServerConfig: (serverId: string) => MCPServerConfig | undefined
   /** 刷新服务器状态 */
   refreshStatus: () => Promise<void>
   /** 连接单个服务器 */
@@ -64,6 +68,7 @@ interface MCPState {
 
 export const useMCPStore = create<MCPState>()((set, get) => ({
   servers: [],
+  configs: [],
   tools: [],
   resources: [],
   configPath: null,
@@ -98,8 +103,11 @@ export const useMCPStore = create<MCPState>()((set, get) => ({
         return // 配置文件不存在不是错误
       }
 
+      const configs = result.configs as Array<Record<string, unknown>>
+      set({ configs: configs as unknown as MCPServerConfig[] })
+
       // 自动连接所有配置的服务器
-      for (const config of result.configs as Array<Record<string, unknown>>) {
+      for (const config of configs) {
         try {
           await ipc.invoke('mcp:connect', config)
         } catch (e) {
@@ -118,6 +126,10 @@ export const useMCPStore = create<MCPState>()((set, get) => ({
     } catch (error) {
       set({ loading: false, error: String(error) })
     }
+  },
+
+  getServerConfig: (serverId) => {
+    return get().configs.find(c => c.id === serverId)
   },
 
   refreshStatus: async () => {

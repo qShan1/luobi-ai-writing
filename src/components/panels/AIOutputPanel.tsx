@@ -4,6 +4,7 @@ import { CheckCircle2, Loader2, Circle, Sparkles, X, ChevronRight, StopCircle } 
 import { useTranslation } from 'react-i18next'
 import { useWorkflowStore, type WorkflowRun, type WorkflowStep } from '../../stores/workflow-store'
 import { useLayoutStore } from '../../stores/layout-store'
+import { parseThink } from '../../lib/think'
 import MarkdownContent from '../ui/MarkdownContent'
 
 /**
@@ -18,15 +19,10 @@ export default function AIOutputPanel() {
   const activeRun = getActiveStreamingRun()
   const [viewRunId, setViewRunId] = useState<string | null>(null)
 
-  console.log('[AIOutputPanel] render: viewRunId=', viewRunId, 'activeRun=', activeRun?.id, activeRun?.status, 'activeRuns.len=', activeRuns.length)
-
   // 自动跟随最新活跃任务
   useEffect(() => {
     if (activeRun) {
-      console.log('[AIOutputPanel] mount/useEffect activeRun:', activeRun.id, activeRun.status, 'steps:', activeRun.steps.map(s => s.status))
       setViewRunId(prev => prev === activeRun.id ? prev : activeRun.id)
-    } else {
-      console.log('[AIOutputPanel] mount/useEffect: no activeRun, activeRuns=', activeRuns.map(r => r.id + ':' + r.status), 'history=', history.slice(0, 2).map(r => r.id + ':' + r.status))
     }
     // ✅ 只依赖 id 字符串，不依赖 activeRun 对象引用
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,11 +33,6 @@ export default function AIOutputPanel() {
     history.find(r => r.id === viewRunId) ||
     activeRun ||
     undefined
-
-  // DEBUG: 面板切换时追踪状态
-  if (viewRun?.status === 'failed' && viewRun.steps.some(s => s.status === 'pending' || s.status === 'running')) {
-    console.log('[AIOutputPanel] viewRun out of sync! run.status=', viewRun.status, 'steps=', viewRun.steps.map(s => s.status))
-  }
 
   const recentHistory = history.slice(0, 10)
 
@@ -137,17 +128,7 @@ function ActiveRunView({
   const currentStep = run.steps[run.currentStepIndex] || run.steps[0]
   const rawText = currentStep?.result || ''
 
-  let content = rawText
-  const segments = rawText.split(/<think>/)
-  if (segments.length > 1) {
-    const lastSegment = segments[segments.length - 1]
-    const end = lastSegment.indexOf('</think>')
-    if (end !== -1) {
-      content = lastSegment.substring(end + 8)
-    } else {
-      content = ''
-    }
-  }
+  const content = parseThink(rawText).content
 
   // 节流自动滚动：仅在正文内容长度变化时触发，思考区不自动滚动
   const contentLen = content.length
@@ -288,21 +269,7 @@ function StepOutputBlock({ step, index, total, isActiveRun, isCurrentStep }: { s
 
   // 防御：step.result 可能不是字符串（如 Command 返回了数组/对象），强制转为字符串
   const rawText = typeof step.result === 'string' ? step.result : (step.result ? JSON.stringify(step.result) : '')
-  let thinking = ''
-  let content = rawText
-
-  const segments = rawText.split(/<think>/)
-  if (segments.length > 1) {
-    const lastSegment = segments[segments.length - 1]
-    const end = lastSegment.indexOf('</think>')
-    if (end !== -1) {
-      thinking = lastSegment.substring(0, end)
-      content = lastSegment.substring(end + 8)
-    } else {
-      thinking = lastSegment
-      content = ''
-    }
-  }
+  const { thinking, content } = parseThink(rawText)
 
   // 当前激活的步骤默认展开，过去/未来的默认折叠（只有产生了内容的步骤才允许展开）
   const [expanded, setExpanded] = useState(isCurrentStep)

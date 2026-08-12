@@ -49,6 +49,11 @@ export async function loadKBData(): Promise<{ documents: KBDocument[]; stats: KB
   return { documents, stats }
 }
 
+/** 删除文档（连同其向量索引） */
+export async function removeDocument(docId: string): Promise<{ success: boolean }> {
+  return ipc.invoke('kb:remove-document', docId)
+}
+
 /** 获取缺失向量的文档块数量 */
 export async function getVectorlessCount(): Promise<number> {
   const result = await ipc.invoke('kb:get-vectorless-count') as { count: number }

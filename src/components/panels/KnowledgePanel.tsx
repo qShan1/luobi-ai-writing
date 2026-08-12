@@ -1,14 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
-  Database, RefreshCw, BookOpen,
+  Database, RefreshCw, BookOpen, Trash2,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ipc } from '../../services/ipc-client'
 import { Button } from '../ui/Button'
 import { EmptyState } from '../ui/EmptyState'
+import { toast } from '../ui/Toast'
+import { confirm } from '../ui/Confirm'
 import { useProjectStore } from '../../stores/project-store'
 import { globalEventBus } from '../../shared/event-bus'
-import { loadKBData, type KBDocument } from '../../services/knowledge-service'
+import { loadKBData, removeDocument, type KBDocument } from '../../services/knowledge-service'
 
 
 
@@ -35,6 +37,27 @@ export default function KnowledgePanel() {
     Promise.resolve().then(() => { if (mounted) loadData() })
     return () => { mounted = false }
   }, [loadData])
+
+  /** 删除文档（确认 + IPC + 刷新） */
+  const handleDeleteDocument = useCallback(async (doc: KBDocument) => {
+    const ok = await confirm(t('knowledge.deleteConfirmMessage', { name: doc.fileName }), {
+      title: t('knowledge.deleteConfirmTitle'),
+      confirmText: t('knowledge.delete'),
+      danger: true,
+    })
+    if (!ok) return
+    try {
+      const result = await removeDocument(doc.id)
+      if (result.success) {
+        toast.success(t('knowledge.deleteSuccess'))
+        loadData()
+      } else {
+        toast.error(t('knowledge.deleteFailed', { error: '' }))
+      }
+    } catch (e) {
+      toast.error(t('knowledge.deleteFailed', { error: String(e) }))
+    }
+  }, [t, loadData])
 
   // 通过 EventBus 监听资源刷新和定稿完成事件
   useEffect(() => {
@@ -145,6 +168,13 @@ export default function KnowledgePanel() {
                       <span>{new Date(doc.importedAt).toLocaleDateString('zh-CN')}</span>
                     </div>
                   </div>
+                  <button
+                    onClick={() => handleDeleteDocument(doc)}
+                    title={t('knowledge.delete')}
+                    className="opacity-0 group-hover:opacity-100 flex items-center justify-center p-1 rounded transition-colors text-[var(--color-text-muted)] hover:text-red-400 hover:bg-[var(--color-hover)]"
+                  >
+                    <Trash2 size={12} />
+                  </button>
                 </div>
               ))}
             

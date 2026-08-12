@@ -4,7 +4,6 @@ import {
   ChevronDown,
   ArrowRight,
   Square,
-  Image,
   AtSign,
   Workflow,
 } from 'lucide-react'
@@ -229,7 +228,6 @@ export default function AgentInputBox() {
           <div className="text-[0.7rem] px-3 pb-1 pt-1" style={{ color: 'var(--color-text-muted)' }}>
             {t('agent.addContext')}
           </div>
-          <ContextMenuItem icon={<Image size={13} />} label={t('agent.mediaFiles')} onClick={() => setShowContextMenu(false)} disabled />
           <ContextMenuItem icon={<AtSign size={13} />} label={t('agent.mention')} onClick={() => {
             setShowContextMenu(false)
             // 插入 @ 字符并触发 MentionMenu
@@ -248,7 +246,7 @@ export default function AgentInputBox() {
       )}
 
       {/* 输入区域 */}
-      <div className="relative w-full">
+      <div className="relative w-full focus-within:ring-2 focus-within:ring-[var(--color-accent)] focus-within:ring-offset-1 focus-within:ring-offset-[var(--color-bg)] rounded-md">
           <textarea
             ref={textareaRef}
             value={inputText}

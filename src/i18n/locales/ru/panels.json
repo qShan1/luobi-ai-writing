@@ -75,6 +75,10 @@
     "noMcpServers": "Нет серверов MCP",
     "mcpConfigHint": "Настройте в ~/.luobi/mcp_config.json",
     "mcpToolsRegistered": "Зарегистрировано инструментов MCP: {{count}}",
+    "mcpConnect": "Подключить",
+    "mcpDisconnect": "Отключить",
+    "mcpConnecting": "Подключение",
+    "mcpDisconnectAll": "Отключить все",
     "noAvailableSkills": "Нет доступных навыков",
     "skillsDirHint": "Размещайте файлы SKILL.md в директории ~/.luobi/skills/",
     "builtin": "Встроенные",
@@ -392,7 +396,12 @@
     "chunks": "{{count}} чанков",
     "docsChunks": "({{docs}} док. / {{chunks}} чанков)",
     "chapterTitle": "Глава {{chapter}} {{title}}",
-    "chapterOnly": "Глава {{chapter}}"
+    "chapterOnly": "Глава {{chapter}}",
+    "delete": "Удалить",
+    "deleteConfirmTitle": "Удалить документ",
+    "deleteConfirmMessage": "Удалить документ «{{name}}»?\nЭто действие нельзя отменить.",
+    "deleteSuccess": "Удалено",
+    "deleteFailed": "Не удалось удалить: {{error}}"
   },
   "draftStatus": {
     "draft": "Черновик",

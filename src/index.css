@@ -606,6 +606,18 @@
     box-shadow: inset 2px 0 0 var(--color-accent);
   }
 
+  .tree-item:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
+  }
+
+  .tree-item.active:focus-visible {
+    outline: none;
+    box-shadow: inset 2px 0 0 var(--color-accent),
+                0 0 0 2px var(--color-bg),
+                0 0 0 4px var(--color-focus-ring);
+  }
+
   /* ===== 旧按钮类已废弃 — 请使用 <Button> 组件 (src/components/ui/Button.tsx) ===== */
   /* .btn-primary 和 .btn-ghost 已迁移至 Button.tsx 的 cva 变体系统 */
 
@@ -628,6 +640,11 @@
 
   .icon-btn:active {
     transform: scale(0.95);
+  }
+
+  .icon-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
   }
 
   /* ===== 配置编辑器输入框 ===== */
@@ -676,6 +693,11 @@
     box-shadow: inset 0 -2px 0 var(--color-accent);
   }
 
+  .tool-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
+  }
+
   /* ===== 底部工具栏按钮（更矮） ===== */
   .bottom-tool-btn {
     @apply flex items-center justify-center relative w-full;
@@ -696,6 +718,11 @@
   .bottom-tool-btn.active {
     color: var(--color-accent);
     box-shadow: inset -2px 0 0 var(--color-accent);
+  }
+
+  .bottom-tool-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
   }
 
   /* ===== Agent 面板专用样式 ===== */

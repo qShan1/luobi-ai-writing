@@ -75,6 +75,10 @@
     "noMcpServers": "No MCP servers",
     "mcpConfigHint": "Configure in ~/.luobi/mcp_config.json",
     "mcpToolsRegistered": "{{count}} MCP tool(s) registered",
+    "mcpConnect": "Connect",
+    "mcpDisconnect": "Disconnect",
+    "mcpConnecting": "Connecting",
+    "mcpDisconnectAll": "Disconnect All",
     "noAvailableSkills": "No available skills",
     "skillsDirHint": "Place SKILL.md files in ~/.luobi/skills/ directory",
     "builtin": "Built-in",
@@ -392,7 +396,12 @@
     "chunks": "{{count}} chunks",
     "docsChunks": "({{docs}} docs / {{chunks}} chunks)",
     "chapterTitle": "Chapter {{chapter}} {{title}}",
-    "chapterOnly": "Chapter {{chapter}}"
+    "chapterOnly": "Chapter {{chapter}}",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete document",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"?\nThis cannot be undone.",
+    "deleteSuccess": "Deleted",
+    "deleteFailed": "Delete failed: {{error}}"
   },
   "draftStatus": {
     "draft": "Draft",

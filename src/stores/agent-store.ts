@@ -7,6 +7,7 @@ import { skillRegistry } from '../services/agent/skill-registry'
 import { parseSlashCommand, parseMentions, mentionsToToolCalls } from '../services/agent/intent-router'
 import { toolRegistry } from '../services/agent/tool-registry'
 import type { ToolArtifact } from '../services/agent/tool-registry'
+import { ipc } from '../services/ipc-client'
 import i18n from '../i18n'
 
 // ===== 类型定义 =====
@@ -417,7 +418,7 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
           temperature: 0.7,    // 创作场景适度随机
         }
         try {
-          const response = await (window as unknown as { luobiAPI: { invoke: (ch: string, ...args: unknown[]) => Promise<unknown> } }).luobiAPI.invoke('llm:generate', request)
+          const response = await ipc.invoke('llm:generate', request)
           const res = response as { success: boolean; content: string; error?: string }
           if (!res.success) {
             throw new Error(res.error ?? 'LLM 生成失败')

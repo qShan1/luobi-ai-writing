@@ -98,8 +98,8 @@ export function PostProcessStatusPanel({
   if (!hasFailure) {
     return (
       <div className={cn(
-        'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] text-[var(--color-success,#22c55e)]',
-        'bg-green-500/8',
+        'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] text-[var(--color-success)]',
+        'bg-[color-mix(in_srgb,var(--color-success)_8%,transparent)]',
         className,
       )}>
         <CheckCircle2 size={12} />
@@ -113,8 +113,8 @@ export function PostProcessStatusPanel({
     <div className={cn(
       'rounded-md border overflow-hidden',
       hasCriticalFailure
-        ? 'border-red-500 bg-red-500/8'
-        : 'border-amber-500 bg-amber-500/8',
+        ? 'border-[var(--color-error)] bg-[color-mix(in_srgb,var(--color-error)_8%,transparent)]'
+        : 'border-[var(--color-warning)] bg-[color-mix(in_srgb,var(--color-warning)_8%,transparent)]',
       className,
     )}>
       {/* 折叠头部 */}
@@ -125,8 +125,8 @@ export function PostProcessStatusPanel({
         <div className="flex items-center gap-1.5">
           <AlertTriangle size={13} className={
             hasCriticalFailure
-              ? 'text-[var(--color-error,#ef4444)]'
-              : 'text-[var(--color-warning,#f59e0b)]'
+              ? 'text-[var(--color-error)]'
+              : 'text-[var(--color-warning)]'
           } />
           <span className="text-[11px] font-medium text-[var(--color-text)]">
             {status.sourceLabel} — {failedSteps.length} {t('failed')}
@@ -148,9 +148,9 @@ export function PostProcessStatusPanel({
             >
               <div className="flex items-center gap-1.5 min-w-0">
                 {step.ok ? (
-                  <CheckCircle2 size={12} className="text-[var(--color-success,#22c55e)] shrink-0" />
+                  <CheckCircle2 size={12} className="text-[var(--color-success)] shrink-0" />
                 ) : (
-                  <XCircle size={12} className="text-[var(--color-error,#ef4444)] shrink-0" />
+                  <XCircle size={12} className="text-[var(--color-error)] shrink-0" />
                 )}
                 <span className={cn(
                   'truncate',
@@ -159,7 +159,7 @@ export function PostProcessStatusPanel({
                   {step.label}
                 </span>
                 {step.critical && !step.ok && (
-                  <span className="shrink-0 px-1 py-0.5 rounded text-[9px] bg-red-500/15 text-red-400">
+                  <span className="shrink-0 px-1 py-0.5 rounded text-[9px] bg-[color-mix(in_srgb,var(--color-error)_15%,transparent)] text-[var(--color-error)]">
                     {t('completed')}
                   </span>
                 )}
@@ -172,7 +172,7 @@ export function PostProcessStatusPanel({
                   </span>
                 ) : (
                   <>
-                    <span className="text-[10px] text-[var(--color-error,#ef4444)] max-w-[120px] truncate" title={step.error}>
+                    <span className="text-[10px] text-[var(--color-error)] max-w-[120px] truncate" title={step.error}>
                       {step.error || t('failed')}
                     </span>
                     {onRetry && (

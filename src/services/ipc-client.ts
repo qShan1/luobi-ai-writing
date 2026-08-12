@@ -54,9 +54,7 @@ export const ipc = {
     channel: C,
     ...args: AllInvokeChannels[C]['args']
   ): Promise<AllInvokeChannels[C]['return']> => {
-    console.log('[ipc-client.invoke] 调用通道:', channel, '参数数量:', args.length)
     const result = await getAPI().invoke(channel, ...args) as Promise<AllInvokeChannels[C]['return']>
-    console.log('[ipc-client.invoke] 调用完成:', channel)
     return result
   },
 

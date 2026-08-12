@@ -8,6 +8,7 @@ import { useRef, useState, useMemo } from 'react'
 import { confirm } from '../../ui/Confirm'
 import { IconBtn } from '../../ui/IconBtn'
 import { MenuItem } from '../../ui/MenuItem'
+import { Button } from '../../ui/Button'
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
 
 /**
@@ -196,6 +197,20 @@ function MCPSubView({
   const { t } = useTranslation('panels')
   const connectedCount = servers.filter(s => s.status === 'connected').length
 
+  const handleConnect = async (server: { id: string; name: string }) => {
+    const config = useMCPStore.getState().getServerConfig(server.id)
+    if (!config) return
+    await useMCPStore.getState().connectServer(config)
+  }
+
+  const handleDisconnect = async (serverId: string) => {
+    await useMCPStore.getState().disconnectServer(serverId)
+  }
+
+  const handleDisconnectAll = async () => {
+    await useMCPStore.getState().disconnectAll()
+  }
+
   return (
     <>
       {/* 返回按钮 */}
@@ -257,10 +272,43 @@ function MCPSubView({
                   {t('agent.error')}
                 </span>
               )}
+              <Button
+                size="sm"
+                variant="ghost"
+                className="flex-shrink-0"
+                disabled={
+                  server.status === 'connecting' ||
+                  (server.status !== 'connected' && !useMCPStore.getState().getServerConfig(server.id))
+                }
+                onClick={() =>
+                  server.status === 'connected'
+                    ? handleDisconnect(server.id)
+                    : handleConnect(server)
+                }
+              >
+                {server.status === 'connected'
+                  ? t('agent.mcpDisconnect')
+                  : server.status === 'connecting'
+                    ? t('agent.mcpConnecting')
+                    : t('agent.mcpConnect')}
+              </Button>
             </div>
           ))}
         </div>
       )}
+
+      {/* 全部断开 */}
+      <div style={{ height: 1, backgroundColor: 'var(--color-border)', margin: '2px 0' }} />
+      <div className="px-3 py-1.5">
+        <Button
+          variant="ghost"
+          className="w-full"
+          disabled={connectedCount === 0}
+          onClick={handleDisconnectAll}
+        >
+          {t('agent.mcpDisconnectAll')}
+        </Button>
+      </div>
 
       {/* 底部统计 */}
       {toolCount > 0 && (

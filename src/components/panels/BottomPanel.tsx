@@ -108,8 +108,6 @@ function TaskRunView() {
   const cancelWorkflow = useWorkflowStore(s => s.cancelWorkflow)
   const confirmContinue = useWorkflowStore(s => s.confirmContinue)
 
-  console.log('[BottomPanel] TaskRunView render: activeRuns=', activeRuns.map(r => r.id.slice(0,8) + ':' + r.status + ':' + r.steps.map(s=>s.status).join('/')))
-
   if (activeRuns.length === 0 && history.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3" style={{ color: 'var(--color-text-muted)' }}>
@@ -229,8 +227,6 @@ function ActiveRunPanel({
   const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
   const nextStepName = run.steps[waitingAfterStepIndex + 1]?.name
   const isActive = run.status === 'running' || run.status === 'waiting'
-
-  console.log('[BottomPanel] ActiveRunPanel render: run.status=', run.status, 'steps=', run.steps.map(s => s.status).join(','))
 
   return (
     <div>

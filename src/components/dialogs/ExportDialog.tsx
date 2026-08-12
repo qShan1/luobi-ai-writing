@@ -91,7 +91,7 @@ export default function ExportDialog({ isOpen, onClose }: Props) {
           {result && (
             <div className={cn(
               'p-3 rounded-lg text-xs',
-              result.success ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'
+              result.success ? 'bg-[color-mix(in_srgb,var(--color-success)_10%,transparent)] text-[var(--color-success)]' : 'bg-[color-mix(in_srgb,var(--color-error)_10%,transparent)] text-[var(--color-error)]'
             )}>
               {result.success ? t('export.exported', { path: result.path }) : t('export.exportError', { error: result.error })}
             </div>

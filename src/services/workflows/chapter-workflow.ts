@@ -156,7 +156,29 @@ export function createRefineOnlyWorkflow(params: RefineOnlyParams): WorkflowDefi
         },
       },
     ],
-    onComplete: { mode: 'open', openResult: async () => { } },
+    onComplete: {
+      mode: 'open', openResult: async () => {
+        const { useEditorStore } = await import('../../stores/editor-store')
+        const { ipc } = await import('../ipc-client')
+        const baseDraft = await parseDraftMeta(params.draftPath)
+        if (!baseDraft) return
+        const pendingRevs = await ipc.invoke('db:revision-get-pending', baseDraft.id)
+        const rev = pendingRevs[pendingRevs.length - 1]
+        if (!rev) return
+        const revFull = await ipc.invoke('db:revision-get-full', rev.id)
+        useEditorStore.getState().openFile({
+          id: `diff-${params.draftPath}-${rev.id}`,
+          name: t('refineDraft.tabName', { chapter: params.chapterNumber }),
+          type: 'diff',
+          filePath: params.draftPath,
+          originalContent: params.draftContent,
+          content: revFull?.content || '',
+          revisionPath: String(rev.id),
+          chapterNumber: params.chapterNumber,
+          chapterDir: `luobi://draft/ch${params.chapterNumber}`,
+        })
+      }
+    },
   }
 }
 
@@ -182,7 +204,29 @@ export function createRefineFromReviewWorkflow(params: RefineFromReviewParams): 
         },
       },
     ],
-    onComplete: { mode: 'open', openResult: async () => { } },
+    onComplete: {
+      mode: 'open', openResult: async () => {
+        const { useEditorStore } = await import('../../stores/editor-store')
+        const { ipc } = await import('../ipc-client')
+        const baseDraft = await parseDraftMeta(params.draftPath)
+        if (!baseDraft) return
+        const pendingRevs = await ipc.invoke('db:revision-get-pending', baseDraft.id)
+        const rev = pendingRevs[pendingRevs.length - 1]
+        if (!rev) return
+        const revFull = await ipc.invoke('db:revision-get-full', rev.id)
+        useEditorStore.getState().openFile({
+          id: `diff-${params.draftPath}-${rev.id}`,
+          name: t('refineFromReview.tabName', { chapter: params.chapterNumber }),
+          type: 'diff',
+          filePath: params.draftPath,
+          originalContent: params.draftContent,
+          content: revFull?.content || '',
+          revisionPath: String(rev.id),
+          chapterNumber: params.chapterNumber,
+          chapterDir: `luobi://draft/ch${params.chapterNumber}`,
+        })
+      }
+    },
   }
 }
 
