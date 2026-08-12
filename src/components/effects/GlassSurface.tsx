@@ -21,8 +21,6 @@ interface GlassSurfaceProps {
   padding?: string
   /** 是否为浅色背景上的玻璃（自动调亮阴影/高光） */
   overLight?: boolean
-  /** 玻璃底色（半透明），默认透出面板色 */
-  tint?: string
   onClick?: () => void
   title?: string
   role?: string
@@ -37,7 +35,6 @@ export default function GlassSurface({
   cornerRadius = 14,
   padding = '18px 22px',
   overLight = false,
-  tint,
   onClick,
   title,
   role,
@@ -152,16 +149,6 @@ export default function GlassSurface({
         tabIndex={tabIndex}
         onKeyDown={onKeyDown}
       >
-        {/* 玻璃底色（半透明，透出下层内容） */}
-        <span
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundColor: tint
-              ?? (overLight
-                ? 'rgba(255,255,255,0.45)'
-                : 'color-mix(in srgb, var(--color-panel, #23262e) 45%, transparent)'),
-          }}
-        />
         {/* 顶部高光 */}
         <span
           className="pointer-events-none absolute inset-x-0 top-0"

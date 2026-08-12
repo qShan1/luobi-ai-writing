@@ -1214,7 +1214,7 @@
   .welcome-title { font-size: 24px; line-height: 1.2; font-weight: 650; margin: 0; letter-spacing: 0; }
   .welcome-subtitle { font-size: 13px; margin: 6px 0 0; }
   .welcome-actions { display: grid; grid-template-columns: minmax(220px, 1.35fr) repeat(2, minmax(180px, 1fr)); gap: 12px; }
-  .welcome-primary, .welcome-secondary { min-height: 92px; border-radius: 4px; display: flex; align-items: center; text-align: left; gap: 14px; padding: 18px 20px; transition: border-color 160ms ease, background-color 160ms ease; }
+  .welcome-primary, .welcome-secondary { min-height: 92px; border-radius: 4px; display: flex; align-items: center; text-align: left; gap: 14px; padding: 18px 20px; transition: border-color 160ms ease, background-color 160ms ease; cursor: pointer; }
   .welcome-primary { justify-content: space-between; color: #fff; background: color-mix(in srgb, var(--color-accent) 82%, transparent); border: 1px solid color-mix(in srgb, var(--color-accent) 90%, transparent); box-shadow: none; }
   .welcome-primary:hover { background: var(--color-accent-hover); }
   .welcome-secondary { color: var(--color-text); background: transparent; border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent); }
