@@ -45,6 +45,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
               className="welcome-primary group"
               cornerRadius={10}
               padding="18px 22px"
+              highlight
               onClick={onNewProject}
             >
               <span>

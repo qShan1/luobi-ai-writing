@@ -1,13 +1,13 @@
 import { type CSSProperties, type ReactNode } from 'react'
 import { useEffectsStore } from '../../stores/effects-store'
 import { cn } from '../../lib/utils'
+import './glass-surface.css'
 
 /**
- * 玻璃表面 — backdrop-filter 磨砂 + 高光层。
+ * 液态玻璃表面 — 纯 CSS 实现。
  *
- * 不使用 SVG 滤镜（位移折射 / 色差），因为它们在强色彩背景上
- * 会产生严重的 RGB 通道分离（彩虹重影 / 花屏）。
- * 玻璃质感靠 CSS backdrop-filter: blur + saturate 实现。
+ * 多层 box-shadow（内凹质感）+ 45° 渐变（玻璃反射）+ ::before / ::after 伪元素（光圈）。
+ * 不使用 SVG 滤镜（色差/位移）或 backdrop-filter，避免花屏/色偏。
  */
 interface GlassSurfaceProps {
   children: ReactNode
@@ -17,8 +17,10 @@ interface GlassSurfaceProps {
   cornerRadius?: number
   /** 内边距，默认 18px 22px */
   padding?: string
-  /** 是否为浅色背景上的玻璃（自动调亮阴影/高光） */
+  /** 是否为浅色背景上的玻璃（调亮阴影） */
   overLight?: boolean
+  /** 是否显示 45° 斜向高光渐变（玻璃反射） */
+  highlight?: boolean
   onClick?: () => void
   title?: string
   role?: string
@@ -33,6 +35,7 @@ export default function GlassSurface({
   cornerRadius = 14,
   padding = '18px 22px',
   overLight = false,
+  highlight = false,
   onClick,
   title,
   role,
@@ -40,8 +43,6 @@ export default function GlassSurface({
   onKeyDown,
 }: GlassSurfaceProps) {
   const enabled = useEffectsStore((s) => s.enabled)
-  const blurAmount = useEffectsStore((s) => s.blurAmount)
-  const saturation = useEffectsStore((s) => s.saturation)
 
   if (!enabled) {
     return (
@@ -59,43 +60,48 @@ export default function GlassSurface({
     )
   }
 
-  const blur = (overLight ? 10 : 6) + blurAmount * 160
+  const isRound = cornerRadius >= 50
 
   return (
     <div
-      className={cn('relative', onClick && 'cursor-pointer', className)}
-      style={{ position: 'relative', ...style }}
+      className={cn(
+        'luobi-glass',
+        isRound ? 'luobi-glass--round' : 'luobi-glass--rect',
+        highlight && 'luobi-glass--highlight',
+        onClick && 'cursor-pointer',
+        className,
+      )}
+      style={{
+        borderRadius: isRound ? '50%' : cornerRadius,
+        padding,
+        boxShadow: overLight
+          ? [
+              'inset 2px -2px 1px -1px rgba(255,255,255,0.9)',
+              'inset -2px 2px 1px -1px rgba(255,255,255,0.9)',
+              'inset 6px -6px 1px -6px rgba(255,255,255,0.55)',
+              'inset -6px 6px 1px -6px rgba(255,255,255,0.55)',
+              'inset 0 0 2px rgba(0,0,0,0.5)',
+              '0 4px 8px rgba(0,0,0,0.15)',
+            ].join(', ')
+          : [
+              'inset 2px -2px 1px -1px rgba(255,255,255,0.65)',
+              'inset -2px 2px 1px -1px rgba(255,255,255,0.65)',
+              'inset 6px -6px 1px -6px rgba(255,255,255,0.35)',
+              'inset -6px 6px 1px -6px rgba(255,255,255,0.35)',
+              'inset 0 0 2px rgba(0,0,0,0.8)',
+              '0 4px 8px rgba(0,0,0,0.2)',
+            ].join(', '),
+        border: '1px solid rgba(255,255,255,0.12)',
+        ...style,
+      }}
+      onClick={onClick}
+      title={title}
+      role={role}
+      tabIndex={tabIndex}
+      onKeyDown={onKeyDown}
     >
-      {/* 玻璃主体 */}
-      <div
-        style={{
-          borderRadius: cornerRadius,
-          padding,
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: overLight
-            ? '0 10px 40px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.55)'
-            : '0 10px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.12)',
-          backdropFilter: `blur(${blur}px) saturate(${saturation}%)`,
-          WebkitBackdropFilter: `blur(${blur}px) saturate(${saturation}%)`,
-        }}
-        onClick={onClick}
-        title={title}
-        role={role}
-        tabIndex={tabIndex}
-        onKeyDown={onKeyDown}
-      >
-        {/* 顶部高光 */}
-        <span
-          className="pointer-events-none absolute inset-x-0 top-0"
-          style={{
-            height: '55%',
-            background: 'linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 100%)',
-          }}
-        />
-        {/* 用户内容保持清晰 */}
-        <div className="relative z-[1]">{children}</div>
-      </div>
+      {/* 用户内容（z-index 在伪元素之上） */}
+      <div className="relative z-[3]">{children}</div>
     </div>
   )
 }
