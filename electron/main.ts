@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron'
 import { registerIPCHandlers } from './ipc-handlers'
 import { registerMCPHandlers } from './mcp/mcp-ipc-bridge'
-import { registerWindowController, registerWindowCloseBehavior, showMainWindow } from './controllers/window-controller'
+import { registerWindowCloseBehavior, showMainWindow } from './controllers/window-controller'
 
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -88,7 +88,6 @@ if (!gotTheLock) {
   app.whenReady().then(() => {
     registerIPCHandlers()
     registerMCPHandlers()
-    registerWindowController()
     createWindow()
   })
 }
