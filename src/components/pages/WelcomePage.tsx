@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { motion, useReducedMotion, type Variants } from 'motion/react'
 import { FolderOpen, Clock, BookOpen, FileUp, Plus } from 'lucide-react'
 import { useProjectStore } from '../../stores/project-store'
 import { useThemeStore } from '../../stores/theme-store'
@@ -17,6 +17,18 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
   const currentProject = useProjectStore(s => s.currentProject)
   const theme = useThemeStore(s => s.theme)
   const logoSrc = theme === 'dark' || theme === 'galaxy' ? './luobi-logo-white.svg' : './luobi-logo.svg'
+  const reduce = useReducedMotion()
+
+  // 玻璃材质化入场（apple §12）：blur + scale 一起，像真实材质到达，而非纯淡入
+  const enterCard: Variants = reduce
+    ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.2, ease: 'easeOut' } } }
+    : {
+        hidden: { opacity: 0, y: 12, scale: 0.98, filter: 'blur(8px)' },
+        show: {
+          opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
+          transition: { duration: 0.32, ease: [0.23, 1, 0.32, 1] },
+        },
+      }
 
   return (
     <div className="welcome-shell w-full h-full overflow-y-auto">
@@ -42,7 +54,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.03 } } }}
         >
           <motion.div
-            variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } } }}
+            variants={enterCard}
           >
             <GlassSurface
               className="welcome-primary group"
@@ -60,7 +72,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
           </motion.div>
 
           <motion.div
-            variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } } }}
+            variants={enterCard}
           >
             <GlassSurface
               className="welcome-secondary group"
@@ -74,7 +86,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
           </motion.div>
 
           <motion.div
-            variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } } }}
+            variants={enterCard}
           >
             <GlassSurface
               className="welcome-secondary group"
@@ -106,7 +118,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
               {recentProjects.map((p, i) => (
                 <motion.div
                   key={i}
-                  variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
+                  variants={enterCard}
                 >
                   <GlassSurface
                     className="group"
