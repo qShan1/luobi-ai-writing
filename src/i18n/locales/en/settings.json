@@ -7,6 +7,7 @@
     "language": "Language",
     "proxy": "Network Proxy",
     "editor": "Editor",
+    "effects": "Visual Effects",
     "about": "About & Support",
     "embedding": "Embedding Models",
     "fonts": "Font Settings",
@@ -15,6 +16,7 @@
     "embeddingDesc": "Configure Embedding models for knowledge base retrieval",
     "proxyDesc": "Configure HTTP / SOCKS5 proxy for restricted API access",
     "editorDesc": "Font size, auto-save and other editor preferences",
+    "effectsDesc": "Liquid glass texture, elasticity and refraction effects",
     "promptsDesc": "Customize prompt templates for AI writing stages",
     "aboutDesc": "Business collaboration and developer sponsorship"
   },
@@ -27,6 +29,25 @@
     "zoomLevel": "Zoom Level",
     "fontsBuiltIn": "All fonts are built into the application, no network connection required. Changes take effect immediately.",
     "hint": "Hint"
+  },
+  "glass": {
+    "enabled": "Liquid Glass Effect",
+    "enabledDesc": "Apple-style liquid glass texture on buttons and cards",
+    "mode": "Refraction Mode",
+    "mode_standard": "Standard",
+    "mode_polar": "Polar",
+    "mode_prominent": "Prominent",
+    "displacement": "Refraction Intensity",
+    "displacementDesc": "Edge displacement amplitude, higher is more visible",
+    "blur": "Frost Blur",
+    "blurDesc": "Background blur strength, higher is softer",
+    "saturation": "Color Saturation",
+    "saturationDesc": "Color intensity of content shown through the glass",
+    "aberration": "Chromatic Aberration",
+    "aberrationDesc": "Edge RGB channel separation",
+    "elasticity": "Elasticity",
+    "elasticityDesc": "Elastic deformation on hover (0 = rigid)",
+    "reset": "Restore Defaults"
   },
   "models": {
     "title": "Model Configuration",

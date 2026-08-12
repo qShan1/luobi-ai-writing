@@ -7,6 +7,7 @@
     "language": "语言",
     "proxy": "网络代理",
     "editor": "编辑器",
+    "effects": "视觉特效",
     "about": "关于与支持",
     "embedding": "向量模型",
     "fonts": "字体设置",
@@ -15,6 +16,7 @@
     "embeddingDesc": "配置用于知识库检索的 Embedding 模型",
     "proxyDesc": "配置 HTTP / SOCKS5 代理，用于访问受限 API",
     "editorDesc": "字体大小、自动保存等编辑器偏好设置",
+    "effectsDesc": "液态玻璃质感、弹性与折射效果",
     "promptsDesc": "自定义 AI 创作各环节使用的提示词模板",
     "aboutDesc": "版本信息与本地创作说明"
   },
@@ -27,6 +29,25 @@
     "zoomLevel": "缩放级别",
     "fontsBuiltIn": "所有字体已内置在应用中，无需网络连接，切换后立即生效。",
     "hint": "提示"
+  },
+  "glass": {
+    "enabled": "液态玻璃效果",
+    "enabledDesc": "为按钮与卡片启用 Apple 风格的液态玻璃质感",
+    "mode": "折射模式",
+    "mode_standard": "标准",
+    "mode_polar": "极光",
+    "mode_prominent": "强折射",
+    "displacement": "折射强度",
+    "displacementDesc": "边缘位移幅度，越大折射越明显",
+    "blur": "磨砂模糊",
+    "blurDesc": "背景模糊程度，越大越柔和",
+    "saturation": "颜色饱和度",
+    "saturationDesc": "玻璃透出内容的色彩浓度",
+    "aberration": "色差强度",
+    "aberrationDesc": "边缘色散（RGB 分离）程度",
+    "elasticity": "弹性手感",
+    "elasticityDesc": "鼠标悬停时的弹性形变（0 = 刚性）",
+    "reset": "恢复默认"
   },
   "models": {
     "title": "模型配置",

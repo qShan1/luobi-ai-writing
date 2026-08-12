@@ -1,5 +1,6 @@
 import { FolderOpen, Clock, BookOpen, FileUp, Plus } from 'lucide-react'
 import { useProjectStore } from '../../stores/project-store'
+import GlassSurface from '../effects/GlassSurface'
 
 interface WelcomePageProps {
   onNewProject: () => void
@@ -31,32 +32,38 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
         </div>
 
         <div className="welcome-actions mb-10">
-          <button
-            onClick={onNewProject}
+          <GlassSurface
             className="welcome-primary group"
+            cornerRadius={10}
+            padding="18px 22px"
+            onClick={onNewProject}
           >
             <span>
               <span className="welcome-action-label">新建作品</span>
               <span className="welcome-action-desc">从题材、设定和章节蓝图开始</span>
             </span>
             <Plus size={20} strokeWidth={1.8} />
-          </button>
+          </GlassSurface>
 
-          <button
-            onClick={onOpenProject}
+          <GlassSurface
             className="welcome-secondary group"
+            cornerRadius={10}
+            padding="18px 22px"
+            onClick={onOpenProject}
           >
             <FolderOpen size={18} strokeWidth={1.8} />
             <span><span className="welcome-action-label">打开项目</span><span className="welcome-action-desc">继续本地作品</span></span>
-          </button>
+          </GlassSurface>
 
-          <button
-            onClick={onImportNovel}
+          <GlassSurface
             className="welcome-secondary group"
+            cornerRadius={10}
+            padding="18px 22px"
+            onClick={onImportNovel}
           >
             <FileUp size={18} strokeWidth={1.8} />
             <span><span className="welcome-action-label">导入旧稿</span><span className="welcome-action-desc">把现有章节带入工作台</span></span>
-          </button>
+          </GlassSurface>
         </div>
 
         {/* 最近项目 */}
@@ -70,30 +77,25 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             </div>
             <div className="space-y-1">
               {recentProjects.map((p, i) => (
-                <div
+                <GlassSurface
                   key={i}
-                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all"
-                  style={{ backgroundColor: 'transparent', borderLeft: '2px solid transparent' }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-                    e.currentTarget.style.borderLeftColor = 'var(--color-accent)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent'
-                    e.currentTarget.style.borderLeftColor = 'transparent'
-                  }}
+                  className="group"
+                  cornerRadius={8}
+                  padding="10px 14px"
                   onClick={() => openProject(p.path)}
                 >
-                  <BookOpen size={14} style={{ color: 'var(--color-accent)', opacity: 0.6 }} />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm block truncate" style={{ color: 'var(--color-text)' }}>
-                      {p.name}
-                    </span>
-                    <span className="text-xs block truncate" style={{ color: 'var(--color-text-muted)' }}>
-                      {p.path}
-                    </span>
+                  <div className="flex items-center gap-3">
+                    <BookOpen size={14} style={{ color: 'var(--color-accent)', opacity: 0.6 }} />
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm block truncate" style={{ color: 'var(--color-text)' }}>
+                        {p.name}
+                      </span>
+                      <span className="text-xs block truncate" style={{ color: 'var(--color-text-muted)' }}>
+                        {p.path}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </GlassSurface>
               ))}
             </div>
           </div>

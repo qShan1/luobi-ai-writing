@@ -2,13 +2,14 @@ import { useState, useEffect, useRef } from 'react'
 import {
   X, Plus, Trash2, Check, Save, Globe, Cpu, Database,
   Type, Settings2, Zap, Eye, EyeOff, ChevronDown, MessageSquare,
-  Languages,
+  Languages, Sparkles,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../i18n'
 import PromptSettings from './PromptSettings'
 import { useLLMStore } from '../../stores/llm-store'
 import { useThemeStore, FONT_OPTIONS, type FontId } from '../../stores/theme-store'
+import { useEffectsStore } from '../../stores/effects-store'
 import type { ModelProfile } from '../../shared/ipc-channels'
 import type { ProviderPreset } from '../../shared/provider-presets'
 import { BUILTIN_PRESETS } from '../../shared/provider-presets'
@@ -23,7 +24,7 @@ import { Switch } from '../ui/Switch'
 
 // ==================== 分类定义 ====================
 
-type SettingsSection = 'language' | 'llm' | 'embedding' | 'proxy' | 'editor' | 'prompts' | 'about'
+type SettingsSection = 'language' | 'llm' | 'embedding' | 'proxy' | 'editor' | 'effects' | 'prompts' | 'about'
 
 interface SectionItem {
   id: SettingsSection
@@ -38,6 +39,7 @@ const SECTIONS: SectionItem[] = [
   { id: 'embedding', label: 'Embedding Models', icon: <Database size={16} />, descriptionKey: 'general.embeddingDesc' },
   { id: 'proxy', label: 'Network Proxy', icon: <Globe size={16} />, descriptionKey: 'general.proxyDesc' },
   { id: 'editor', label: 'Editor', icon: <Type size={16} />, descriptionKey: 'general.editorDesc' },
+  { id: 'effects', label: 'Visual Effects', icon: <Sparkles size={16} />, descriptionKey: 'general.effectsDesc' },
   { id: 'prompts', label: 'Prompt Templates', icon: <MessageSquare size={16} />, descriptionKey: 'general.promptsDesc' },
   { id: 'about', label: 'About & Support', icon: <span style={{ color: '#ff4d4f', fontSize: 14 }}>❤️</span>, descriptionKey: 'general.aboutDesc' },
 ]
@@ -133,6 +135,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             {section === 'embedding' && <LLMSection purposes={['embedding']} purposeLabel={t('general.embedding')} />}
             {section === 'proxy' && <ProxySection />}
             {section === 'editor' && <EditorSection />}
+            {section === 'effects' && <EffectsSection />}
             {section === 'prompts' && <PromptSettings />}
             {section === 'about' && <AboutSection />}
           </div>
@@ -973,6 +976,136 @@ function EditorSection() {
         <span className="flex-shrink-0 mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{t('appearance.hint')}</span>
         <span>{t('appearance.fontsBuiltIn')}</span>
       </div>
+    </div>
+  )
+}
+
+// ==================== 视觉效果设置 ====================
+
+/** 数值滑杆（带实时值显示） */
+function EffectSlider({
+  label, desc, min, max, step, value, onChange,
+}: {
+  label: string
+  desc: string
+  min: number
+  max: number
+  step: number
+  value: number
+  onChange: (v: number) => void
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>{label}</p>
+          <p className="text-[0.68rem] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
+        </div>
+        <span
+          className="text-xs font-mono px-1.5 py-0.5 rounded flex-shrink-0"
+          style={{ backgroundColor: 'var(--color-hover)', color: 'var(--color-text-secondary)' }}
+        >
+          {Math.round(value)}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="w-full mt-2 accent-[var(--color-accent)]"
+      />
+    </div>
+  )
+}
+
+function EffectsSection() {
+  const { t } = useTranslation('settings')
+  const {
+    enabled, displacementScale, blurAmount, saturation, aberrationIntensity, elasticity, mode,
+    setGlass, toggle, reset,
+  } = useEffectsStore()
+
+  return (
+    <div className="max-w-md space-y-6">
+      {/* 启用开关 */}
+      <div
+        className="flex items-center justify-between p-4 rounded-xl"
+        style={{ border: '1px solid var(--color-border)', backgroundColor: 'var(--color-panel)' }}
+      >
+        <div>
+          <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{t('glass.enabled')}</p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+            {t('glass.enabledDesc')}
+          </p>
+        </div>
+        <Switch checked={enabled} onCheckedChange={toggle} aria-label={t('glass.enabled')} />
+      </div>
+
+      {enabled && (
+        <>
+          {/* 折射模式 */}
+          <div>
+            <p className="text-xs font-semibold mb-2" style={{ color: 'var(--color-text)' }}>{t('glass.mode')}</p>
+            <div className="grid grid-cols-3 gap-2">
+              {(['standard', 'polar', 'prominent'] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setGlass({ mode: m })}
+                  className="px-2 py-2 rounded-lg text-xs transition-colors"
+                  style={{
+                    border: mode === m ? '1px solid var(--color-accent)' : '1px solid var(--color-border)',
+                    color: mode === m ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                    backgroundColor: mode === m ? 'color-mix(in srgb, var(--color-accent) 8%, transparent)' : 'transparent',
+                  }}
+                >
+                  {t(`glass.mode_${m}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-5">
+            <EffectSlider
+              label={t('glass.displacement')}
+              desc={t('glass.displacementDesc')}
+              min={8} max={140} step={1} value={displacementScale}
+              onChange={(v) => setGlass({ displacementScale: v })}
+            />
+            <EffectSlider
+              label={t('glass.blur')}
+              desc={t('glass.blurDesc')}
+              min={0.02} max={0.2} step={0.005} value={blurAmount}
+              onChange={(v) => setGlass({ blurAmount: v })}
+            />
+            <EffectSlider
+              label={t('glass.saturation')}
+              desc={t('glass.saturationDesc')}
+              min={100} max={220} step={1} value={saturation}
+              onChange={(v) => setGlass({ saturation: v })}
+            />
+            <EffectSlider
+              label={t('glass.aberration')}
+              desc={t('glass.aberrationDesc')}
+              min={0} max={6} step={0.1} value={aberrationIntensity}
+              onChange={(v) => setGlass({ aberrationIntensity: v })}
+            />
+            <EffectSlider
+              label={t('glass.elasticity')}
+              desc={t('glass.elasticityDesc')}
+              min={0} max={0.4} step={0.01} value={elasticity}
+              onChange={(v) => setGlass({ elasticity: v })}
+            />
+          </div>
+
+          <Button variant="outline" size="sm" onClick={reset}>
+            <Settings2 size={13} />
+            {t('glass.reset')}
+          </Button>
+        </>
+      )}
     </div>
   )
 }
