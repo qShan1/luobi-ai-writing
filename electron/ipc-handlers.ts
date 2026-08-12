@@ -7,6 +7,7 @@ import { registerLLMController } from './controllers/llm-controller'
 import { registerDatabaseController } from './controllers/db-controller'
 import { registerKBController } from './controllers/kb-controller'
 import { registerImportController } from './controllers/import-controller'
+import { registerWindowController } from './controllers/window-controller'
 
 /**
  * 注册所有 IPC 通道 — 在主进程启动时调用
@@ -24,6 +25,7 @@ export function registerIPCHandlers() {
   registerDatabaseController()
   registerKBController()
   registerImportController()
+  registerWindowController()
 
   console.log(`[Luobi IPC] 所有 Controller 已注册完成 | 本地工作区: ${LUOBI_HOME}`)
 }

@@ -1,0 +1,17 @@
+{
+  "title": "关闭落笔",
+  "description": "是否将落笔最小化到系统托盘，或完全退出？",
+  "minimizeToTray": "最小化到托盘",
+  "quit": "完全退出",
+  "remember": "记住我的选择",
+  "cancel": "取消",
+  "closeBehaviorLabel": "关闭窗口时的行为",
+  "closeBehaviorDesc": "点击右上角关闭按钮时如何处理窗口",
+  "option_ask": "每次询问",
+  "option_askDesc": "每次关闭时弹出选择窗口",
+  "option_minimize": "最小化到托盘",
+  "option_minimizeDesc": "关闭即隐藏到托盘，应用继续在后台运行",
+  "option_quit": "直接退出",
+  "option_quitDesc": "关闭即退出应用",
+  "hint": "提示：选择「最小化到托盘」后，可通过双击托盘图标快速恢复窗口。"
+}

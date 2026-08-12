@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import {
   X, Plus, Trash2, Check, Save, Globe, Cpu, Database,
   Type, Settings2, Zap, Eye, EyeOff, ChevronDown, MessageSquare,
-  Languages, Sparkles,
+  Languages, Sparkles, PanelBottomClose, Minus, LogOut,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../i18n'
@@ -10,7 +10,8 @@ import PromptSettings from './PromptSettings'
 import { useLLMStore } from '../../stores/llm-store'
 import { useThemeStore, FONT_OPTIONS, type FontId } from '../../stores/theme-store'
 import { useEffectsStore } from '../../stores/effects-store'
-import type { ModelProfile } from '../../shared/ipc-channels'
+import { useWindowStore } from '../../stores/window-store'
+import type { ModelProfile, CloseBehavior } from '../../shared/ipc-channels'
 import type { ProviderPreset } from '../../shared/provider-presets'
 import { BUILTIN_PRESETS } from '../../shared/provider-presets'
 import { randomUUID } from '../../utils/id'
@@ -24,7 +25,7 @@ import { Switch } from '../ui/Switch'
 
 // ==================== 分类定义 ====================
 
-type SettingsSection = 'language' | 'llm' | 'embedding' | 'proxy' | 'editor' | 'effects' | 'prompts' | 'about'
+type SettingsSection = 'language' | 'llm' | 'embedding' | 'proxy' | 'editor' | 'effects' | 'prompts' | 'window' | 'about'
 
 interface SectionItem {
   id: SettingsSection
@@ -41,6 +42,7 @@ const SECTIONS: SectionItem[] = [
   { id: 'editor', label: 'Editor', icon: <Type size={16} />, descriptionKey: 'general.editorDesc' },
   { id: 'effects', label: 'Visual Effects', icon: <Sparkles size={16} />, descriptionKey: 'general.effectsDesc' },
   { id: 'prompts', label: 'Prompt Templates', icon: <MessageSquare size={16} />, descriptionKey: 'general.promptsDesc' },
+  { id: 'window', label: 'Window & Tray', icon: <PanelBottomClose size={16} />, descriptionKey: 'general.windowDesc' },
   { id: 'about', label: 'About & Support', icon: <span style={{ color: '#ff4d4f', fontSize: 14 }}>❤️</span>, descriptionKey: 'general.aboutDesc' },
 ]
 
@@ -137,6 +139,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             {section === 'editor' && <EditorSection />}
             {section === 'effects' && <EffectsSection />}
             {section === 'prompts' && <PromptSettings />}
+            {section === 'window' && <WindowSection />}
             {section === 'about' && <AboutSection />}
           </div>
         </main>
@@ -1015,7 +1018,10 @@ function EffectSlider({
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
+        onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+        onMouseLeave={(e) => (e.currentTarget.style.opacity = value !== min ? '1' : '0.85')}
         className="w-full mt-2 accent-[var(--color-accent)]"
+        style={{ opacity: value !== min ? 1 : 0.85, transition: 'opacity 150ms var(--ease-out)' }}
       />
     </div>
   )
@@ -1054,7 +1060,7 @@ function EffectsSection() {
                 <button
                   key={m}
                   onClick={() => setGlass({ mode: m })}
-                  className="px-2 py-2 rounded-lg text-xs transition-colors"
+                  className="active-press px-2 py-2 rounded-lg text-xs transition-[background-color,border-color,color,transform] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)]"
                   style={{
                     border: mode === m ? '1px solid var(--color-accent)' : '1px solid var(--color-border)',
                     color: mode === m ? 'var(--color-accent)' : 'var(--color-text-secondary)',
@@ -1106,6 +1112,84 @@ function EffectsSection() {
           </Button>
         </>
       )}
+    </div>
+  )
+}
+
+// ==================== 窗口与托盘设置 ====================
+
+function WindowSection() {
+  const windowT = useTranslation('window').t
+  const closeBehavior = useWindowStore((s) => s.closeBehavior)
+  const loaded = useWindowStore((s) => s.loaded)
+  const setCloseBehavior = useWindowStore((s) => s.setCloseBehavior)
+
+  useEffect(() => {
+    useWindowStore.getState().loadCloseBehavior()
+  }, [])
+
+  const options: { value: CloseBehavior; icon: React.ReactNode }[] = [
+    { value: 'ask', icon: <MessageSquare size={15} /> },
+    { value: 'minimize', icon: <Minus size={15} /> },
+    { value: 'quit', icon: <LogOut size={15} /> },
+  ]
+
+  return (
+    <div className="max-w-md space-y-5">
+      <div className="space-y-1.5">
+        <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
+          {windowT('closeBehaviorLabel')}
+        </p>
+        <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+          {windowT('closeBehaviorDesc')}
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {options.map((opt) => {
+          const active = closeBehavior === opt.value
+          return (
+            <button
+              key={opt.value}
+              disabled={!loaded}
+              onClick={() => setCloseBehavior(opt.value)}
+              className={cn(
+                'flex items-start gap-3 w-full px-4 py-3 rounded-xl text-left transition-all duration-200 disabled:opacity-60',
+                active
+                  ? 'border border-[var(--color-accent)]'
+                  : 'border border-[var(--color-border)] hover:bg-[var(--color-hover)]',
+              )}
+              style={{
+                backgroundColor: active
+                  ? 'color-mix(in srgb, var(--color-accent) 6%, var(--color-panel))'
+                  : 'var(--color-panel)',
+              }}
+            >
+              <span
+                className="mt-0.5 flex-shrink-0"
+                style={{ color: active ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+              >
+                {opt.icon}
+              </span>
+              <span className="flex-1 min-w-0">
+                <span
+                  className="block text-sm font-medium"
+                  style={{ color: active ? 'var(--color-accent)' : 'var(--color-text)' }}
+                >
+                  {windowT(`option_${opt.value}`)}
+                </span>
+                <span className="block text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                  {windowT(`option_${opt.value}Desc`)}
+                </span>
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+        {windowT('hint')}
+      </p>
     </div>
   )
 }

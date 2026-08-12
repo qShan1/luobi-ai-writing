@@ -1132,6 +1132,24 @@
   animation: scale-in 0.2s var(--ease-out) forwards;
 }
 
+/* ===== Popover / 下拉菜单入场 =====
+   Origin-aware 缩放（Emil 标准）：从触发点展开，而不是居中缩放。
+   - .menu-pop      用于 bottom-full 弹出的菜单（原点在底部，向上展开）
+   - .menu-pop-top  用于 top-full 弹出的菜单（原点在顶部，向下展开）
+   快速 160ms ease-out，reduced-motion 由全局规则统一降级。 */
+.menu-pop {
+  transform-origin: bottom left;
+  animation: menu-pop-in 0.16s var(--ease-out);
+}
+.menu-pop-top {
+  transform-origin: top right;
+  animation: menu-pop-in 0.16s var(--ease-out);
+}
+@keyframes menu-pop-in {
+  from { opacity: 0; transform: scale(0.96) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 /* 弹跳入场动画 */
 .animate-bounce-in {
   animation: bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;

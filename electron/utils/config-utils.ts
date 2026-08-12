@@ -34,12 +34,18 @@ export function readJsonFile<T>(filePath: string, fallback: T): T {
     if (fs.existsSync(filePath)) {
       // JSON files created by Windows tools may begin with a UTF-8 BOM.
       const raw = fs.readFileSync(filePath, 'utf-8').replace(/^\uFEFF/, '')
-      return JSON.parse(raw)
+      return JSON.parse(raw) as T
     }
   } catch (error) {
     console.warn(`[Luobi] 读取 ${filePath} 失败:`, error)
   }
   return fallback
+}
+
+/** 读取 JSON 并强制校验为数组，损坏/非数组数据回退为空数组（防止 .filter 崩溃） */
+export function readJsonArray<T>(filePath: string): T[] {
+  const value = readJsonFile<T[]>(filePath, [])
+  return Array.isArray(value) ? value : []
 }
 
 export function writeJsonFile(filePath: string, data: unknown) {
@@ -57,6 +63,7 @@ export const DEFAULT_GLOBAL_CONFIG: GlobalConfig = {
   editorFontSize: 16,
   editorFontFamily: 'Noto Serif SC',
   autoSaveInterval: 30,
+  closeBehavior: 'ask',
   proxy: {
     enabled: false,
     type: 'http',

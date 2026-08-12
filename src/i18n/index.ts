@@ -10,6 +10,7 @@ import zhCNPages from './locales/zh-CN/pages.json'
 import zhCNStores from './locales/zh-CN/stores.json'
 import zhCNSettings from './locales/zh-CN/settings.json'
 import zhCNCommands from './locales/zh-CN/commands.json'
+import zhCNWindow from './locales/zh-CN/window.json'
 
 import enCommon from './locales/en/common.json'
 import enDialogs from './locales/en/dialogs.json'
@@ -20,6 +21,7 @@ import enPages from './locales/en/pages.json'
 import enStores from './locales/en/stores.json'
 import enSettings from './locales/en/settings.json'
 import enCommands from './locales/en/commands.json'
+import enWindow from './locales/en/window.json'
 
 import ruCommon from './locales/ru/common.json'
 import ruDialogs from './locales/ru/dialogs.json'
@@ -30,6 +32,7 @@ import ruPages from './locales/ru/pages.json'
 import ruStores from './locales/ru/stores.json'
 import ruSettings from './locales/ru/settings.json'
 import ruCommands from './locales/ru/commands.json'
+import ruWindow from './locales/ru/window.json'
 
 const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined'
 
@@ -45,6 +48,7 @@ const i18nConfig: Parameters<typeof i18n.init>[0] = {
       stores: zhCNStores,
       settings: zhCNSettings,
       commands: zhCNCommands,
+      window: zhCNWindow,
     },
     en: {
       common: enCommon,
@@ -56,6 +60,7 @@ const i18nConfig: Parameters<typeof i18n.init>[0] = {
       stores: enStores,
       settings: enSettings,
       commands: enCommands,
+      window: enWindow,
     },
     ru: {
       common: ruCommon,
@@ -67,10 +72,11 @@ const i18nConfig: Parameters<typeof i18n.init>[0] = {
       stores: ruStores,
       settings: ruSettings,
       commands: ruCommands,
+      window: ruWindow,
     },
   },
   fallbackLng: 'zh-CN',
-  ns: ['common', 'dialogs', 'editors', 'panels', 'layout', 'pages', 'stores', 'settings', 'commands'],
+  ns: ['common', 'dialogs', 'editors', 'panels', 'layout', 'pages', 'stores', 'settings', 'commands', 'window'],
   defaultNS: 'common',
   interpolation: {
     escapeValue: false,
@@ -101,9 +107,9 @@ if (isBrowser) {
   i18n.on('languageChanged', (lng) => {
     document.documentElement.lang = lng === 'ru' ? 'ru' : lng === 'en' ? 'en' : 'zh-CN'
     const titles: Record<string, string> = {
-      'ru': 'Luobi — ИИ-редактор для написания романов',
-      'en': 'Luobi — AI Novel Writing IDE',
-      'zh-CN': '落笔 — AI 小说创作 IDE',
+      'ru': 'Luobi �?ИИ-редактор для написания романов',
+      'en': 'Luobi �?AI Novel Writing IDE',
+      'zh-CN': '落笔 �?AI 小说创作 IDE',
     }
     document.title = titles[lng] || titles['zh-CN']
   })

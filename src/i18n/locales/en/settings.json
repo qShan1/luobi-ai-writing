@@ -17,6 +17,8 @@
     "proxyDesc": "Configure HTTP / SOCKS5 proxy for restricted API access",
     "editorDesc": "Font size, auto-save and other editor preferences",
     "effectsDesc": "Liquid glass texture, elasticity and refraction effects",
+    "window": "Window & Tray",
+    "windowDesc": "Behavior when closing the window and system tray",
     "promptsDesc": "Customize prompt templates for AI writing stages",
     "aboutDesc": "Business collaboration and developer sponsorship"
   },

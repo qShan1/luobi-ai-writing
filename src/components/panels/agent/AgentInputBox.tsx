@@ -28,7 +28,7 @@ export default function AgentInputBox() {
   const { t } = useTranslation('panels')
   const [inputText, setInputText] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const { generating, sendMessage, cancelGeneration, getActiveConversation, setMode, setModelId } = useAgentStore()
+  const { generating, sendMessage, cancelGeneration, getActiveConversation, setMode, setModelId, defaultMode } = useAgentStore()
   const models = useLLMStore(s => s.models)
   const defaultModelId = useLLMStore(s => s.defaultModelId)
 
@@ -36,7 +36,8 @@ export default function AgentInputBox() {
   const chatModels = models.filter(m => !(m.purposes.length === 1 && m.purposes[0] === 'embedding'))
 
   const activeConv = getActiveConversation()
-  const currentMode = activeConv?.mode ?? 'planning'
+  // 空对话（首次进入）时回退到 defaultMode，确保模式选择能即时反映到 UI
+  const currentMode = activeConv?.mode ?? defaultMode
   const currentModelId = activeConv?.modelId ?? defaultModelId
 
   // 找到当前模型信息
@@ -217,7 +218,7 @@ export default function AgentInputBox() {
       {/* 上下文菜单（+ 按钮弹出） */}
       {showContextMenu && (
         <div
-          className="absolute bottom-[calc(100%+8px)] left-0 z-50 py-1 rounded-lg shadow-lg"
+          className="menu-pop absolute bottom-[calc(100%+8px)] left-0 z-50 py-1 rounded-lg shadow-lg"
           style={{
             width: 180,
             backgroundColor: 'var(--color-sidebar)',
@@ -295,7 +296,7 @@ export default function AgentInputBox() {
                 setShowModelMenu(false)
                 setShowModeMenu(v => !v)
               }}
-              className="flex items-center gap-0.5 py-1 pl-1 pr-1.5 rounded-md text-xs transition-colors"
+              className="active-press flex items-center gap-0.5 py-1 pl-1 pr-1.5 rounded-md text-xs transition-colors"
               style={{
                 color: 'var(--color-text-secondary)',
                 opacity: 0.75,
@@ -316,7 +317,7 @@ export default function AgentInputBox() {
             {/* 模式选择下拉 */}
             {showModeMenu && (
               <div
-                className="absolute bottom-full left-0 mb-1 z-50 py-1 rounded-lg shadow-lg"
+                className="menu-pop absolute bottom-full left-0 mb-1 z-50 py-1 rounded-lg shadow-lg"
                 style={{
                   width: 240,
                   backgroundColor: 'var(--color-sidebar)',
@@ -353,7 +354,7 @@ export default function AgentInputBox() {
                 setShowModeMenu(false)
                 setShowModelMenu(v => !v)
               }}
-              className="flex items-center gap-0.5 py-1 pl-0.5 pr-1.5 rounded-md text-xs min-w-0 transition-colors"
+              className="active-press flex items-center gap-0.5 py-1 pl-0.5 pr-1.5 rounded-md text-xs min-w-0 transition-colors"
               style={{
                 color: 'var(--color-text-secondary)',
                 opacity: 0.75,
@@ -377,7 +378,7 @@ export default function AgentInputBox() {
             {/* 模型选择下拉 */}
             {showModelMenu && (
               <div
-                className="absolute bottom-full left-0 mb-1 z-50 py-1 rounded-lg shadow-lg"
+                className="menu-pop absolute bottom-full left-0 mb-1 z-50 py-1 rounded-lg shadow-lg"
                 style={{
                   width: 220,
                   backgroundColor: 'var(--color-sidebar)',
@@ -459,7 +460,7 @@ function ToolbarIconBtn({
     <button
       title={title}
       onClick={onClick}
-      className="flex items-center justify-center p-1 rounded-full transition-colors"
+      className="active-press flex items-center justify-center p-1 rounded-full transition-colors"
       style={{ color: 'var(--color-text-secondary)', opacity: 0.75 }}
       onMouseEnter={e => {
         e.currentTarget.style.backgroundColor = 'var(--color-hover)'

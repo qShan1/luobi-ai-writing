@@ -23,6 +23,9 @@ export interface ConfigChannels {
   }
 }
 
+/** 关闭窗口时的行为策略 */
+export type CloseBehavior = 'ask' | 'minimize' | 'quit'
+
 export interface GlobalConfig {
   theme: string
   defaultModelId: string | null
@@ -30,6 +33,8 @@ export interface GlobalConfig {
   editorFontSize: number
   editorFontFamily: string
   autoSaveInterval: number
+  /** 点击关闭按钮时的行为：询问 / 最小化到托盘 / 直接退出 */
+  closeBehavior?: CloseBehavior
   proxy?: {
     enabled: boolean
     type: 'http' | 'socks5'
@@ -495,15 +500,45 @@ export interface MCPChannels {
   'mcp:get-config-path': { args: []; return: string }
 }
 
+// ===== 窗口控制（托盘 / 关闭行为） =====
+export interface WindowChannels {
+  /** 强制退出应用（托盘菜单/确定退出时调用） */
+  'window:quit': {
+    args: []
+    return: { success: boolean }
+  }
+  /** 最小化到系统托盘 */
+  'window:minimize-to-tray': {
+    args: []
+    return: { success: boolean }
+  }
+  /** 显示/还原主窗口 */
+  'window:show': {
+    args: []
+    return: { success: boolean }
+  }
+  /** 获取当前关闭行为策略 */
+  'window:get-close-behavior': {
+    args: []
+    return: CloseBehavior
+  }
+}
+
+/** 主进程 → 渲染进程事件 */
+export interface WindowEvents {
+  /** 用户点击关闭按钮且策略为「询问」时，通知渲染进程弹出选择弹窗 */
+  'window:close-requested': Record<string, never>
+}
+
 // ===== 合并所有频道 =====
-export type AllInvokeChannels = ConfigChannels & ProjectChannels & FileChannels & LLMChannels & DatabaseChannels & KnowledgeBaseChannels & ImportChannels & MCPChannels
+export type AllInvokeChannels = ConfigChannels & ProjectChannels & FileChannels & LLMChannels & DatabaseChannels & KnowledgeBaseChannels & ImportChannels & MCPChannels & WindowChannels
 
 /** 主进程 → 渲染进程事件 */
 export interface MCPStreamEvents {
   'mcp:status-change': { serverId: string; status: string; error?: string }
   'mcp:tools-change': { tools: unknown[] }
 }
-export type AllEventChannels = LLMStreamEvents & MCPStreamEvents
+export type AllEventChannels = LLMStreamEvents & MCPStreamEvents & WindowEvents
 
 /** 提取 invoke 频道名 */
 export type InvokeChannel = keyof AllInvokeChannels

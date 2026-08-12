@@ -7,6 +7,7 @@ import { useLLMStore } from './stores/llm-store'
 import { useProjectStore } from './stores/project-store'
 import { useMCPStore } from './stores/mcp-store'
 import { useWorkflowStore } from './stores/workflow-store'
+import { useWindowStore } from './stores/window-store'
 import { ipc } from './services/ipc-client'
 import TitleBar from './components/layout/TitleBar'
 import StatusBar from './components/layout/StatusBar'
@@ -22,6 +23,7 @@ import ImportNovelDialog from './components/dialogs/ImportNovelDialog'
 import ChapterCreationDialog from './components/dialogs/ChapterCreationDialog'
 import ExportDialog from './components/dialogs/ExportDialog'
 import SettingsModal from './components/settings/SettingsModal'
+import CloseBehaviorDialog from './components/dialogs/CloseBehaviorDialog'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { actionToast } from './components/ui/ActionToast'
 import { globalEventBus } from './shared/event-bus'
@@ -82,12 +84,14 @@ export default function App() {
   const closeChapterCreation = useLayoutStore(s => s.closeChapterCreation)
   const initLLM = useLLMStore((s) => s.init)
   const loadRecentProjects = useProjectStore((s) => s.loadRecentProjects)
+  const loadCloseBehavior = useWindowStore((s) => s.loadCloseBehavior)
 
   // 初始化：主题 + LLM 模型 + 最近项目 + 缩放级别
   useEffect(() => {
     initTheme()
     initLLM()
     loadRecentProjects()
+    loadCloseBehavior()
     // 初始化 MCP Store
     useMCPStore.getState().init().catch(e => console.warn('[MCP] 初始化失败:', e))
     if (ipc.isElectron) {
@@ -118,7 +122,7 @@ export default function App() {
       }).catch(() => {})
       unsubActionToast()
     }
-  }, [initTheme, initLLM, loadRecentProjects, t])
+  }, [initTheme, initLLM, loadRecentProjects, loadCloseBehavior, t])
 
   // 全局快捷键: Cmd+N 新建项目，Cmd+O 打开项目
   // 注意：Cmd+=/- 缩放已由 TitleBar.tsx 统一处理，此处不重复注册
@@ -259,6 +263,9 @@ export default function App() {
         open={settingsOpen}
         onClose={closeSettings}
       />
+
+      {/* 关闭行为「询问」弹窗 — 监听主进程 close-requested 事件 */}
+      <CloseBehaviorDialog />
 
     </div>
   )

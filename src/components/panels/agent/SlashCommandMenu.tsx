@@ -63,7 +63,7 @@ export default function SlashCommandMenu({ query, onSelect, onClose, position }:
   return (
     <div
       ref={menuRef}
-      className="absolute z-50 py-1 rounded-lg shadow-lg"
+      className="menu-pop absolute z-50 py-1 rounded-lg shadow-lg"
       style={{
         bottom: position?.bottom ?? 'calc(100% + 4px)',
         left: position?.left ?? 0,

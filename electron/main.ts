@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron'
 import { registerIPCHandlers } from './ipc-handlers'
 import { registerMCPHandlers } from './mcp/mcp-ipc-bridge'
+import { registerWindowController, registerWindowCloseBehavior } from './controllers/window-controller'
 
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -48,6 +49,9 @@ function createWindow() {
   // 隐藏默认菜单栏（Windows/Linux）
   win.setMenuBarVisibility(false)
 
+  // 拦截关闭行为（最小化到托盘 / 询问 / 退出）
+  registerWindowCloseBehavior(win)
+
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
   } else {
@@ -73,5 +77,6 @@ app.on('activate', () => {
 app.whenReady().then(() => {
   registerIPCHandlers()
   registerMCPHandlers()
+  registerWindowController()
   createWindow()
 })

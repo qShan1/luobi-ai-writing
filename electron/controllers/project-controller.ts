@@ -2,7 +2,7 @@ import { ipcMain, dialog } from 'electron'
 import { randomUUID } from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
-import { readJsonFile, writeJsonFile, RECENT_PROJECTS_PATH } from '../utils/config-utils'
+import { readJsonArray, writeJsonFile, RECENT_PROJECTS_PATH } from '../utils/config-utils'
 import { ProjectData } from '../../src/shared/ipc-channels'
 import { DIR_LUOBI_INTERNAL, DIR_PROMPTS } from '../../src/shared/project-paths'
 import { initProjectDatabase } from '../database'
@@ -15,7 +15,7 @@ interface RecentProject {
 }
 
 function loadRecentProjects(): RecentProject[] {
-  return readJsonFile<RecentProject[]>(RECENT_PROJECTS_PATH, [])
+  return readJsonArray<RecentProject>(RECENT_PROJECTS_PATH)
 }
 
 function addRecentProject(project: RecentProject) {

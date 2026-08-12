@@ -17,6 +17,8 @@
     "proxyDesc": "配置 HTTP / SOCKS5 代理，用于访问受限 API",
     "editorDesc": "字体大小、自动保存等编辑器偏好设置",
     "effectsDesc": "液态玻璃质感、弹性与折射效果",
+    "window": "窗口与托盘",
+    "windowDesc": "关闭窗口时的行为与系统托盘",
     "promptsDesc": "自定义 AI 创作各环节使用的提示词模板",
     "aboutDesc": "版本信息与本地创作说明"
   },

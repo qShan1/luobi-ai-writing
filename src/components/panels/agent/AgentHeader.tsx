@@ -112,7 +112,7 @@ export default function AgentHeader() {
           {/* 更多菜单下拉 */}
           {showMore && (
             <div
-              className="absolute right-0 top-full mt-1 z-50 py-1 rounded-lg shadow-lg"
+              className="menu-pop-top absolute right-0 top-full mt-1 z-50 py-1 rounded-lg shadow-lg"
               style={{
                 width: subView === 'main' ? 200 : 260,
                 backgroundColor: 'var(--color-sidebar)',

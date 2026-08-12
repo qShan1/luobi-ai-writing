@@ -1,0 +1,17 @@
+{
+  "title": "Close Luobi",
+  "description": "Minimize Luobi to the system tray, or quit completely?",
+  "minimizeToTray": "Minimize to tray",
+  "quit": "Quit completely",
+  "remember": "Remember my choice",
+  "cancel": "Cancel",
+  "closeBehaviorLabel": "Behavior when closing the window",
+  "closeBehaviorDesc": "What to do when the close button is clicked",
+  "option_ask": "Ask every time",
+  "option_askDesc": "Show a dialog each time you close the window",
+  "option_minimize": "Minimize to tray",
+  "option_minimizeDesc": "Hide to the tray and keep running in the background",
+  "option_quit": "Quit directly",
+  "option_quitDesc": "Close the window and exit the app",
+  "hint": "Tip: with 'Minimize to tray', double-click the tray icon to quickly restore the window."
+}
