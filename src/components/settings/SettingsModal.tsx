@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import {
   X, Plus, Trash2, Check, Save, Globe, Cpu, Database,
   Type, Settings2, Zap, Eye, EyeOff, ChevronDown, MessageSquare,
-  Languages, Sparkles, PanelBottomClose, Minus, LogOut,
+  Languages, Sparkles, PanelBottomClose, Minus, LogOut, Search,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../i18n'
@@ -817,10 +817,18 @@ function FontSelect({
   value: FontId
   onChange: (id: FontId) => void
 }) {
+  const { t } = useTranslation('settings')
   const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
   const [options, setOptions] = useState(FONT_OPTIONS)
   const ref = useRef<HTMLDivElement>(null)
   const current = options.find((o) => o.id === value) ?? FONT_OPTIONS[0]
+
+  // 按关键字过滤字体（大小写不敏感，匹配名称 / 英文名 / 描述）
+  const q = search.trim().toLowerCase()
+  const filtered = q
+    ? options.filter((o) => `${o.label} ${o.labelEn} ${o.desc}`.toLowerCase().includes(q))
+    : options
 
   useEffect(() => {
     ipc.invoke('config:list-system-fonts').then((fonts) => {
@@ -887,7 +895,27 @@ function FontSelect({
             boxShadow: 'var(--shadow-lg)',
           }}
         >
-          {options.map((opt) => (
+          {/* 搜索框 */}
+          <div className="flex items-center gap-1.5 px-2.5 py-2 border-b" style={{ borderColor: 'var(--color-border)' }}>
+            <Search size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('settingsFont.searchPlaceholder')}
+              autoFocus
+              className="w-full bg-transparent outline-none text-xs"
+              style={{ color: 'var(--color-text)' }}
+            />
+          </div>
+
+          {/* 列表 */}
+          <div className="max-h-[260px] overflow-y-auto">
+          {filtered.length === 0 && (
+            <div className="px-3 py-4 text-xs text-center" style={{ color: 'var(--color-text-muted)' }}>
+              {t('settingsFont.noMatch')}
+            </div>
+          )}
+          {filtered.map((opt) => (
             <button
               key={opt.id}
               onClick={() => { onChange(opt.id); setOpen(false) }}
@@ -935,6 +963,7 @@ function FontSelect({
               </span>
             </button>
           ))}
+          </div>
         </div>
       )}
     </div>

@@ -233,6 +233,10 @@
     "noto-serif-sc": { "label": "思源宋体", "desc": "宋体风格，字形端正，印刷质感强，正式文稿首选" },
     "system": { "label": "系统默认", "desc": "macOS 使用苹方/SF Pro，原生手感，无需字体文件" }
   },
+  "settingsFont": {
+    "searchPlaceholder": "搜索字体…",
+    "noMatch": "没有匹配的字体"
+  },
   "modelsProviders": {
     "ollama": "Ollama（本地）",
     "bigmodel": "BigModel（智谱）",

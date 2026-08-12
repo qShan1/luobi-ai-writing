@@ -133,9 +133,14 @@ export default function ProjectTree() {
       isDir: false,
     })) as Array<{ path: string; name: string; isDir: boolean }>
 
-  // 小说配置是否已完成（核心大纲非空视为已完成）
+  // 小说配置是否已完成（核心 AI 生成字段全部填完才算完成，避免只生成一个就误判）
   const nc = currentProject.novelConfig
-  const configDone = !!(nc.coreOutline?.trim() || nc.protagonistProfile?.trim())
+  const configDone = !!(
+    nc.coreOutline?.trim()
+    && nc.protagonistProfile?.trim()
+    && nc.worldSetting?.trim()
+    && nc.goldenFinger?.trim()
+  )
 
   // 故事架构进度
   const archDone = ARCH_FILES.filter(f => archStatus[f.key]).length

@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { FolderOpen, Clock, BookOpen, FileUp, Plus } from 'lucide-react'
 import { useProjectStore } from '../../stores/project-store'
+import { useThemeStore } from '../../stores/theme-store'
 import GlassSurface from '../effects/GlassSurface'
 
 interface WelcomePageProps {
@@ -14,13 +15,15 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
   const recentProjects = useProjectStore(s => s.recentProjects)
   const openProject = useProjectStore(s => s.openProject)
   const currentProject = useProjectStore(s => s.currentProject)
+  const theme = useThemeStore(s => s.theme)
+  const logoSrc = theme === 'dark' || theme === 'galaxy' ? './luobi-logo-white.svg' : './luobi-logo.svg'
 
   return (
     <div className="welcome-shell w-full h-full overflow-y-auto">
       <div className="welcome-content max-w-4xl w-full mx-auto px-10 py-12">
         <div className="welcome-hero mb-8">
           <div className="welcome-brand-row">
-            <img className="welcome-logo" src="./luobi-icon.svg" alt="落笔" />
+            <img className="welcome-logo" src={logoSrc} alt="落笔" />
             <div>
               <h1 className="welcome-title" style={{ color: 'var(--color-text)' }}>
                 {currentProject ? currentProject.name : '开始一部作品'}

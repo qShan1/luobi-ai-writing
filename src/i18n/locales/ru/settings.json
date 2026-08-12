@@ -234,6 +234,10 @@
     "noto-serif-sc": { "label": "思源宋体", "desc": "Антиквенный стиль, правильные формы букв, сильная печатная подача, идеален для формальных документов" },
     "system": { "label": "Системный", "desc": "На macOS использует PingFang/SF Pro, нативный вид, не требует файлов шрифтов" }
   },
+  "settingsFont": {
+    "searchPlaceholder": "Поиск шрифтов…",
+    "noMatch": "Нет подходящих шрифтов"
+  },
   "modelsProviders": {
     "ollama": "Ollama (Локальный)",
     "bigmodel": "BigModel (Чжипу)",

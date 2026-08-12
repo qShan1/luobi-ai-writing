@@ -48,7 +48,15 @@ export default function GlassSurface({
     return (
       <div
         className={className}
-        style={{ borderRadius: cornerRadius, padding, ...style }}
+        style={{
+          borderRadius: cornerRadius,
+          padding,
+          // 关闭玻璃后提供正常面板质感，避免卡片纯白突兀
+          backgroundColor: 'var(--color-panel)',
+          border: '1px solid var(--color-border)',
+          boxShadow: 'var(--shadow-sm)',
+          ...style,
+        }}
         onClick={onClick}
         title={title}
         role={role}

@@ -233,6 +233,10 @@
     "noto-serif-sc": { "label": "Noto Serif SC", "desc": "Serif style, upright letterforms, strong print feel, ideal for formal documents" },
     "system": { "label": "System Default", "desc": "Uses PingFang/SF Pro on macOS, native feel, no font files needed" }
   },
+  "settingsFont": {
+    "searchPlaceholder": "Search fonts…",
+    "noMatch": "No matching fonts"
+  },
   "modelsProviders": {
     "ollama": "Ollama (Local)",
     "bigmodel": "BigModel (Zhipu)",
