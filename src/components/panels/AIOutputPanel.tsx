@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'motion/react'
 import { CheckCircle2, Loader2, Circle, Sparkles, X, ChevronRight, StopCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useWorkflowStore, type WorkflowRun, type WorkflowStep } from '../../stores/workflow-store'
@@ -318,7 +319,12 @@ function StepOutputBlock({ step, index, total, isActiveRun, isCurrentStep }: { s
   }, [isCurrentStep])
 
   return (
-    <div className="mb-1.5">
+    <motion.div
+      className="mb-1.5"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+    >
       {/* 头部摘要项，点击折叠/展开 */}
       <div
         onClick={() => { if (rawText) setExpanded(!expanded) }}
@@ -402,7 +408,7 @@ function StepOutputBlock({ step, index, total, isActiveRun, isCurrentStep }: { s
           {t('aiPanel.waitingResponse')}
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
 

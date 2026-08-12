@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import {
   Trash2, ChevronsDown, Loader2, CheckCircle2, XCircle, Clock,
   Play, X, ChevronDown, ChevronRight, Zap,
@@ -77,9 +78,20 @@ export default function BottomPanel() {
 
       {/* 内容区 */}
       <div className="flex-1 overflow-hidden">
-        {activeTab === 'tasks'  && <TaskRunView />}
-        {activeTab === 'log'    && <LogsView />}
-        {activeTab === 'models' && <ModelsView />}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeTab}
+            className="w-full h-full"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+          >
+            {activeTab === 'tasks'  && <TaskRunView />}
+            {activeTab === 'log'    && <LogsView />}
+            {activeTab === 'models' && <ModelsView />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   )
@@ -112,20 +124,29 @@ function TaskRunView() {
       {/* 活跃任务列表（支持多个并行） */}
       {activeRuns.length > 0 && (
         <div className="flex-shrink-0" style={{ borderBottom: history.length > 0 ? '1px solid var(--color-border)' : undefined }}>
-          {activeRuns.map((run, idx) => {
-            const runWaiting = waitingRuns[run.id]
-            return (
-              <div key={run.id} style={{ borderBottom: idx < activeRuns.length - 1 ? '1px solid var(--color-border)' : undefined }}>
-                <ActiveRunPanel
-                  run={run}
-                  waitingForConfirm={runWaiting?.waitingForConfirm ?? false}
-                  waitingAfterStepIndex={runWaiting?.waitingAfterStepIndex ?? -1}
-                  onConfirm={() => confirmContinue(run.id)}
-                  onCancel={() => cancelWorkflow(run.id)}
-                />
-              </div>
-            )
-          })}
+          <AnimatePresence initial={false}>
+            {activeRuns.map((run, idx) => {
+              const runWaiting = waitingRuns[run.id]
+              return (
+                <motion.div
+                  key={run.id}
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  style={{ borderBottom: idx < activeRuns.length - 1 ? '1px solid var(--color-border)' : undefined }}
+                >
+                  <ActiveRunPanel
+                    run={run}
+                    waitingForConfirm={runWaiting?.waitingForConfirm ?? false}
+                    waitingAfterStepIndex={runWaiting?.waitingAfterStepIndex ?? -1}
+                    onConfirm={() => confirmContinue(run.id)}
+                    onCancel={() => cancelWorkflow(run.id)}
+                  />
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
         </div>
       )}
 
@@ -135,12 +156,17 @@ function TaskRunView() {
           <div className="px-4 pt-3 pb-1 text-[0.68rem] font-semibold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
             {t('bottomPanel.historyTasks')}
           </div>
-          <div className="px-2 pb-2">
-            {history.map((run) => (
-              <div
-                key={run.id}
-                className="flex items-center gap-2 px-2 py-1.5 rounded transition-colors hover:bg-[var(--color-hover)]"
-              >
+          <AnimatePresence initial={false}>
+            <div className="px-2 pb-2">
+              {history.map((run) => (
+                <motion.div
+                  key={run.id}
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                  className="flex items-center gap-2 px-2 py-1.5 rounded transition-colors hover:bg-[var(--color-hover)]"
+                >
                 {/* 状态图标 */}
                 {run.status === 'completed'
                   ? <CheckCircle2 size={12} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
@@ -158,9 +184,10 @@ function TaskRunView() {
                 <span className="text-[0.68rem] flex-shrink-0 w-14 text-right" style={{ color: 'var(--color-text-muted)' }}>
                   {new Date(run.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
                 </span>
-              </div>
+              </motion.div>
             ))}
-          </div>
+            </div>
+          </AnimatePresence>
         </div>
       )}
     </div>
@@ -264,7 +291,13 @@ function ActiveRunPanel({
 
       {/* ── 步骤详情列表（展开时显示） ── */}
       {expanded && (
-        <div className="pb-2">
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className="overflow-hidden pb-2"
+        >
           {/* 步骤列表——扁平连接器风格 */}
           <div className="px-4">
             {run.steps.map((step, i) => (
@@ -294,7 +327,7 @@ function ActiveRunPanel({
               </button>
             </div>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* ── 折叠时若等待确认：状态条下方显示简洁提示 ── */}
@@ -414,7 +447,13 @@ function WorkflowStepItem({
 
         {/* 详情区（展开时显示：日志 + 错误） */}
         {expanded && hasDetail && (
-          <div className="mb-1">
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="overflow-hidden mb-1"
+          >
             {step.error && (
               <div
                 className="text-[0.7rem] px-2 py-1 rounded mb-1"
@@ -432,7 +471,7 @@ function WorkflowStepItem({
                 ))}
               </div>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
@@ -511,10 +550,16 @@ function LogsView() {
           <div className="text-center py-8 opacity-30">{t('common.noLogs')}</div>
         )}
         {globalLogs.map((log, i) => (
-          <div key={i} className="flex gap-2">
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="flex gap-2"
+          >
             <span style={{ color: 'var(--color-text-muted)' }}>{log.time}</span>
             <span style={{ color: levelColor(log.level) }}>{log.message}</span>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

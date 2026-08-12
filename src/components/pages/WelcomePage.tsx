@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { FolderOpen, Clock, BookOpen, FileUp, Plus } from 'lucide-react'
 import { useProjectStore } from '../../stores/project-store'
 import GlassSurface from '../effects/GlassSurface'
@@ -31,40 +32,57 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
           </div>
         </div>
 
-        <div className="welcome-actions mb-10">
-          <GlassSurface
-            className="welcome-primary group"
-            cornerRadius={10}
-            padding="18px 22px"
-            onClick={onNewProject}
+        <motion.div
+          className="welcome-actions mb-10"
+          initial="hidden"
+          animate="show"
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } }}
+        >
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } } }}
           >
-            <span>
-              <span className="welcome-action-label">新建作品</span>
-              <span className="welcome-action-desc">从题材、设定和章节蓝图开始</span>
-            </span>
-            <Plus size={20} strokeWidth={1.8} />
-          </GlassSurface>
+            <GlassSurface
+              className="welcome-primary group"
+              cornerRadius={10}
+              padding="18px 22px"
+              onClick={onNewProject}
+            >
+              <span>
+                <span className="welcome-action-label">新建作品</span>
+                <span className="welcome-action-desc">从题材、设定和章节蓝图开始</span>
+              </span>
+              <Plus size={20} strokeWidth={1.8} />
+            </GlassSurface>
+          </motion.div>
 
-          <GlassSurface
-            className="welcome-secondary group"
-            cornerRadius={10}
-            padding="18px 22px"
-            onClick={onOpenProject}
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } } }}
           >
-            <FolderOpen size={18} strokeWidth={1.8} />
-            <span><span className="welcome-action-label">打开项目</span><span className="welcome-action-desc">继续本地作品</span></span>
-          </GlassSurface>
+            <GlassSurface
+              className="welcome-secondary group"
+              cornerRadius={10}
+              padding="18px 22px"
+              onClick={onOpenProject}
+            >
+              <FolderOpen size={18} strokeWidth={1.8} />
+              <span><span className="welcome-action-label">打开项目</span><span className="welcome-action-desc">继续本地作品</span></span>
+            </GlassSurface>
+          </motion.div>
 
-          <GlassSurface
-            className="welcome-secondary group"
-            cornerRadius={10}
-            padding="18px 22px"
-            onClick={onImportNovel}
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } } }}
           >
-            <FileUp size={18} strokeWidth={1.8} />
-            <span><span className="welcome-action-label">导入旧稿</span><span className="welcome-action-desc">把现有章节带入工作台</span></span>
-          </GlassSurface>
-        </div>
+            <GlassSurface
+              className="welcome-secondary group"
+              cornerRadius={10}
+              padding="18px 22px"
+              onClick={onImportNovel}
+            >
+              <FileUp size={18} strokeWidth={1.8} />
+              <span><span className="welcome-action-label">导入旧稿</span><span className="welcome-action-desc">把现有章节带入工作台</span></span>
+            </GlassSurface>
+          </motion.div>
+        </motion.div>
 
         {/* 最近项目 */}
         {recentProjects.length > 0 && (
@@ -75,29 +93,38 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
                 最近项目
               </span>
             </div>
-            <div className="space-y-1">
+            <motion.div
+              className="space-y-1"
+              initial="hidden"
+              animate="show"
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+            >
               {recentProjects.map((p, i) => (
-                <GlassSurface
+                <motion.div
                   key={i}
-                  className="group"
-                  cornerRadius={8}
-                  padding="10px 14px"
-                  onClick={() => openProject(p.path)}
+                  variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
                 >
-                  <div className="flex items-center gap-3">
-                    <BookOpen size={14} style={{ color: 'var(--color-accent)', opacity: 0.6 }} />
-                    <div className="flex-1 min-w-0">
-                      <span className="text-sm block truncate" style={{ color: 'var(--color-text)' }}>
-                        {p.name}
-                      </span>
-                      <span className="text-xs block truncate" style={{ color: 'var(--color-text-muted)' }}>
-                        {p.path}
-                      </span>
+                  <GlassSurface
+                    className="group"
+                    cornerRadius={8}
+                    padding="10px 14px"
+                    onClick={() => openProject(p.path)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <BookOpen size={14} style={{ color: 'var(--color-accent)', opacity: 0.6 }} />
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm block truncate" style={{ color: 'var(--color-text)' }}>
+                          {p.name}
+                        </span>
+                        <span className="text-xs block truncate" style={{ color: 'var(--color-text-muted)' }}>
+                          {p.path}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </GlassSurface>
+                  </GlassSurface>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         )}
 

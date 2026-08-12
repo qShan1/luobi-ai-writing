@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
 import { useLayoutStore } from '../../stores/layout-store'
 import { ContextMenu } from '../ui/ContextMenu'
@@ -53,10 +54,20 @@ export default function Sidebar() {
         </div>
       )}
       <div className="flex-1 overflow-y-auto py-1">
-        {sidebarView === 'home'       && <HomeSidebarPanel />}
-        {sidebarView === 'project'    && <ProjectTree />}
-        {sidebarView === 'knowledge'  && <KnowledgePanel />}
-        {sidebarView === 'characters' && <CharactersView />}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={sidebarView}
+            initial={{ opacity: 0, x: 4 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -4 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+          >
+            {sidebarView === 'home'       && <HomeSidebarPanel />}
+            {sidebarView === 'project'    && <ProjectTree />}
+            {sidebarView === 'knowledge'  && <KnowledgePanel />}
+            {sidebarView === 'characters' && <CharactersView />}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* 动态右键菜单 */}

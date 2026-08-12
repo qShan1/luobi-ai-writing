@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAgentStore } from '../../../stores/agent-store'
@@ -145,11 +146,20 @@ function ActiveConversation() {
         className="flex-1 overflow-y-auto px-4 py-4"
       >
         <div className="flex flex-col">
-          {activeConv.messages
-            .filter(m => m.role !== 'system')
-            .map(msg => (
-              <AgentMessage key={msg.id} message={msg} />
-            ))}
+          <AnimatePresence initial={false}>
+            {activeConv.messages
+              .filter(m => m.role !== 'system')
+              .map(msg => (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                >
+                  <AgentMessage message={msg} />
+                </motion.div>
+              ))}
+          </AnimatePresence>
         </div>
         {/* 底部空间 */}
         <div className="h-4" />
