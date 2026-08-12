@@ -32,7 +32,6 @@
     "category": "public.app-category.productivity"
   },
   "win": {
-    "signAndEditExecutable": false,
     "target": [
       {
         "target": "nsis",

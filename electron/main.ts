@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron'
 import { registerIPCHandlers } from './ipc-handlers'
 import { registerMCPHandlers } from './mcp/mcp-ipc-bridge'
-import { registerWindowController, registerWindowCloseBehavior } from './controllers/window-controller'
+import { registerWindowController, registerWindowCloseBehavior, showMainWindow } from './controllers/window-controller'
 
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -59,24 +59,36 @@ function createWindow() {
   }
 }
 
-// macOS: 关闭所有窗口不退出
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-    win = null
-  }
-})
+// 单实例锁：双击两次 / 重复启动时，不再起新实例，而是聚焦已有窗口。
+// （便携版每次运行都会自解压到临时目录，双实例极易冲突导致"打不开/很慢"）
+const gotTheLock = app.requestSingleInstanceLock()
 
-// macOS: 点击 dock 图标重新创建窗口
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    showMainWindow()
+  })
+
+  // macOS: 关闭所有窗口不退出
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+      win = null
+    }
+  })
+
+  // macOS: 点击 dock 图标重新创建窗口
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
+  })
+
+  app.whenReady().then(() => {
+    registerIPCHandlers()
+    registerMCPHandlers()
+    registerWindowController()
     createWindow()
-  }
-})
-
-app.whenReady().then(() => {
-  registerIPCHandlers()
-  registerMCPHandlers()
-  registerWindowController()
-  createWindow()
-})
+  })
+}
