@@ -37,7 +37,6 @@ src/
 ├── stores/          # Zustand 状态仓库
 ├── services/        # 业务服务（LLM, 工作流, 叙事一致性）
 ├── styles/          # 补充 CSS
-├── vendor/          # 第三方源码副本（liquid-glass）
 ├── shared/          # 主进程/渲染进程共享类型
 └── lib/             # 工具函数
 electron/            # 主进程代码
@@ -87,7 +86,7 @@ electron/            # 主进程代码
 
 ## 注意事项
 
-- liquid-glass-react 已 vendor 到 `src/vendor/liquid-glass/`，修改玻璃效果时注意同步
+
 - motion@13 已安装，import 路径是 `motion/react`（不是 `framer-motion`）
 - react-resizable-panels v4: Panel 用 `panelRef`（非 `ref`），Group 用 `onLayoutChanged`
 - Layout store 用 `clampNum`/`readNum` 防脏写（localStorage 可能存 NaN → null）
