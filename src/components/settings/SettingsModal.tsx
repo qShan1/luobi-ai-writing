@@ -1183,7 +1183,7 @@ function WindowSection() {
               disabled={!loaded}
               onClick={() => setCloseBehavior(opt.value)}
               className={cn(
-                'flex items-start gap-3 w-full px-4 py-3 rounded-xl text-left transition-all duration-200 disabled:opacity-60',
+                'flex items-start gap-3 w-full px-4 py-3 rounded-xl text-left transition-[background-color,border-color] duration-200 disabled:opacity-60',
                 active
                   ? 'border border-[var(--color-accent)]'
                   : 'border border-[var(--color-border)] hover:bg-[var(--color-hover)]',

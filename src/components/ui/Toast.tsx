@@ -140,7 +140,7 @@ function ToastItemView({ item, onRemove }: { item: ToastItem; onRemove: (id: num
       </span>
       <button
         onClick={() => onRemove(item.id)}
-        className="flex-shrink-0 p-0.5 rounded transition-all duration-150 hover:bg-[var(--color-hover)]"
+        className="flex-shrink-0 p-0.5 rounded transition-[background-color] duration-150 hover:bg-[var(--color-hover)]"
         style={{
           background: 'none',
           border: 'none',

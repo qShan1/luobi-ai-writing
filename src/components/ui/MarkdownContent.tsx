@@ -277,7 +277,7 @@ function ThinkingBlock({ content, streaming, t }: { content: string; streaming?:
 
   return (
     <div
-      className="my-2 rounded-lg overflow-hidden transition-all duration-200"
+      className="my-2 rounded-lg overflow-hidden transition-[background-color,border-color] duration-200"
       style={{
         border: '1px solid var(--color-border)',
         backgroundColor: 'rgba(var(--color-accent-rgb, 99, 102, 241), 0.03)',

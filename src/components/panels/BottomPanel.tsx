@@ -262,7 +262,7 @@ function ActiveRunPanel({
           {/* 2px 进度条 */}
           <div className="h-[2px] rounded-full overflow-hidden" style={{ backgroundColor: 'var(--color-border)' }}>
             <div
-              className="h-full rounded-full transition-all duration-500"
+              className="h-full rounded-full transition-[width] duration-500"
               style={{ width: `${progress}%`, backgroundColor: 'var(--color-accent)' }}
             />
           </div>

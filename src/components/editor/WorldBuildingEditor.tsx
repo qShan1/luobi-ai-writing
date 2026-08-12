@@ -237,7 +237,7 @@ export default function WorldBuildingEditor() {
           return (
             <div key={f.key} className="space-y-2">
               <div
-                className="rounded-lg border p-4 flex items-center gap-4 cursor-pointer transition-all"
+                className="rounded-lg border p-4 flex items-center gap-4 cursor-pointer transition-[border-color,background-color,opacity]"
                 style={{
                   borderColor: cardBorderColor,
                   backgroundColor: charExtractFailed ? 'rgba(239, 68, 68, 0.03)' : 'var(--color-panel)',
@@ -291,7 +291,7 @@ export default function WorldBuildingEditor() {
                     <Button
                       size="sm"
                       disabled={extracting}
-                      className="gap-1.5 mt-0.5 bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm hover:from-red-600 hover:to-orange-600 border-none hover:shadow hover:-translate-y-[0.5px] transition-all"
+                      className="gap-1.5 mt-0.5 bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm hover:from-red-600 hover:to-orange-600 border-none hover:shadow hover:-translate-y-[0.5px] transition-[box-shadow,transform]"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleExtractCharacters()

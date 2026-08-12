@@ -60,7 +60,7 @@ const DialogContent = React.forwardRef<
     >
       {children}
       <DialogPrimitive.Close
-        className="absolute right-4 top-4 rounded-md opacity-60 hover:opacity-100 transition-all duration-200 hover:bg-[var(--color-hover)] p-1"
+        className="absolute right-4 top-4 rounded-md opacity-60 hover:opacity-100 transition-[opacity,background-color] duration-200 hover:bg-[var(--color-hover)] p-1"
         style={{
           background: 'transparent',
           border: 'none',

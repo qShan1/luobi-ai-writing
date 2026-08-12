@@ -224,7 +224,7 @@ export default function ArchitectureConfirmDialog({
                 >
                   {/* 复选框 */}
                   <div
-                    className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0 transition-all"
+                    className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0 transition-[background-color,border-color]"
                     style={{
                       backgroundColor: isChecked ? 'var(--color-accent)' : 'transparent',
                       border: `1.5px solid ${isChecked ? 'var(--color-accent)' : 'var(--color-border)'}`,

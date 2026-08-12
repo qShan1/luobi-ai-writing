@@ -187,7 +187,7 @@ function ActiveRunView({
             <button
               key={r.id}
               onClick={() => onSwitchRun(r.id)}
-              className="text-[0.68rem] px-2 py-0.5 rounded transition-all flex-shrink-0"
+              className="text-[0.68rem] px-2 py-0.5 rounded transition-[background-color,color] flex-shrink-0"
               style={{
                 backgroundColor: r.id === run.id ? 'var(--color-hover)' : 'transparent',
                 color: r.id === run.id ? 'var(--color-text)' : 'var(--color-text-muted)',
@@ -252,7 +252,7 @@ function ActiveRunView({
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
           <button
             onClick={() => cancelWorkflow(run.id)}
-            className="flex items-center justify-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-all shadow-md backdrop-blur-md"
+            className="flex items-center justify-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-[color,background-color,border-color] shadow-md backdrop-blur-md"
             style={{
               color: 'var(--color-text)',
               backgroundColor: 'var(--color-hover)',

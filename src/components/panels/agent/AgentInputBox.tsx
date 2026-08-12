@@ -418,7 +418,7 @@ export default function AgentInputBox() {
           <button
             onClick={handleSendOrStop}
             disabled={!generating && !canSend}
-            className="flex items-center justify-center w-6 h-6 transition-all duration-150"
+            className="flex items-center justify-center w-6 h-6 transition-[background-color,opacity] duration-150"
             style={{
               borderRadius: 'var(--radius-md)',
               backgroundColor: generating

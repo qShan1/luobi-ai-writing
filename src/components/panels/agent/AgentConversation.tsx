@@ -80,7 +80,7 @@ function EmptyState() {
             {conversations.filter(c => c.messages.length > 0).length > 3 && (
               <button
                 onClick={() => useAgentStore.getState().setShowHistory(true)}
-                className="mt-4 text-left text-xs transition-all hover:underline"
+                className="mt-4 text-left text-xs transition-[color,opacity] hover:underline"
                 style={{ color: 'var(--color-text-muted)' }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
@@ -169,7 +169,7 @@ function ActiveConversation() {
       {!isAtBottom && (
         <button
           onClick={scrollToBottom}
-          className="absolute z-10 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-all"
+          className="absolute z-10 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-[border-color,color]"
           style={{
             right: 16,
             bottom: 100,
@@ -222,7 +222,7 @@ function AgentToolbar() {
       {/* 右侧：打开 AI 输出面板 */}
       <button
         onClick={() => openRightPanel('ai-output')}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all select-none"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-[background-color,color] select-none"
         style={{
           color: 'var(--color-text-muted)',
           border: '1px solid var(--color-border)',
