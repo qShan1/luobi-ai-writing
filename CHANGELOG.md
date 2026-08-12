@@ -1,4 +1,29 @@
+# CHANGELOG
+
+## v0.1.0 (2026-08-12) — 稳定性、品牌与体验优化
+
+### 稳定性与功能修复
+- **系统托盘**：关闭窗口支持「询问 / 最小化到托盘 / 退出」三种策略，托盘常驻、双击还原，设置面板可配置
+- **修复应用无法启动**：`registerWindowController` 重复注册导致 IPC 二次注册冲突、`createWindow` 从未执行（窗口/渲染进程缺失）
+- **单实例锁**：重复双击/启动只聚焦已有窗口，不再堆积后台实例、互相冲突
+- **修复「只生成一个字段就显示配置完成」**：小说配置完成需核心大纲/主角/世界观/金手指全部填完
+- **修复便携版/安装版打不开**：上述 IPC 冲突根因
+
+### 品牌与图标
+- 全部 exe / 应用图标统一为「落笔」毛笔 logo（`luobi-icon` / `luobi-logo`）
+- 欢迎页与标题栏统一使用带文字的横幅 logo（按主题切换深/浅色版）
+- 清理废弃的 `liquid-glass-react` 第三方依赖与 `src/vendor/liquid-glass` 副本
+
+### 体验与动画（emil-design-eng + apple-design 标准）
+- 13 个文件 `transition-all` → 具体属性列表，消除过渡性能开销
+- 下拉/弹层 origin-aware 缩放入场、按钮按压反馈、hover 门控、`prefers-reduced-motion`
+- 玻璃卡片 **materialize** 入场（blur + scale + fade），而非纯淡入
+- 字体下拉增加**搜索过滤**
+
+---
+
 # CHANGELOG — PR #13「Luobi Lite」修复
+
 
 > 审计 + 修复 + 验证：5 个 patch 文件 + 23 个漏洞 + 72 个回归测试
 
