@@ -8,6 +8,7 @@ import {
   sleep,
   createTimeoutSignal,
   STREAM_FIRST_BYTE_TIMEOUT_MS,
+  STREAM_TOTAL_TIMEOUT_MS,
   readErrorBody,
 } from './http-utils'
 
@@ -115,6 +116,7 @@ export class GeminiProvider implements ILLMProvider {
   }
 
   async generateStream(model: ModelProfile, messages: Array<{ role: string; content: string }>, opts: LLMStreamOptions): Promise<void> {
+    const totalSignal = createTimeoutSignal(opts.signal, STREAM_TOTAL_TIMEOUT_MS)
     try {
       const baseUrl = model.baseUrl.replace(/\/$/, '')
       const url = `${baseUrl}/v1beta/models/${model.modelName}:streamGenerateContent?alt=sse`
@@ -125,7 +127,7 @@ export class GeminiProvider implements ILLMProvider {
       let res: Response | null = null
       let activeCleanup: (() => void) | null = null
       for (let attempt = 0; attempt <= 2; attempt++) {
-        const { signal, cleanup } = createTimeoutSignal(opts.signal, STREAM_FIRST_BYTE_TIMEOUT_MS)
+        const { signal, cleanup } = createTimeoutSignal(totalSignal.signal, STREAM_FIRST_BYTE_TIMEOUT_MS)
         activeCleanup?.()
         activeCleanup = cleanup
         try {
@@ -140,7 +142,7 @@ export class GeminiProvider implements ILLMProvider {
           res = null
           await sleep(500 * 2 ** attempt)
         } catch (error) {
-          if (attempt < 2 && isRetryableNetworkError(error) && !opts.signal?.aborted) {
+          if (attempt < 2 && isRetryableNetworkError(error) && !totalSignal.signal.aborted) {
             await sleep(500 * 2 ** attempt)
             continue
           }
@@ -156,9 +158,11 @@ export class GeminiProvider implements ILLMProvider {
         return
       }
 
+      activeCleanup?.()
+      activeCleanup = null
+
       const reader = res.body?.getReader()
       if (!reader) {
-        activeCleanup?.()
         opts.onError('无法读取 Gemini 响应流')
         return
       }
@@ -166,6 +170,7 @@ export class GeminiProvider implements ILLMProvider {
       const lineBuffer = new SSELineBuffer()
       let fullText = ''
       let usage: { promptTokens: number; completionTokens: number; totalTokens: number } | undefined
+      let finishReason: string | null = null
 
       // eslint-disable-next-line no-constant-condition
       while (true) {
@@ -178,10 +183,12 @@ export class GeminiProvider implements ILLMProvider {
           if (data === null) continue
           try {
             const parsed = JSON.parse(data) as {
-              candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>
+              candidates?: Array<{ content?: { parts?: Array<{ text?: string }> }, finishReason?: string }>
               usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number; totalTokenCount?: number }
             }
-            const chunk = parsed.candidates?.[0]?.content?.parts?.[0]?.text
+            const candidate = parsed.candidates?.[0]
+            if (candidate?.finishReason) finishReason = candidate.finishReason
+            const chunk = candidate?.content?.parts?.[0]?.text
             if (chunk) {
               fullText += chunk
               opts.onChunk(chunk)
@@ -205,10 +212,12 @@ export class GeminiProvider implements ILLMProvider {
         if (!data) continue
         try {
           const parsed = JSON.parse(data) as {
-            candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>
+            candidates?: Array<{ content?: { parts?: Array<{ text?: string }> }, finishReason?: string }>
             usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number; totalTokenCount?: number }
           }
-          const chunk = parsed.candidates?.[0]?.content?.parts?.[0]?.text
+          const candidate = parsed.candidates?.[0]
+          if (candidate?.finishReason) finishReason = candidate.finishReason
+          const chunk = candidate?.content?.parts?.[0]?.text
           if (chunk) {
             fullText += chunk
             opts.onChunk(chunk)
@@ -225,14 +234,19 @@ export class GeminiProvider implements ILLMProvider {
         }
       }
 
-      activeCleanup?.()
-      opts.onDone(this.stripThinkingTags(fullText), usage)
+      if (finishReason === 'MAX_TOKENS') {
+        opts.onError('输出达到 max_tokens 上限被截断')
+      } else {
+        opts.onDone(this.stripThinkingTags(fullText), usage)
+      }
     } catch (error) {
       if (opts.signal?.aborted || (error instanceof Error && error.name === 'AbortError' && opts.signal?.aborted)) {
         opts.onError('已取消生成')
       } else {
         opts.onError(error instanceof Error ? error.message : String(error))
       }
+    } finally {
+      totalSignal.cleanup()
     }
   }
 }

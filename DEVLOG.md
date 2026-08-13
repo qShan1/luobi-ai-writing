@@ -4,6 +4,89 @@
 
 ---
 
+## 2026-08-13: UI 质感提升 — 三区层次、磨砂状态栏、控件与圆角规范统一
+
+**拉平三区底色层次、加磨砂状态栏与柔和投影，统一状态标签/复选框/按钮 hover 与圆角规范。**
+
+### 实现
+- `src/index.css`
+  - `@theme` 新增 `--radius-sm/md/lg/xl` 映射，让全局 `rounded-*` 直接对齐项目 token（4/6/10/14px），消除零散硬编码圆角。
+  - 各主题三区背景递进重构（不动 `--color-accent` 与语义色）：`activity-bar < bg < sidebar < editor < panel`；light 主题冷蓝调统一为暖白莫兰迪（`bg #F1EDE7 / sidebar #EAE5DB / editor-bg #FAF8F4 / panel #FFFFFF`），galaxy/paper/dark 的 `sidebar` 与 `panel` 由同色拆开（如 galaxy `#1C2521 / #25302A`），并微调 `hover/active` 对比度。
+  - light 主题冷色残留（statusbar/titlebar-text/activity-icon）统一为暖灰。
+  - `--height-statusbar` 28→30px。
+  - 新增 `.statusbar-frost`（半透明材质 + blur + 上浮柔和投影）与升级 `.glass`（blur 14px + saturate），均带 `@media (prefers-reduced-transparency: reduce)` 实心降级。
+  - 全局 `input[type="checkbox"/"radio"]` 统一 `accent-color: var(--color-accent)` + `cursor: pointer`。
+  - `.ai-task-capsule` 由直角改圆角 pill（22px、soft 底色）。
+- `src/components/layout/StatusBar.tsx` — 改用 `.statusbar-frost`，移除硬 borderTop，分段留白加大（`px-2.5 gap-1.5`）。
+- `src/components/panels/BottomPanel.tsx` — 活跃任务徽章改 pill（`color-mix` soft 底），状态条行距加大（`px-3.5 py-2.5`）。
+- `src/components/panels/sidebar/SidebarShared.tsx` — 树节点 badge 改为统一 soft pill（`color-mix` 12% 底 + 状态色文字）。
+- `src/components/pages/KnowledgeOverview.tsx` — 修复 StatCard badge 背景 `${badgeColor}20`（对 `var(--x)` 失效）→ `color-mix` 12% 底色。
+- `src/components/ui/Button.tsx` — `outline` 变体 hover 增加微抬升 + `shadow-sm` 悬浮反馈。
+- `src/components/panels/AIOutputPanel.tsx` — 悬浮停止按钮改为半透明磨砂底（`color-mix` 82% + `backdrop-blur`），对滚动内容真实起雾。
+
+### 验证
+- `pnpm exec tsc --noEmit` ✅
+- `pnpm lint` ✅
+
+---
+
+## 2026-08-13: 修复「故事架构生成自动停止、无法生成完整」— 移除三处 60s 硬超时叠加
+
+**架构四步流水线（前提→角色→世界观→大纲）任一步 LLM 输出超约 60s 被掐断致整条 workflow 失败，移除渲染端/主进程的 60s 看门狗叠加，并补流中途重试、max_tokens 截断检测与架构步骤大 maxTokens。**
+
+### 实现
+- `src/stores/llm-store.ts` — 渲染端看门狗改为「首事件后总超时」：新增 `receivedChunk` 标记，首个 chunk 到达时 `clearTimeout` 60s 看门狗并重启 10 分钟看门狗，保证长输出不被 60s 掐断；`onDone`/`onError` 维持 `clearTimeout`。
+- `electron/llm/openai-provider.ts`、`electron/llm/gemini-provider.ts` — 主进程流式超时分层：
+  - 外层新增 `STREAM_TOTAL_TIMEOUT_MS`（30 分钟）总超时信号 `totalSignal`，重试循环/`reader.read()` 读取全程生效，`finally` 中 `cleanup()`；首字节 60s 信号改以 `totalSignal.signal` 为外部信号，实现总超时穿透 abort 整个流。
+  - `fetch` 拿到 `res.ok` 响应后立即 `activeCleanup?.()` 并置空，清掉 60s 首字节计时器，流读取阶段不再被其误掐。
+  - SSE 结束检测 `finish_reason`：OpenAI 流 `finish_reason === 'length'`（choice 与 delta 双通道），Gemini 流 `finishReason === 'MAX_TOKENS'` → `onError('输出达到 max_tokens 上限被截断')`，不再静默 `onDone`。
+- `src/services/workflows/workflow-utils.ts` — `streamToFullText` 包 1 次整流重试：单次流中途错误（超时 AbortError 等）重试一次；用户取消（`options.cancelled?.()` / `workflowCancelled` / `已取消生成`）直接抛出不重试。
+- `src/services/workflows/commands/base-command.ts` — `callLLM`/`callLLMWithBuilder` 的 options 新增 `maxTokens`；新增 `callLLMWithBuilderForLongOutput`，按 `Math.max(model.maxTokens ?? 0, 8192)` 显式传大 `maxTokens`。
+- `src/services/workflows/commands/architecture.command.ts` — 四步命令（`GenerateCoreSeedCommand`/`GenerateCharactersCommand`/`GenerateWorldBuildingCommand`/`GeneratePlotArchitectureCommand`）改用 `callLLMWithBuilderForLongOutput`。
+
+### 验证
+- `pnpm exec tsc --noEmit` ✅
+- `pnpm lint` ✅
+
+---
+
+## 2026-08-13: 底部任务列表历史行 — 快捷操作 + 详情 + 留白
+
+**为历史任务行新增 hover 快捷操作（重新生成/一键重试/导出文本）与点击展开的步骤详情，并优化行内留白。**
+
+### 实现
+- `src/components/panels/BottomPanel.tsx`
+  - 新增 `HistoryRunRow`：历史任务行改为「点击行展开/收起详情 + hover 浮现操作按钮」；行间距加大（`px-3 py-2.5`、`gap-2.5`）、标题 `truncate`、新增状态胶囊标签（完成/失败，`color-mix` 10% 底色，用 token 不写死 hex）、步骤计数与时间分列对齐。
+  - 操作按钮（`IconBtn` 18，`opacity-0 group-hover:opacity-100`，按钮区 `stopPropagation` 避免误触展开）：
+    - **重新生成**（`RefreshCw`）：仅对无参数工厂可安全重建的类型（`architecture_generation` → `createArchitectureWorkflow()`、`directory` → `createDirectoryWorkflow()`）接入 `startWorkflow` 真实重跑，成功后 toast 提示；其余类型按钮禁用并 tooltip 说明「无法从历史重跑」。
+    - **一键重试**（`RotateCcw`）：仅失败任务显示；与重新生成同一 `startWorkflow` 路径（工作流无部分断点续跑能力，失败即整任务重跑）。
+    - **导出文本**（`Download`）：复用现有 IPC `dialog:select-folder` + `fs:write-file`，把 run 的步骤状态/耗时/输出/错误导出为 .md，成功/失败用 toast 反馈；无需新 IPC。
+  - 新增 `HistoryRunDetail`：展开后逐步骤展示状态图标 + 名称 + 状态文案 + 耗时（由 startedAt/completedAt 计算）+ 输出摘要（`result` 截断 200 字）+ 错误。
+  - 新增 `rebuildDefinition()`（类型→工厂映射，仅覆盖可安全重跑的类型）与 `buildRunMarkdown()`（导出 md 组装）。
+  - 复用 `StepStatusIcon`；任务数据流/状态机零改动，仅增强展示与操作入口。
+- `src/i18n/locales/{zh-CN,en,ru}/panels.json` — `bottomPanel` 下新增 `historyRerun`/`historyRetry`/`historyExport`/`historyRerunStarted`/`historyExported`/`historyExportFailed`/`historyRerunUnavailable`。
+
+### 验证
+- `pnpm exec tsc --noEmit` ✅（src 无错误；`electron/llm/*-provider.ts` 的 3 个错误为工作区遗留、与本改动无关）
+- `pnpm lint` ✅
+
+---
+
+## 2026-08-13: AI 输出分板块卡片 + 排版优化
+
+**右侧 AI 输出区由长段纯文本滚动框改为分板块卡片归类，并优化排版。**
+
+### 实现
+- `src/components/ui/MarkdownContent.tsx` — 新增 `splitIntoSections()`：按 Markdown 标题（`#`/`##`/`###`）或分隔线（`---`/`===`）把内容切成小节（代码块内不切分，少于 2 节视为无结构）；`renderMarkdownContent()` 将各小节渲染为卡片（标题行 + 正文，复用原 `renderLines`，Markdown 表格/代码块能力不变）。AI 输出面板与 Agent 对话共用此组件，一处生效。
+- `src/index.css` — `@layer components` 下新增 `.assistant-section-card`（`--color-panel` 底 + `--color-border` 细边框 + `--radius-lg` 圆角 + `--shadow-sm`）与 `.assistant-section-title`（下分隔线标题行）。
+- 排版：标题按层级加大字号/字重并拉开边距，段落 `my-1 leading-relaxed`，列表/引用/分隔线间距增大。
+
+### 验证
+- `pnpm exec tsc --noEmit` ✅
+- `pnpm lint` ✅
+
+---
+
 ## 2026-08-13: 统一面板/Agent/工具栏按钮
 
 **将面板/Agent/工具栏类手写 `<button>` 收敛到统一 `<Button>` / `<IconBtn>` 组件。**

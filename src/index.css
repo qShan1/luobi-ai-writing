@@ -97,6 +97,12 @@
   --spacing-statusbar: 24px;
   --spacing-activity-bar: 48px;
 
+  /* 圆角 — 让 Tailwind 的 rounded-* 直接对齐项目 token（sm/md/lg/xl 各主题一致） */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
   /* Tailwind 动画 - 扩展更多交互动画 */
     --animate-fade-in: fade-in 0.15s var(--ease-out);
     --animate-fade-in-up: fade-in-up 0.25s var(--ease-out);
@@ -166,16 +172,16 @@
   /* Logo 核心色：深邃蓝 #0A1628 · 冰蓝 #7EC8E3 · 星空蓝 #5B9ED6
      薰衣草紫 #9B8EC8 · 星辰金 #C9A76C */
   :root {
-    /* ☀️ 浅色主题 — 清冷蓝调（从 Logo 蓝紫色系延伸） */
+    /* ☀️ 浅色主题 — 暖白莫兰迪（Logo 蓝紫冷调已统一为暖白系） */
 
-    /* 背景层次 — 冷白蓝调，强调分区辨识 */
-    --color-bg: #F4F2EE;
-    --color-sidebar: #E9E4DB;
+    /* 背景层次 — 三区递进：activity-bar < bg < sidebar < editor < panel */
+    --color-bg: #F1EDE7;
+    --color-sidebar: #EAE5DB;
     --color-panel: #FFFFFF;
-    --color-titlebar: #FBFAF7;
-    --color-activity-bar: #E4DFD4;
-    --color-hover: #E9E4DA;
-    --color-active: #DED7CB;
+    --color-titlebar: #F8F5EF;
+    --color-activity-bar: #E3DED2;
+    --color-hover: #E2DCCF;
+    --color-active: #D7CFC1;
 
     /* 文字层次 */
     --color-text: #23211E;
@@ -206,19 +212,19 @@
     --color-tab-indicator: #A53D32;
 
     /* 状态栏 */
-    --color-statusbar: #EFF2F7;
-    --color-statusbar-text: #8994A7;
+    --color-statusbar: #ECE8E0;
+    --color-statusbar-text: #8B8378;
 
     /* 标题栏文字 */
-    --color-titlebar-text: #2D3748;
+    --color-titlebar-text: #3B352E;
 
     /* 活动栏图标颜色 */
-    --color-activity-icon: #8994A7;
-    --color-activity-icon-active: #1A2233;
+    --color-activity-icon: #928B7F;
+    --color-activity-icon-active: #262019;
     --color-activity-indicator: #5B9ED6;
 
     /* 编辑器 */
-    --color-editor-bg: #F7F9FC;
+    --color-editor-bg: #FAF8F4;
     --color-editor-line-highlight: rgba(91, 158, 214, 0.04);
     --color-editor-selection: rgba(91, 158, 214, 0.14);
 
@@ -243,7 +249,7 @@
 
     /* ===== 尺寸规范 ===== */
     --height-titlebar: 40px;
-    --height-statusbar: 28px;
+    --height-statusbar: 30px;
     --height-tab: 36px;
     --height-panel-header: 36px;
     --width-left-bar: 44px;
@@ -279,12 +285,12 @@
 
   /* 🌑 星空主题 — Logo 深邃星空（直接取自 Logo 背景色 #0A1628） */
   .galaxy {
-    /* 背景层次 — Logo 深蓝背景色为基底，逐层提亮 */
-    --color-bg: #18201D;
-    --color-sidebar: #202A25;
-    --color-panel: #202A25;
+    /* 背景层次 — 三区递进：activity-bar < bg < editor < sidebar < panel */
+    --color-bg: #141B18;
+    --color-sidebar: #1C2521;
+    --color-panel: #25302A;
     --color-titlebar: #18201D;
-    --color-activity-bar: #121815;
+    --color-activity-bar: #0E1412;
     --color-hover: #2A3931;
     --color-active: #35483D;
 
@@ -310,7 +316,7 @@
     --color-info: #C98B7F;
 
     --color-tab-bg: transparent;
-    --color-tab-active: #243129;
+    --color-tab-active: #25302A;
     --color-tab-border: transparent;
     --color-tab-indicator: #D9825B;
 
@@ -323,7 +329,7 @@
     --color-activity-icon-active: #E7EEE8;
     --color-activity-indicator: #D9825B;
 
-    --color-editor-bg: #151B18;
+    --color-editor-bg: #181F1C;
     --color-editor-line-highlight: rgba(159, 190, 169, 0.04);
     --color-editor-selection: rgba(159, 190, 169, 0.18);
 
@@ -349,13 +355,13 @@
 
   /* 📜 纸质感主题 — 写作沉浸（温暖牛皮纸色调 + Logo 紫色强调） */
   .paper {
-    --color-bg: #F5F0E8;
-    --color-sidebar: #EDE8E0;
-    --color-panel: #EDE8E0;
+    --color-bg: #F1EBE0;
+    --color-sidebar: #EAE3D7;
+    --color-panel: #FCFAF5;
     --color-titlebar: #F5F0E8;
     --color-activity-bar: #E4DDD4;
-    --color-hover: #E8E3DB;
-    --color-active: #DCD5CB;
+    --color-hover: #E2DBCB;
+    --color-active: #D5CDBC;
 
     --color-text: #2C2520;
     --color-text-secondary: #6B6058;
@@ -376,7 +382,7 @@
     --color-info: #7B92C0;
 
     --color-tab-bg: transparent;
-    --color-tab-active: #FAF5ED;
+    --color-tab-active: #FCFAF5;
     --color-tab-border: transparent;
     --color-tab-indicator: #9B8EC8;
 
@@ -389,7 +395,7 @@
     --color-activity-icon-active: #2C2520;
     --color-activity-indicator: #9B8EC8;
 
-    --color-editor-bg: #F8F3EB;
+    --color-editor-bg: #F9F5ED;
     --color-editor-line-highlight: rgba(155, 142, 200, 0.04);
     --color-editor-selection: rgba(155, 142, 200, 0.12);
 
@@ -415,9 +421,9 @@
 
   /* 🌃 黑夜主题 — VS Code / IDEA 深灰极客风（真正的暗黑模式） */
   .dark {
-    --color-bg: #1E1E1E;
+    --color-bg: #1B1B1B;
     --color-sidebar: #252526;
-    --color-panel: #252526;
+    --color-panel: #2A2A2C;
     --color-titlebar: #181818;
     --color-activity-bar: #333333;
     --color-hover: #2A2D2E;
@@ -441,7 +447,7 @@
     --color-info: #3794FF;
 
     --color-tab-bg: transparent;
-    --color-tab-active: #1E1E1E;
+    --color-tab-active: #1F1F1F;
     --color-tab-border: transparent;
     --color-tab-indicator: #0E639C;
 
@@ -454,7 +460,7 @@
     --color-activity-icon-active: #FFFFFF;
     --color-activity-indicator: #FFFFFF;
 
-    --color-editor-bg: #1E1E1E;
+    --color-editor-bg: #1F1F1F;
     --color-editor-line-highlight: rgba(255, 255, 255, 0.04);
     --color-editor-selection: rgba(38, 79, 120, 0.6);
 
@@ -558,6 +564,13 @@
 
   .paper ::-webkit-scrollbar-thumb:hover {
     background: rgba(120, 100, 80, 0.35);
+  }
+
+  /* ===== 控件统一 — 复选框 / 单选：跟随莫兰迪强调色，圆润可点 ===== */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-accent);
+    cursor: pointer;
   }
 }
 
@@ -730,6 +743,24 @@
     line-height: 1.6;
   }
 
+  .assistant-section-card {
+    border: 1px solid var(--color-border);
+    background-color: var(--color-panel);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 12px 14px;
+  }
+
+  .assistant-section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    letter-spacing: 0.02em;
+  }
+
   .agent-textarea::placeholder {
     color: var(--color-text-muted);
     opacity: 0.6;
@@ -740,23 +771,25 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 0 8px;
-    height: 100%;
+    padding: 0 10px;
+    height: 22px;
+    margin: 0 4px;
     border: none;
-    border-radius: 0;
-    background: transparent;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-statusbar-text) 10%, transparent);
     font-size: 0.68rem;
     font-family: var(--font-sans);
     color: var(--color-statusbar-text);
     cursor: pointer;
-    transition: background var(--transition-fast);
+    transition: background var(--transition-fast), color var(--transition-fast);
     animation: capsule-enter 0.3s ease-out;
     white-space: nowrap;
     max-width: 260px;
   }
 
   .ai-task-capsule:hover {
-    background: rgba(var(--color-accent-rgb), 0.08);
+    background: rgba(var(--color-accent-rgb), 0.12);
+    color: var(--color-text);
   }
 
   .ai-task-capsule--complete {
@@ -1233,11 +1266,34 @@
   opacity: 0.5;
 }
 
-/* 玻璃态效果 */
+/* 玻璃态效果 — 苹果式磨砂：柔和模糊 + 提饱和 + 细边框 + 柔和小阴影 */
 .glass {
-  background: color-mix(in srgb, var(--color-bg) 80%, transparent);
-  backdrop-filter: blur(20px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(1.5);
+  border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+/* 状态栏磨砂 — 底部工具条：半透明材质 + 上浮柔和投影 */
+.statusbar-frost {
+  background: color-mix(in srgb, var(--color-statusbar) 88%, transparent);
+  backdrop-filter: blur(12px) saturate(1.2);
+  box-shadow: 0 -1px 0 var(--color-border), 0 -12px 28px -16px rgba(0, 0, 0, 0.12);
+}
+
+/* 降低透明度偏好：降级为实心材质，关闭模糊与投影 */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--color-bg);
+    backdrop-filter: none;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .statusbar-frost {
+    background: var(--color-statusbar);
+    backdrop-filter: none;
+    box-shadow: 0 -1px 0 var(--color-border);
+  }
 }
 
 /* 渐变文字效果 */

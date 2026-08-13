@@ -20,6 +20,7 @@ export function LeafItem({
   onClick?: () => void
   onContextMenu?: (event: React.MouseEvent) => void
 }) {
+  const badgeColorResolved = badgeColor || (badgeDone ? 'var(--color-success)' : 'var(--color-text-muted)')
   return (
     <button
       type="button"
@@ -34,8 +35,11 @@ export function LeafItem({
       <span className="text-sm font-medium flex-1 min-w-0 truncate" style={{ color: 'var(--color-text)' }}>{label}</span>
       {badge && (
         <span
-          className="text-[0.7rem] flex-shrink-0 ml-1"
-          style={{ color: badgeColor || (badgeDone ? 'var(--color-success)' : 'var(--color-text-muted)') }}
+          className="text-[0.65rem] font-medium leading-none px-1.5 py-1 rounded-full flex-shrink-0 ml-1"
+          style={{
+            color: badgeColorResolved,
+            backgroundColor: `color-mix(in srgb, ${badgeColorResolved} 12%, transparent)`,
+          }}
         >
           {badge}
         </span>

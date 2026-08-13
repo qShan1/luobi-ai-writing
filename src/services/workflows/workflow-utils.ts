@@ -90,6 +90,7 @@ export interface StreamToFullTextOptions {
   /** 请求可选项 */
   responseFormat?: { type: string }
   thinking?: boolean
+  maxTokens?: number
   /** 模型 ID，缺省使用默认模型 */
   modelId?: string
   /** 是否可取消（取消时向主进程发起 llm:cancel） */
@@ -129,7 +130,7 @@ export async function streamToFullText(
 
   options?.onProgress?.(options.progressStart ?? 0)
 
-  return new Promise<string>((resolve, reject) => {
+  const attempt = (): Promise<string> => new Promise<string>((resolve, reject) => {
     let fullContent = ''
     let streamRequestId = ''
     let settled = false
@@ -173,6 +174,7 @@ export async function streamToFullText(
       {
         responseFormat: options?.responseFormat,
         thinking: options?.thinking,
+        maxTokens: options?.maxTokens,
       },
     ).then((requestId) => {
       streamRequestId = requestId
@@ -195,6 +197,15 @@ export async function streamToFullText(
       }, 200)
     }
   })
+
+  try {
+    return await attempt()
+  } catch (error) {
+    if (options?.cancelled?.()) throw error
+    const message = error instanceof Error ? error.message : String(error)
+    if (message === t('base.workflowCancelled') || message === '已取消生成') throw error
+    return await attempt()
+  }
 }
 
 // ===== 通用重试包装器 =====

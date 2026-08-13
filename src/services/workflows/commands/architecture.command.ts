@@ -132,7 +132,7 @@ export class GenerateCoreSeedCommand extends BaseWorkflowCommand<string> {
       .withStepGuidance(((context.data.stepGuidance as Record<string, string>) || {}).premise || '')
       .withReferenceWorks(config.referenceWorks || '')
 
-    const result = await this.callLLMWithBuilder(promptBuilder, callbacks, undefined, context)
+    const result = await this.callLLMWithBuilderForLongOutput(promptBuilder, callbacks, context)
     if (!result.trim()) throw new Error(i18n.t('architecture.premiseGenerationFailed', { ns: 'commands' }))
     if (context.cancelled) throw new Error(i18n.t('base.workflowCancelled', { ns: 'commands' }))
 
@@ -175,7 +175,7 @@ export class GenerateCharactersCommand extends BaseWorkflowCommand<string> {
       .withStepGuidance(((context.data.stepGuidance as Record<string, string>) || {}).characters || '')
       .withReferenceWorks(config.referenceWorks || '')
 
-    const result = await this.callLLMWithBuilder(promptBuilder, callbacks, undefined, context)
+    const result = await this.callLLMWithBuilderForLongOutput(promptBuilder, callbacks, context)
     if (!result.trim()) throw new Error(i18n.t('architecture.charactersGenerationFailed', { ns: 'commands' }))
     if (context.cancelled) throw new Error(i18n.t('base.workflowCancelled', { ns: 'commands' }))
 
@@ -219,7 +219,7 @@ export class GenerateWorldBuildingCommand extends BaseWorkflowCommand<string> {
       .withGlobalGuidance(config.globalGuidance || i18n.t('architecture.unfilled', { ns: 'commands' }))
       .withStepGuidance(((context.data.stepGuidance as Record<string, string>) || {}).worldbuilding || '')
 
-    const result = await this.callLLMWithBuilder(promptBuilder, callbacks, undefined, context)
+    const result = await this.callLLMWithBuilderForLongOutput(promptBuilder, callbacks, context)
     if (context.cancelled) throw new Error(i18n.t('base.workflowCancelled', { ns: 'commands' }))
 
     await writeArchToDb('worldbuilding', `# 世界观\n\n${result}\n`)
@@ -271,7 +271,7 @@ export class GeneratePlotArchitectureCommand extends BaseWorkflowCommand<string>
       .withGlobalGuidance(config.globalGuidance || i18n.t('architecture.unfilled', { ns: 'commands' }))
       .withStepGuidance(((context.data.stepGuidance as Record<string, string>) || {}).synopsis || '')
 
-    const result = await this.callLLMWithBuilder(promptBuilder, callbacks, undefined, context)
+    const result = await this.callLLMWithBuilderForLongOutput(promptBuilder, callbacks, context)
     if (context.cancelled) throw new Error(i18n.t('base.workflowCancelled', { ns: 'commands' }))
 
     await writeArchToDb('synopsis', `# 情节大纲\n\n${result}\n`)

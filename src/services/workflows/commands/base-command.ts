@@ -25,7 +25,7 @@ export abstract class BaseWorkflowCommand<TResult = string> {
     prompt: string, 
     systemPrompt: string, 
     callbacks: StepCallbacks,
-    options?: { responseFormat?: { type: string }; thinking?: boolean },
+    options?: { responseFormat?: { type: string }; thinking?: boolean; maxTokens?: number },
     context?: WorkflowContext
   ): Promise<string> {
     const llmStore = useLLMStore.getState()
@@ -58,10 +58,21 @@ export abstract class BaseWorkflowCommand<TResult = string> {
   protected async callLLMWithBuilder(
     builder: BasePromptBuilder,
     callbacks: StepCallbacks,
-    options?: { responseFormat?: { type: string }; thinking?: boolean },
+    options?: { responseFormat?: { type: string }; thinking?: boolean; maxTokens?: number },
     context?: WorkflowContext
   ): Promise<string> {
     return this.callLLM(builder.build(), builder.getSystemRole(), callbacks, options, context)
+  }
+
+  protected callLLMWithBuilderForLongOutput(
+    builder: BasePromptBuilder,
+    callbacks: StepCallbacks,
+    context?: WorkflowContext
+  ): Promise<string> {
+    const llmStore = useLLMStore.getState()
+    const model = llmStore.models.find((m) => m.id === llmStore.defaultModelId)
+    const maxTokens = Math.max(model?.maxTokens ?? 0, 8192)
+    return this.callLLMWithBuilder(builder, callbacks, { maxTokens }, context)
   }
 
   /**

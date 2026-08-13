@@ -234,7 +234,7 @@ function ActiveRunView({
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
           <Button
             onClick={() => cancelWorkflow(run.id)}
-            className="rounded-full shadow-md backdrop-blur-md"
+            className="rounded-full shadow-lg backdrop-blur-md bg-[color-mix(in_srgb,var(--color-error)_82%,transparent)] border border-white/15"
             variant="destructive"
           >
             <StopCircle size={13} />

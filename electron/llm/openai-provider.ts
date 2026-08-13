@@ -8,6 +8,7 @@ import {
   sleep,
   createTimeoutSignal,
   STREAM_FIRST_BYTE_TIMEOUT_MS,
+  STREAM_TOTAL_TIMEOUT_MS,
   readErrorBody,
 } from './http-utils'
 /**
@@ -131,6 +132,7 @@ export class OpenAIProvider implements ILLMProvider {
   }
 
   async generateStream(model: ModelProfile, messages: Array<{ role: string; content: string }>, opts: LLMStreamOptions): Promise<void> {
+    const totalSignal = createTimeoutSignal(opts.signal, STREAM_TOTAL_TIMEOUT_MS)
     try {
       const url = this.buildUrl(model.baseUrl, this.isOllama(model))
       const body = this.buildBody(model, messages, opts, true)
@@ -140,7 +142,7 @@ export class OpenAIProvider implements ILLMProvider {
       let res: Response | null = null
       let activeCleanup: (() => void) | null = null
       for (let attempt = 0; attempt <= 2; attempt++) {
-        const { signal, cleanup } = createTimeoutSignal(opts.signal, STREAM_FIRST_BYTE_TIMEOUT_MS)
+        const { signal, cleanup } = createTimeoutSignal(totalSignal.signal, STREAM_FIRST_BYTE_TIMEOUT_MS)
         activeCleanup?.()
         activeCleanup = cleanup
         try {
@@ -156,7 +158,7 @@ export class OpenAIProvider implements ILLMProvider {
           res = null
           await sleep(500 * 2 ** attempt)
         } catch (error) {
-          if (attempt < 2 && isRetryableNetworkError(error) && !opts.signal?.aborted) {
+          if (attempt < 2 && isRetryableNetworkError(error) && !totalSignal.signal.aborted) {
             await sleep(500 * 2 ** attempt)
             continue
           }
@@ -172,9 +174,11 @@ export class OpenAIProvider implements ILLMProvider {
         return
       }
 
+      activeCleanup?.()
+      activeCleanup = null
+
       const reader = res.body?.getReader()
       if (!reader) {
-        activeCleanup?.()
         opts.onError('无法读取响应流')
         return
       }
@@ -182,6 +186,7 @@ export class OpenAIProvider implements ILLMProvider {
       const lineBuffer = new SSELineBuffer()
       let fullText = ''
       let isThinking = false
+      let finishReason: string | null = null
 
       // eslint-disable-next-line no-constant-condition
       while (true) {
@@ -195,9 +200,12 @@ export class OpenAIProvider implements ILLMProvider {
           if (data === '[DONE]') continue
           try {
             const parsed = JSON.parse(data) as {
-              choices: Array<{ delta: { content?: string, reasoning_content?: string } }>
+              choices: Array<{ delta: { content?: string, reasoning_content?: string, finish_reason?: string | null }, finish_reason?: string | null }>
             }
-            const delta = parsed.choices?.[0]?.delta
+            const choice = parsed.choices?.[0]
+            const finish = choice?.finish_reason ?? choice?.delta?.finish_reason
+            if (finish) finishReason = finish
+            const delta = choice?.delta
 
             let emitChunk = ''
 
@@ -237,9 +245,12 @@ export class OpenAIProvider implements ILLMProvider {
         if (!data || data === '[DONE]') continue
         try {
           const parsed = JSON.parse(data) as {
-            choices: Array<{ delta: { content?: string } }>
+            choices: Array<{ delta: { content?: string, finish_reason?: string | null }, finish_reason?: string | null }>
           }
-          const delta = parsed.choices?.[0]?.delta
+          const choice = parsed.choices?.[0]
+          const finish = choice?.finish_reason ?? choice?.delta?.finish_reason
+          if (finish) finishReason = finish
+          const delta = choice?.delta
           if (delta?.content) {
             fullText += delta.content
             opts.onChunk(delta.content)
@@ -255,14 +266,19 @@ export class OpenAIProvider implements ILLMProvider {
         opts.onChunk(closeTag)
       }
 
-      activeCleanup?.()
-      opts.onDone(this.stripThinkingTags(fullText))
+      if (finishReason === 'length') {
+        opts.onError('输出达到 max_tokens 上限被截断')
+      } else {
+        opts.onDone(this.stripThinkingTags(fullText))
+      }
     } catch (error) {
       if (opts.signal?.aborted || (error instanceof Error && error.name === 'AbortError' && opts.signal?.aborted)) {
         opts.onError('已取消生成')
       } else {
         opts.onError(error instanceof Error ? error.message : String(error))
       }
+    } finally {
+      totalSignal.cleanup()
     }
   }
 }

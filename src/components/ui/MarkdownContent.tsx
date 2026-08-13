@@ -25,13 +25,98 @@ export default function MarkdownContent({ content, streaming }: MarkdownContentP
           <ThinkingBlock key={`think-${i}`} content={seg.content} streaming={streaming && i === segments.length - 1} t={t} />
         ) : (
           <React.Fragment key={`md-${i}`}>
-            {renderLines(seg.content.split('\n'), t)}
+            {renderMarkdownContent(seg.content, t)}
           </React.Fragment>
         )
       )}
       {streaming && <StreamingCursor />}
     </div>
   )
+}
+
+/**
+ * 渲染整段 Markdown：若内容含多个结构化小节（标题/分隔线切分），
+ * 则按小节输出为卡片式板块；否则按普通排版渲染。
+ */
+function renderMarkdownContent(content: string, t: (key: string) => string): React.ReactNode {
+  const sections = splitIntoSections(content)
+  if (!sections) {
+    return renderLines(content.split('\n'), t)
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      {sections.map((sec, i) => (
+        <div key={i} className="assistant-section-card">
+          {sec.title && (
+            <div
+              className={`assistant-section-title ${
+                sec.level === 1 ? 'text-sm font-bold' : sec.level === 2 ? 'text-[0.82rem] font-semibold' : 'text-xs font-medium'
+              }`}
+            >
+              {renderInline(sec.title)}
+            </div>
+          )}
+          {renderLines(sec.body.split('\n'), t)}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+interface Section {
+  title?: string
+  level?: number
+  body: string
+}
+
+/**
+ * 按 Markdown 标题（#/##/###）或分隔线（---/===）将内容切分为小节。
+ * 代码块内的标题/分隔线不参与切分。少于两个小节视为无结构化内容。
+ */
+function splitIntoSections(content: string): Section[] | null {
+  const lines = content.split('\n')
+  const sections: Section[] = []
+  let cur: Section | null = null
+  let inFence = false
+  let boundaryCount = 0
+
+  const flush = () => {
+    if (cur) {
+      cur.body = cur.body.replace(/\n{3,}/g, '\n\n').trim()
+      if (cur.body) sections.push(cur)
+    }
+    cur = null
+  }
+
+  for (const raw of lines) {
+    const line = raw.trimEnd()
+    if (line.startsWith('```')) {
+      inFence = !inFence
+    }
+    if (!inFence) {
+      const m = line.match(/^(#{1,3})\s+(.+)$/)
+      if (m) {
+        boundaryCount++
+        flush()
+        cur = { title: m[2].trim(), level: m[1].length, body: '' }
+        continue
+      }
+      if (/^(-{3,}|={3,})\s*$/.test(line)) {
+        boundaryCount++
+        flush()
+        cur = { body: '' }
+        continue
+      }
+    }
+    if (!cur) cur = { body: '' }
+    cur.body += (cur.body ? '\n' : '') + line
+  }
+  flush()
+
+  if (boundaryCount === 0 || sections.length <= 1) {
+    return null
+  }
+  return sections
 }
 
 /** 渲染行列表为 React 元素 */
@@ -61,21 +146,21 @@ function renderLines(lines: string[], t: (key: string) => string): React.ReactNo
     // H1 ~ H3 标题
     if (line.startsWith('### ')) {
       elements.push(
-        <div key={i} className="font-semibold mt-3 mb-1 text-sm"
+        <div key={i} className="font-semibold mt-2.5 mb-1 text-[0.8rem]"
           style={{ color: 'var(--color-text)' }}>
           {renderInline(line.slice(4))}
         </div>
       )
     } else if (line.startsWith('## ')) {
       elements.push(
-        <div key={i} className="font-semibold mt-3 mb-1 text-sm"
+        <div key={i} className="font-semibold mt-3 mb-1.5 text-sm"
           style={{ color: 'var(--color-text)' }}>
           {renderInline(line.slice(3))}
         </div>
       )
     } else if (line.startsWith('# ')) {
       elements.push(
-        <div key={i} className="font-bold mt-3 mb-1 text-base"
+        <div key={i} className="font-bold mt-4 mb-2 text-base"
           style={{ color: 'var(--color-text)' }}>
           {renderInline(line.slice(2))}
         </div>
@@ -84,7 +169,7 @@ function renderLines(lines: string[], t: (key: string) => string): React.ReactNo
     // 无序列表
     else if (line.match(/^[-*+] /)) {
       elements.push(
-        <div key={i} className="flex gap-1.5 my-0.5">
+        <div key={i} className="flex gap-1.5 my-1">
           <span style={{ color: 'var(--color-text-muted)' }} className="flex-shrink-0 mt-[1px]">•</span>
           <span>{renderInline(line.slice(2))}</span>
         </div>
@@ -95,7 +180,7 @@ function renderLines(lines: string[], t: (key: string) => string): React.ReactNo
       const match = line.match(/^(\d+)\. (.*)$/)
       if (match) {
         elements.push(
-          <div key={i} className="flex gap-1.5 my-0.5">
+          <div key={i} className="flex gap-1.5 my-1">
             <span style={{ color: 'var(--color-text-muted)' }} className="flex-shrink-0 min-w-[16px]">
               {match[1]}.
             </span>
@@ -107,7 +192,7 @@ function renderLines(lines: string[], t: (key: string) => string): React.ReactNo
     // 分隔线
     else if (line.match(/^---+$/) || line.match(/^===+$/)) {
       elements.push(
-        <hr key={i} className="my-2" style={{ borderColor: 'var(--color-border)' }} />
+        <hr key={i} className="my-3" style={{ borderColor: 'var(--color-border)' }} />
       )
     }
     // 引用块
@@ -115,7 +200,7 @@ function renderLines(lines: string[], t: (key: string) => string): React.ReactNo
       elements.push(
         <div
           key={i}
-          className="pl-3 py-0.5 my-1 text-xs italic"
+          className="pl-3 py-0.5 my-1.5 text-xs italic leading-relaxed"
           style={{
             borderLeft: '3px solid var(--color-accent)',
             color: 'var(--color-text-secondary)',
@@ -141,7 +226,7 @@ function renderLines(lines: string[], t: (key: string) => string): React.ReactNo
     // 普通段落
     else {
       elements.push(
-        <p key={i} className="my-0.5 leading-relaxed">
+        <p key={i} className="my-1 leading-relaxed">
           {renderInline(line)}
         </p>
       )

@@ -42,7 +42,14 @@
     "taskComplete": "Завершено",
     "tasksRunning": "задач(и) выполняется...",
     "viewTaskProgress": "Нажмите для просмотра прогресса задачи",
-    "viewAIDetails": "Нажмите для просмотра деталей вывода ИИ"
+    "viewAIDetails": "Нажмите для просмотра деталей вывода ИИ",
+    "historyRerun": "Перегенерировать",
+    "historyRetry": "Повторить",
+    "historyExport": "Экспорт",
+    "historyRerunStarted": "Перезапущено: «{{title}}»",
+    "historyExported": "Экспортировано: {{path}}",
+    "historyExportFailed": "Ошибка экспорта: {{error}}",
+    "historyRerunUnavailable": "Этот тип задач нельзя перезапустить из истории"
   },
   "agent": {
     "helpTitle": "## ИИ-ассистент Luobi — Справка",

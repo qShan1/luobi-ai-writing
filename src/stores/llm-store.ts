@@ -46,7 +46,7 @@ interface LLMState {
     messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     callbacks: StreamCallbacks,
     modelId?: string,
-    options?: { responseFormat?: { type: string }; thinking?: boolean }
+    options?: { responseFormat?: { type: string }; thinking?: boolean; maxTokens?: number }
   ) => Promise<string>
   /** 取消生成 */
   cancelGeneration: (requestId: string) => Promise<void>
@@ -141,7 +141,8 @@ export const useLLMStore = create<LLMState>()((set, get) => ({
     // 渲染端看门狗：防止主进程侧异常导致事件永不回传而挂起。
     // 正常流式生成通常很快产出首个 chunk；60s 内无任何事件即视为失败。
     let settled = false
-    const watchdog = setTimeout(() => {
+    let receivedChunk = false
+    let watchdog = setTimeout(() => {
       if (settled) return
       settled = true
       cleanup()
@@ -150,9 +151,18 @@ export const useLLMStore = create<LLMState>()((set, get) => ({
 
     // 注册流式事件监听
     const unsubChunk = ipc.on('llm:stream-chunk', (data) => {
-      if (data.requestId === requestId) {
-        callbacks.onChunk?.(data.chunk)
+      if (data.requestId !== requestId) return
+      if (!receivedChunk) {
+        receivedChunk = true
+        clearTimeout(watchdog)
+        watchdog = setTimeout(() => {
+          if (settled) return
+          settled = true
+          cleanup()
+          callbacks.onError?.(i18n.t('llm.streamWatchdogTimeout', { ns: 'stores' }))
+        }, 10 * 60_000)
       }
+      callbacks.onChunk?.(data.chunk)
     })
 
     const unsubDone = ipc.on('llm:stream-done', (data) => {
@@ -191,7 +201,8 @@ export const useLLMStore = create<LLMState>()((set, get) => ({
       messages,
       stream: true,
       responseFormat: options?.responseFormat as { type: 'json_object' | 'text' } | undefined,
-      thinking: options?.thinking
+      thinking: options?.thinking,
+      maxTokens: options?.maxTokens
     }) as { requestId: string; started: boolean }
 
     // 主进程明确告知未启动（模型缺失 / 窗口丢失）：立即报错并清理，防止挂起

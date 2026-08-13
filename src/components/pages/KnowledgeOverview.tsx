@@ -335,8 +335,8 @@ function StatCard({ icon, label, value, accent, badge, badgeColor }: {
         </div>
         {badge && (
           <span
-            className="text-[0.6rem] px-1.5 py-0.5 rounded-full font-medium"
-            style={{ backgroundColor: `${badgeColor}20`, color: badgeColor }}
+            className="text-[0.6rem] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0"
+            style={{ backgroundColor: `color-mix(in srgb, ${badgeColor} 12%, transparent)`, color: badgeColor }}
           >
             {badge}
           </span>

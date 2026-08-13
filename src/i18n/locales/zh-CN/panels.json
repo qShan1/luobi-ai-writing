@@ -42,7 +42,14 @@
     "taskComplete": "完成",
     "tasksRunning": "个任务运行中...",
     "viewTaskProgress": "点击查看任务进度",
-    "viewAIDetails": "点击查看 AI 输出详情"
+    "viewAIDetails": "点击查看 AI 输出详情",
+    "historyRerun": "重新生成",
+    "historyRetry": "一键重试",
+    "historyExport": "导出文本",
+    "historyRerunStarted": "已重新启动「{{title}}」",
+    "historyExported": "已导出到 {{path}}",
+    "historyExportFailed": "导出失败：{{error}}",
+    "historyRerunUnavailable": "该类型任务无法从历史重跑"
   },
   "agent": {
     "helpTitle": "## 落笔 AI 助手 — 帮助",

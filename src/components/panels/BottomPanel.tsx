@@ -2,14 +2,21 @@ import { useState, useRef, useEffect } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import {
   Trash2, ChevronsDown, Loader2, CheckCircle2, XCircle, Clock,
-  Play, X, ChevronDown, ChevronRight, Zap,
+  Play, X, ChevronDown, ChevronRight, Zap, RefreshCw, RotateCcw, Download,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useLayoutStore } from '../../stores/layout-store'
-import { useWorkflowStore, type WorkflowStep, type WorkflowRun } from '../../stores/workflow-store'
+import {
+  useWorkflowStore,
+  type WorkflowStep, type WorkflowRun, type WorkflowType, type WorkflowDefinition,
+} from '../../stores/workflow-store'
 import { Button } from '../ui/Button'
 import { IconBtn } from '../ui/IconBtn'
 import { Skeleton } from '../ui/Skeleton'
+import { toast } from '../ui/Toast'
+import { ipc } from '../../services/ipc-client'
+import { createArchitectureWorkflow } from '../../services/workflows/architecture-workflow'
+import { createDirectoryWorkflow } from '../../services/workflows/directory-workflow'
 
 /** 下方工具窗口 */
 export default function BottomPanel() {
@@ -64,8 +71,8 @@ export default function BottomPanel() {
           {/* 活跃任务数徽章 */}
           {activeTab === 'tasks' && activeRuns.length > 0 && (
             <span
-              className="text-[0.68rem] font-mono px-1 rounded"
-              style={{ backgroundColor: 'rgba(var(--color-accent-rgb), 0.12)', color: 'var(--color-accent)' }}
+              className="text-[0.68rem] font-mono px-1.5 rounded-full"
+              style={{ backgroundColor: 'color-mix(in_srgb, var(--color-accent) 12%, transparent)', color: 'var(--color-accent)' }}
             >
               {activeRuns.length}
             </span>
@@ -159,14 +166,14 @@ function TaskRunView() {
         </div>
       )}
 
-      {/* 历史记录（简表） */}
+      {/* 历史记录（可展开详情 + 快捷操作） */}
       {history.length > 0 && (
         <div className="flex-shrink-0">
           <div className="px-4 pt-3 pb-1 text-[0.68rem] font-semibold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
             {t('bottomPanel.historyTasks')}
           </div>
-          <AnimatePresence initial={false}>
-            <div className="px-2 pb-2">
+          <div className="px-2 pb-2">
+            <AnimatePresence initial={false}>
               {history.map((run) => (
                 <motion.div
                   key={run.id}
@@ -174,31 +181,220 @@ function TaskRunView() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
                   transition={{ duration: 0.18, ease: 'easeOut' }}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded transition-colors hover:bg-[var(--color-hover)]"
                 >
-                {/* 状态图标 */}
-                {run.status === 'completed'
-                  ? <CheckCircle2 size={12} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
-                  : <XCircle size={12} style={{ color: 'var(--color-error)', flexShrink: 0 }} />
-                }
-                {/* 标题 */}
-                <span className="flex-1 text-xs truncate" style={{ color: 'var(--color-text-secondary)' }}>
-                  {run.title}
-                </span>
-                {/* 步骤计数 */}
-                <span className="text-[0.68rem] font-mono flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
-                  {run.steps.filter(s => s.status === 'completed').length}/{run.steps.length}
-                </span>
-                {/* 时间 */}
-                <span className="text-[0.68rem] flex-shrink-0 w-14 text-right" style={{ color: 'var(--color-text-muted)' }}>
-                  {new Date(run.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </motion.div>
-            ))}
-            </div>
-          </AnimatePresence>
+                  <HistoryRunRow run={run} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// ===== 可从历史重跑的工作流类型（无参数工厂，安全重建定义） =====
+
+function rebuildDefinition(type: WorkflowType): WorkflowDefinition | null {
+  switch (type) {
+    case 'architecture_generation': return createArchitectureWorkflow()
+    case 'directory': return createDirectoryWorkflow()
+    default: return null
+  }
+}
+
+/** 将一次运行导出为 Markdown 文本 */
+function buildRunMarkdown(run: WorkflowRun, labels: Record<WorkflowStep['status'], string>): string {
+  const lines = [`# ${run.title}`, '', `> ${labels[run.status as WorkflowStep['status']] ?? run.status} · ${new Date(run.createdAt).toLocaleString()}`, '', '---', '']
+  for (const [i, step] of run.steps.entries()) {
+    lines.push(`## ${i + 1}. ${step.name}`, '')
+    const duration = step.startedAt && step.completedAt
+      ? ` · ${((new Date(step.completedAt).getTime() - new Date(step.startedAt).getTime()) / 1000).toFixed(1)}s`
+      : ''
+    lines.push(`${labels[step.status]}${duration}`, '')
+    if (step.result) lines.push(step.result, '')
+    if (step.error) lines.push(`> ${step.error}`, '')
+    lines.push('---', '')
+  }
+  return lines.join('\n')
+}
+
+// ===== 历史任务行（点击展开详情 + hover 快捷操作） =====
+
+function HistoryRunRow({ run }: { run: WorkflowRun }) {
+  const { t } = useTranslation('panels')
+  const startWorkflow = useWorkflowStore(s => s.startWorkflow)
+  const [expanded, setExpanded] = useState(false)
+  const [exporting, setExporting] = useState(false)
+  const failed = run.status === 'failed'
+  const completedCount = run.steps.filter(s => s.status === 'completed').length
+  const definition = rebuildDefinition(run.type)
+  const rerunnable = definition !== null
+
+  const statusLabels: Record<WorkflowStep['status'], string> = {
+    pending: t('toolCall.pending'),
+    running: t('toolCall.running'),
+    completed: t('toolCall.completed'),
+    failed: t('toolCall.failed'),
+    skipped: t('bottomPanel.skipped'),
+  }
+
+  const rerun = async () => {
+    if (!definition) return
+    await startWorkflow(definition)
+    toast.info(t('bottomPanel.historyRerunStarted', { title: run.title }))
+  }
+
+  const handleExport = async () => {
+    if (exporting) return
+    const dir = await ipc.invoke('dialog:select-folder')
+    if (!dir) return
+    setExporting(true)
+    try {
+      const safeName = run.title.replace(/[\\/:*?"<>|]/g, '_')
+      const filePath = `${dir}/${safeName}.md`
+      const res = await ipc.invoke('fs:write-file', filePath, buildRunMarkdown(run, statusLabels))
+      if (res.success) toast.success(t('bottomPanel.historyExported', { path: filePath }))
+      else toast.error(t('bottomPanel.historyExportFailed', { error: res.error ?? '' }))
+    } catch (err) {
+      toast.error(t('bottomPanel.historyExportFailed', { error: String(err) }))
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  return (
+    <div className="rounded" style={{ borderBottom: '1px solid var(--color-border)' }}>
+      <div
+        className="group flex items-center gap-2.5 px-3 py-2.5 rounded cursor-pointer select-none transition-colors hover:bg-[var(--color-hover)]"
+        onClick={() => setExpanded(v => !v)}
+      >
+        {failed
+          ? <XCircle size={13} style={{ color: 'var(--color-error)', flexShrink: 0 }} />
+          : <CheckCircle2 size={13} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
+        }
+        <span className="flex-1 min-w-0 text-xs truncate" style={{ color: 'var(--color-text-secondary)' }}>
+          {run.title}
+        </span>
+        <span className="text-[0.68rem] font-mono flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
+          {completedCount}/{run.steps.length}
+        </span>
+        <span
+          className="text-[0.68rem] flex-shrink-0 px-1.5 py-px rounded"
+          style={{
+            backgroundColor: `color-mix(in_srgb, ${failed ? 'var(--color-error)' : 'var(--color-success)'} 10%, transparent)`,
+            color: failed ? 'var(--color-error)' : 'var(--color-success)',
+          }}
+        >
+          {failed ? t('toolCall.failed') : t('toolCall.completed')}
+        </span>
+        <span className="text-[0.68rem] flex-shrink-0 w-14 text-right" style={{ color: 'var(--color-text-muted)' }}>
+          {new Date(run.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+        </span>
+
+        <div
+          className="flex items-center gap-0.5 flex-shrink-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <IconBtn
+            size={18}
+            title={rerunnable ? t('bottomPanel.historyRerun') : t('bottomPanel.historyRerunUnavailable')}
+            disabled={!rerunnable}
+            onClick={rerun}
+          >
+            <RefreshCw size={11} />
+          </IconBtn>
+          {failed && (
+            <IconBtn
+              size={18}
+              title={rerunnable ? t('bottomPanel.historyRetry') : t('bottomPanel.historyRerunUnavailable')}
+              disabled={!rerunnable}
+              onClick={rerun}
+            >
+              <RotateCcw size={11} />
+            </IconBtn>
+          )}
+          <IconBtn size={18} title={t('bottomPanel.historyExport')} disabled={exporting} onClick={handleExport}>
+            <Download size={11} />
+          </IconBtn>
+        </div>
+
+        {expanded
+          ? <ChevronDown size={11} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          : <ChevronRight size={11} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+        }
+      </div>
+
+      {expanded && (
+        <motion.div
+          initial={{ clipPath: 'inset(0 0 100% 0)', opacity: 0 }}
+          animate={{ clipPath: 'inset(0 0 0% 0)', opacity: 1 }}
+          exit={{ clipPath: 'inset(0 0 100% 0)', opacity: 0 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+        >
+          <HistoryRunDetail run={run} />
+        </motion.div>
+      )}
+    </div>
+  )
+}
+
+// ===== 历史任务详情（步骤状态 / 耗时 / 输出摘要） =====
+
+function HistoryRunDetail({ run }: { run: WorkflowRun }) {
+  const { t } = useTranslation('panels')
+
+  const statusLabel = (status: WorkflowStep['status']) => {
+    switch (status) {
+      case 'completed': return t('toolCall.completed')
+      case 'failed': return t('toolCall.failed')
+      case 'running': return t('toolCall.running')
+      case 'pending': return t('toolCall.pending')
+      case 'skipped': return t('bottomPanel.skipped')
+    }
+  }
+
+  return (
+    <div className="px-3 pb-2.5 pt-0.5 space-y-2">
+      {run.steps.map((step, i) => {
+        const duration = step.startedAt && step.completedAt
+          ? ((new Date(step.completedAt).getTime() - new Date(step.startedAt).getTime()) / 1000).toFixed(1)
+          : null
+        const preview = step.result && step.result.length > 200
+          ? step.result.slice(0, 200) + '…'
+          : step.result
+        return (
+          <div key={step.id} className="flex items-start gap-2.5">
+            <div className="mt-1 flex-shrink-0"><StepStatusIcon status={step.status} /></div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xs truncate" style={{ color: 'var(--color-text-secondary)' }}>
+                  {i + 1}. {step.name}
+                </span>
+                <span
+                  className="text-[0.68rem] flex-shrink-0"
+                  style={{ color: step.status === 'failed' ? 'var(--color-error)' : 'var(--color-text-muted)' }}
+                >
+                  {statusLabel(step.status)}
+                </span>
+                {duration && (
+                  <span className="text-[0.68rem] font-mono flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
+                    {duration}s
+                  </span>
+                )}
+              </div>
+              {preview && (
+                <p className="text-[0.7rem] leading-4 whitespace-pre-wrap break-words mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                  {preview}
+                </p>
+              )}
+              {step.error && (
+                <p className="text-[0.7rem] leading-4 mt-0.5" style={{ color: 'var(--color-error)' }}>{step.error}</p>
+              )}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -243,7 +439,7 @@ function ActiveRunPanel({
     <div>
       {/* ── 状态条（始终可见，点击折叠/展开） ── */}
       <div
-        className="flex items-center gap-2.5 px-3 py-2 cursor-pointer select-none"
+        className="flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer select-none"
         onClick={() => setExpanded(v => !v)}
       >
         {/* 状态图标 */}

@@ -19,7 +19,7 @@ export const buttonVariants = cva(
         destructive:
           'bg-[var(--color-error)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-error)]/30 transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 active:scale-[0.96]',
         outline:
-          'border border-[var(--color-border)] bg-transparent text-[var(--color-text)] hover:bg-[var(--color-hover)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-[background-color,color,border-color] duration-200',
+          'border border-[var(--color-border)] bg-transparent text-[var(--color-text)] hover:bg-[var(--color-hover)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:-translate-y-px hover:shadow-sm transition-[background-color,color,border-color,transform,box-shadow] duration-200',
         ghost:
           'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] active:scale-[0.98] transition-[background-color,color,transform] duration-200',
         success:

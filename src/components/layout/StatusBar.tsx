@@ -6,7 +6,7 @@ import { useLLMStore } from '../../stores/llm-store'
 import { useLayoutStore } from '../../stores/layout-store'
 import { useWorkflowStore } from '../../stores/workflow-store'
 
-/** 底部状态栏 — JetBrains 风格：22px、深灰底、多分段、hover 可点击感 */
+/** 底部状态栏 — 磨砂底、30px 高、多分段、hover 可点击感 */
 export default function StatusBar() {
   const { t } = useTranslation('layout')
   const currentProject = useProjectStore((s) => s.currentProject)
@@ -19,14 +19,12 @@ export default function StatusBar() {
 
   return (
     <div
-      className="no-select flex items-center justify-between"
+      className="statusbar-frost no-select flex items-center justify-between"
       style={{
-        height: 'var(--height-statusbar)',  /* 22px */
-        backgroundColor: 'var(--color-statusbar)',
+        height: 'var(--height-statusbar)',
         color: 'var(--color-statusbar-text)',
         fontSize: "0.75rem",
         flexShrink: 0,
-        borderTop: '1px solid var(--color-border)',
       }}
     >
       {/* 左侧 */}
@@ -224,7 +222,7 @@ function StatusBarSegment({
   title?: string
   onClick?: () => void
 }) {
-  const base = 'flex items-center gap-1 px-2 h-full'
+  const base = 'flex items-center gap-1.5 px-2.5 h-full'
 
   if (!onClick) {
     return (

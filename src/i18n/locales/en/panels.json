@@ -42,7 +42,14 @@
     "taskComplete": "Complete",
     "tasksRunning": "task(s) running...",
     "viewTaskProgress": "Click to view task progress",
-    "viewAIDetails": "Click to view AI output details"
+    "viewAIDetails": "Click to view AI output details",
+    "historyRerun": "Regenerate",
+    "historyRetry": "Retry",
+    "historyExport": "Export",
+    "historyRerunStarted": "Restarted \"{{title}}\"",
+    "historyExported": "Exported to {{path}}",
+    "historyExportFailed": "Export failed: {{error}}",
+    "historyRerunUnavailable": "This task type cannot be rerun from history"
   },
   "agent": {
     "helpTitle": "## Luobi AI Assistant — Help",
