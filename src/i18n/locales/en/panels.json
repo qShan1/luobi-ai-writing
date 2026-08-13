@@ -426,6 +426,10 @@
     "openChapter": "Open chapter",
     "copyPath": "Copy file path",
     "clickToOpen": "Click to open",
+    "deleteChapter": "Delete manuscript chapter",
+    "deleteTitle": "Delete Manuscript Chapter",
+    "deleteConfirm": "Delete manuscript chapter \"{{name}}\"? The draft will be moved to the trash and can be restored.",
+    "deleteConfirmBtn": "Move to Trash",
     "chapterFormat": "Chapter {{number}}",
     "chapterFormatWithTitle": "Chapter {{number}} {{title}}"
   },

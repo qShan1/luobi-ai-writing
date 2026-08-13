@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import { ChevronRight, ChevronDown, FileText, FolderOpen, Copy, PenTool } from 'lucide-react'
+import { ChevronRight, ChevronDown, FileText, FolderOpen, Copy, PenTool, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { FileNode } from '../../../shared/ipc-channels'
 import { ipc } from '../../../services/ipc-client'
@@ -12,6 +12,8 @@ import i18n from '../../../i18n'
 
 import { showSidebarMenu, openChapterFile } from './SidebarSharedUtils'
 import { chapterTitleCache } from './chapter-title-cache'
+import { useDraftStore } from '../../../stores/draft-store'
+import { confirm } from '../../ui/Confirm'
 
 // ===== 章节标题缓存 =====
 
@@ -103,6 +105,20 @@ export default function ManuscriptGroup({ files }: { files: FileNode[]; projectP
     return chMatch ? i18n.t('manuscript.chapterFormat', { number: parseInt(chMatch[1], 10), ns: 'panels' }) : rawName
   }
 
+  /** 删除正文章节：将对应已定稿草稿移入垃圾桶（可恢复），从正文列表移除 */
+  const deleteChapter = async (filePath: string, name: string) => {
+    const ok = await confirm(
+      t('manuscript.deleteConfirm', { name }),
+      { title: t('manuscript.deleteTitle'), confirmText: t('manuscript.deleteConfirmBtn'), danger: true }
+    )
+    if (!ok) return
+    const idMatch = filePath.match(/^luobi:\/\/manuscript\/(\d+)$/)
+    if (!idMatch) return
+    const draftId = Number(idMatch[1])
+    await ipc.invoke('db:draft-update-status', draftId, 'archived')
+    await useDraftStore.getState().loadAllDrafts()
+  }
+
   // 只显示正文章节（过滤掉旧的 _notes 文件）
   const chapterFiles = files.filter(f => !f.name.includes('_notes'))
 
@@ -155,6 +171,14 @@ export default function ManuscriptGroup({ files }: { files: FileNode[]; projectP
                       label: t('manuscript.copyPath'),
                       icon: <Copy size={13} />,
                       onClick: () => navigator.clipboard.writeText(f.path).catch(() => { }),
+                    },
+                    { key: 'div2', type: 'divider' as const },
+                    {
+                      key: 'delete',
+                      label: t('manuscript.deleteChapter'),
+                      icon: <Trash2 size={13} />,
+                      danger: true,
+                      onClick: () => deleteChapter(f.path, displayName),
                     },
                   ], e)}
                   title={`${t('manuscript.clickToOpen')} — ${displayName}`}

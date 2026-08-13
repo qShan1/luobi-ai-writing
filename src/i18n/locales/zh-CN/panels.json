@@ -426,6 +426,10 @@
     "openChapter": "打开章节",
     "copyPath": "复制文件路径",
     "clickToOpen": "点击打开",
+    "deleteChapter": "删除正文章节",
+    "deleteTitle": "删除正文章节",
+    "deleteConfirm": "确认删除正文章节「{{name}}」？该草稿将移入垃圾桶，可随时恢复。",
+    "deleteConfirmBtn": "移入垃圾桶",
     "chapterFormat": "第{{number}}章",
     "chapterFormatWithTitle": "第{{number}}章 {{title}}"
   },

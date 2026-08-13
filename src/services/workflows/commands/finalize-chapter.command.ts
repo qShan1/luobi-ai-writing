@@ -331,8 +331,9 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
     const { parseDraftMeta } = await import('../chapter-workflow')
     const dbDraft = await parseDraftMeta(this.params.draftPath)
     if (!dbDraft) throw new Error(t('finalize.internalStateError'))
-    if (dbDraft.chapterNumber !== this.params.chapterNumber) throw new Error(t('finalize.internalStateError'))
-    const blueprint = await ipc.invoke('db:blueprint-get', this.params.chapterNumber)
+    // 以草稿自身的章节号为准（draftPath 是正文真实来源），避免参数与草稿轻微不一致误报
+    const effectiveChapterNumber = dbDraft.chapterNumber
+    const blueprint = await ipc.invoke('db:blueprint-get', effectiveChapterNumber)
     const chapterTitle = blueprint?.title || this.params.chapterInfo.title
 
     // ==========================================
@@ -345,7 +346,7 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
         ipc.invoke('db:character-get-all').catch(() => []),
       ])
       const canon = await buildCanonContext({
-        chapterNumber: this.params.chapterNumber,
+        chapterNumber: effectiveChapterNumber,
         architecture: {
           premise: (core as { premise?: string } | null)?.premise || '',
           charactersArch: (core as { charactersArch?: string } | null)?.charactersArch || '',
@@ -372,14 +373,14 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
             currentState: character.currentState,
           }
         }),
-        chapterGoal: t('finalize.chapterGoalPrefix', { chapter: this.params.chapterNumber }),
+        chapterGoal: t('finalize.chapterGoalPrefix', { chapter: effectiveChapterNumber }),
         previousEnding: '',
         ragContext: '',
         writingStyle: project.novelConfig.writingStyle || '',
         globalGuidance: project.novelConfig.globalGuidance || '',
       })
       const gateResult = await runConsistencyGate({
-        chapterNumber: this.params.chapterNumber,
+        chapterNumber: effectiveChapterNumber,
         chapterContent: gatedContent,
         canon,
         isRewrite: false,
@@ -403,9 +404,9 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
 
     // 【重要】：除了写入 DB，对于已定稿的章节需要实体化为物理文件放在根目录，供外部系统读取或备份
     const safeTitle = chapterTitle ? ` ${chapterTitle.replace(/[/\\]/g, '_')}` : ''
-    const physicalPath = `${project.path}/第${this.params.chapterNumber}章${safeTitle}.txt`
+    const physicalPath = `${project.path}/第${effectiveChapterNumber}章${safeTitle}.txt`
     try {
-      const titleLine = chapterTitle ? `第${this.params.chapterNumber}章 ${chapterTitle}\n\n` : `第${this.params.chapterNumber}章\n\n`
+      const titleLine = chapterTitle ? `第${effectiveChapterNumber}章 ${chapterTitle}\n\n` : `第${effectiveChapterNumber}章\n\n`
       const contentToWrite = titleLine + gatedContent.replace(/^#+ .*\n*/, '')
       const result = await ipc.invoke('fs:write-file', physicalPath, contentToWrite)
       if (!result.success) throw new Error(result.error || t('finalize.fileWriteFailed', { error: '' }))
@@ -417,27 +418,27 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
     const statusResult = await ipc.invoke('db:draft-update-status', dbDraft.id, 'finalized', gatedContent.length)
     if (!statusResult?.success) throw new Error(statusResult?.error || t('finalize.fileWriteFailed', { error: '' }))
 
-    callbacks.log(t('finalize.finalizedSaved', { chapter: this.params.chapterNumber, title: safeTitle }))
+    callbacks.log(t('finalize.finalizedSaved', { chapter: effectiveChapterNumber, title: safeTitle }))
 
     // 3. 通过 PostProcessPipeline 执行后处理（状态持久化 + 支持重试）
     callbacks.log(t('finalize.launchingPostProcess'))
 
-    const scope = getChapterFinalizeScope(this.params.chapterNumber)
-    const sourceLabel = t('finalize.chapterGoalPrefix', { chapter: this.params.chapterNumber })
+    const scope = getChapterFinalizeScope(effectiveChapterNumber)
+    const sourceLabel = t('finalize.chapterGoalPrefix', { chapter: effectiveChapterNumber })
     const steps = buildFinalizePostProcessSteps(
       project,
-      this.params.chapterNumber,
+      effectiveChapterNumber,
       chapterTitle,
       gatedContent,
     )
 
     await runPostProcessPipeline(project.path, scope, sourceLabel, steps, callbacks)
 
-    callbacks.log('\n' + t('finalize.chapterComplete', { chapter: this.params.chapterNumber }))
+    callbacks.log('\n' + t('finalize.chapterComplete', { chapter: effectiveChapterNumber }))
     useProjectStore.getState().refreshFileTree()
 
     // 通过 EventBus 通知 ProjectService 执行定稿后的统一刷新
     const { globalEventBus } = await import('../../../shared/event-bus')
-    globalEventBus.emit('FINALIZE_COMPLETE', { chapterNumber: this.params.chapterNumber })
+    globalEventBus.emit('FINALIZE_COMPLETE', { chapterNumber: effectiveChapterNumber })
   }
 }

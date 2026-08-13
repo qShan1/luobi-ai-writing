@@ -99,22 +99,33 @@ function ProseEditorWrapper({
 
       {/* 编辑器主体 */}
       <div className="flex-1 overflow-hidden">
-        <CodeMirrorEditor
-          key={tab.id}
-          mode="prose"
-          content={tab.content ?? ''}
-          filePath={tab.filePath}
-          editable={false}
-          hideStatusBar
-          onCharCountChange={setWordCount}
-          onChange={(text) => {
-            // 同步 ref，供保存按钮使用
-            currentContentRef.current = text
-            // 标记 tab.dirty
-            useEditorStore.getState().updateTabContent(tab.id, text)
-          }}
-          onSave={(text) => handleSave(text)}
-        />
+        {/* 正文章节：只读标题行（标题是元数据，不写入正文内容） */}
+        <div
+          className="px-4 pt-3 pb-1 flex-shrink-0 select-none"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+        >
+          <h2 className="text-base font-bold" style={{ color: 'var(--color-text)' }}>
+            {fileName}
+          </h2>
+        </div>
+        <div className="h-[calc(100%-40px)]">
+          <CodeMirrorEditor
+            key={tab.id}
+            mode="prose"
+            content={tab.content ?? ''}
+            filePath={tab.filePath}
+            editable={false}
+            hideStatusBar
+            onCharCountChange={setWordCount}
+            onChange={(text) => {
+              // 同步 ref，供保存按钮使用
+              currentContentRef.current = text
+              // 标记 tab.dirty
+              useEditorStore.getState().updateTabContent(tab.id, text)
+            }}
+            onSave={(text) => handleSave(text)}
+          />
+        </div>
       </div>
     </div>
   )

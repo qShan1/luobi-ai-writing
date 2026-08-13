@@ -426,6 +426,10 @@
     "openChapter": "Открыть главу",
     "copyPath": "Копировать путь файла",
     "clickToOpen": "Нажмите для открытия",
+    "deleteChapter": "Удалить готовую главу",
+    "deleteTitle": "Удалить готовую главу",
+    "deleteConfirm": "Удалить готовую главу \"{{name}}\"? Черновик будет перемещён в корзину и его можно восстановить.",
+    "deleteConfirmBtn": "В корзину",
     "chapterFormat": "Глава {{number}}",
     "chapterFormatWithTitle": "Глава {{number}} {{title}}"
   },
