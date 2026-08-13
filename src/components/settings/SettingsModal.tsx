@@ -536,6 +536,7 @@ function ModelForm({
       baseUrl: p?.baseUrl ?? '',
       modelName: defaultModelName,
       maxTokens: firstModel?.maxTokens ?? 4096,
+      apiKey: '',
     })
   }
 
