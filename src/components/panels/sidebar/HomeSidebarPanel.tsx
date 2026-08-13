@@ -79,13 +79,11 @@ export default function HomeSidebarPanel() {
               .filter(p => p.path !== currentProject?.path)
               .slice(0, 10)
               .map((p, i) => (
-                <div
+                <button
                   key={i}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors"
-                  style={{ backgroundColor: 'transparent' }}
-                  onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-hover)'}
-                  onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                  type="button"
                   onClick={() => openProject(p.path)}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 rounded-[var(--radius-sm)] text-left cursor-pointer transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]"
                 >
                   <FolderOpen size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
                   <div className="flex-1 min-w-0">
@@ -96,7 +94,7 @@ export default function HomeSidebarPanel() {
                       {p.path}
                     </p>
                   </div>
-                </div>
+                </button>
               ))}
             {recentProjects.filter(p => p.path !== currentProject?.path).length === 0 && (
               <p className="text-xs px-2 py-1 opacity-50" style={{ color: 'var(--color-text-muted)' }}>

@@ -231,7 +231,7 @@ function CodeBlock({ lang, code, t }: { lang: string; code: string; t: (key: str
         </span>
         <button
           onClick={handleCopy}
-          className="text-[0.7rem] px-2 py-0.5 rounded transition-[background-color,opacity] hover:opacity-100 hover:bg-[var(--color-hover)] opacity-60"
+          className="text-[0.7rem] px-2 py-0.5 rounded-[var(--radius-sm)] transition-[background-color,opacity,transform] duration-100 ease-out hover:opacity-100 hover:bg-[var(--color-hover)] opacity-60 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-hover)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
           style={{ color: 'var(--color-text-secondary)' }}
         >
           {t('markdownContent.copy')}
@@ -284,10 +284,8 @@ function ThinkingBlock({ content, streaming, t }: { content: string; streaming?:
       {/* 头部：点击可展开/折叠 */}
       <button
         onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center gap-1.5 px-3 py-1.5 text-xs transition-colors"
+        className="w-full flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-[var(--radius-sm)] transition-[background-color,color,transform] duration-100 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
         style={{ color: 'var(--color-text-muted)' }}
-        onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
       >
         <Brain size={13} style={{ color: 'var(--color-accent)', opacity: 0.7 }} />
         <span className="font-medium" style={{ color: 'var(--color-text-secondary)' }}>
@@ -371,11 +369,10 @@ function MarkdownTable({ lines }: { lines: string[] }) {
           {bodyRows.map((row, ri) => (
             <tr
               key={ri}
+              className="hover:bg-[var(--color-hover)]"
               style={{
                 borderBottom: ri < bodyRows.length - 1 ? '1px solid var(--color-border)' : undefined,
               }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               {row.map((cell, ci) => (
                 <td key={ci} className="px-3 py-1.5" style={{ color: 'var(--color-text-secondary)' }}>

@@ -1047,10 +1047,10 @@ function EffectSlider({
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-        onMouseLeave={(e) => (e.currentTarget.style.opacity = value !== min ? '1' : '0.85')}
-        className="w-full mt-2 accent-[var(--color-accent)]"
-        style={{ opacity: value !== min ? 1 : 0.85, transition: 'opacity 150ms var(--ease-out)' }}
+        className={cn(
+          'w-full mt-2 accent-[var(--color-accent)] transition-opacity duration-150 ease-out hover:opacity-100',
+          value !== min ? 'opacity-100' : 'opacity-[0.85]',
+        )}
       />
     </div>
   )

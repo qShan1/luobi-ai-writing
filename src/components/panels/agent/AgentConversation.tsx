@@ -81,10 +81,8 @@ function EmptyState() {
             {conversations.filter(c => c.messages.length > 0).length > 3 && (
               <button
                 onClick={() => useAgentStore.getState().setShowHistory(true)}
-                className="mt-4 text-left text-xs transition-[color,opacity] hover:underline"
+                className="mt-4 text-left text-xs rounded-[var(--radius-sm)] transition-[color,opacity,transform] duration-100 ease-out hover:underline hover:opacity-80 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
                 style={{ color: 'var(--color-text-muted)' }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 {t('agentConversation.viewAllConversations')}
               </button>
@@ -299,10 +297,7 @@ function RecentConversationItem({
   return (
     <button
       onClick={onClick}
-      className="group w-full flex flex-row items-center justify-between overflow-hidden rounded py-1.5 text-left px-2 box-border transition-colors"
-      style={{ backgroundColor: isActive ? 'var(--color-hover)' : 'transparent' }}
-      onMouseEnter={e => { if (!isActive) e.currentTarget.style.backgroundColor = 'var(--color-hover)' }}
-      onMouseLeave={e => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent' }}
+      className={`group w-full flex flex-row items-center justify-between overflow-hidden rounded-[var(--radius-sm)] py-1.5 text-left px-2 box-border transition-[background-color,transform] duration-100 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] cursor-pointer ${isActive ? 'bg-[var(--color-hover)]' : 'bg-transparent'}`}
     >
       {/* 标题 */}
       <div className="flex items-center gap-x-1 overflow-hidden flex-1 min-w-0">

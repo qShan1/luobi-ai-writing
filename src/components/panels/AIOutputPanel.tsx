@@ -6,6 +6,7 @@ import { useWorkflowStore, type WorkflowRun, type WorkflowStep } from '../../sto
 import { useLayoutStore } from '../../stores/layout-store'
 import { parseThink } from '../../lib/think'
 import MarkdownContent from '../ui/MarkdownContent'
+import { Button } from '../ui/Button'
 
 /**
  * 右侧面板「AI 输出」视图
@@ -231,28 +232,14 @@ function ActiveRunView({
       {/* 固定在底部的操作悬浮区 */}
       {isActive && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-          <button
+          <Button
             onClick={() => cancelWorkflow(run.id)}
-            className="flex items-center justify-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-[color,background-color,border-color] shadow-md backdrop-blur-md"
-            style={{
-              color: 'var(--color-text)',
-              backgroundColor: 'var(--color-hover)',
-              border: '1px solid var(--color-border)'
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.color = '#fff'
-              e.currentTarget.style.backgroundColor = 'var(--color-error)'
-              e.currentTarget.style.borderColor = 'var(--color-error)'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.color = 'var(--color-text)'
-              e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-              e.currentTarget.style.borderColor = 'var(--color-border)'
-            }}
+            className="rounded-full shadow-md backdrop-blur-md"
+            variant="destructive"
           >
             <StopCircle size={13} />
             <span className="font-medium tracking-wide">{t('aiPanel.stopGeneration')}</span>
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -418,10 +405,8 @@ function ThinkingBlock({ thinking, showCursor, hasContent }: { thinking: string;
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
-        className="group flex items-center gap-1.5 w-full text-left text-xs min-h-6 py-1 select-none transition-colors"
+        className="group flex items-center gap-1.5 w-full text-left text-xs min-h-6 py-1 select-none transition-colors hover:text-[var(--color-text)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         style={{ color: 'var(--color-text-muted)', opacity: 0.8 }}
-        onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-text)' }}
-        onMouseLeave={e => { e.currentTarget.style.color = 'var(--color-text-muted)' }}
       >
         <ChevronRight
           size={12}
@@ -478,9 +463,7 @@ function HistoryList({ items, onSelect }: { items: WorkflowRun[]; onSelect: (id:
           <button
             key={run.id}
             onClick={() => onSelect(run.id)}
-            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors"
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--color-hover)' }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent' }}
+            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
           >
             {run.status === 'completed'
               ? <CheckCircle2 size={10} style={{ color: 'var(--color-success)', flexShrink: 0, opacity: 0.6 }} />

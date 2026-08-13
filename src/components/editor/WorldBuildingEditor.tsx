@@ -9,6 +9,7 @@ import ArchitectureConfirmDialog from '../dialogs/ArchitectureConfirmDialog'
 
 import { Button } from '../ui/Button'
 import { EmptyState } from '../ui/EmptyState'
+import { cn } from '../../lib/utils'
 import { ipc } from '../../services/ipc-client'
 
 import { ARCH_CHARACTER_SCOPE, runArchCharacterExtract, createArchitectureWorkflow } from '../../services/workflows/architecture-workflow'
@@ -228,24 +229,22 @@ export default function WorldBuildingEditor() {
           const isCharacters = f.key === 'characters'
           // 角色图谱卡片：提取失败时显示红色警告
           const charExtractFailed = isCharacters && charExtractStatus && !charExtractStatus.allCriticalPassed
-          // 动态边框颜色：提取失败 → 红 | 已生成 → 绿 | 未生成 → 默认
-          const cardBorderColor = charExtractFailed
-            ? 'var(--color-error, #ef4444)'
-            : generated
-              ? 'var(--color-success)'
-              : 'var(--color-border)'
           return (
             <div key={f.key} className="space-y-2">
               <div
-                className="rounded-lg border p-4 flex items-center gap-4 cursor-pointer transition-[border-color,background-color,opacity]"
+                className={cn(
+                  'rounded-lg border p-4 flex items-center gap-4 cursor-pointer transition-[border-color,background-color,opacity,transform] hover:border-[var(--color-accent)] active:scale-[0.98]',
+                  charExtractFailed
+                    ? 'border-[var(--color-error,#ef4444)]'
+                    : generated
+                      ? 'border-[var(--color-success)]'
+                      : 'border-[var(--color-border)]',
+                )}
                 style={{
-                  borderColor: cardBorderColor,
                   backgroundColor: charExtractFailed ? 'rgba(239, 68, 68, 0.03)' : 'var(--color-panel)',
                   opacity: loading ? 0.6 : 1,
                 }}
                 onClick={() => openArchFile(f)}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-accent)'}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = cardBorderColor}
                 title={t('worldBuilding.clickToViewDesc', { desc: f.desc })}
               >
                 {/* 状态图标 */}

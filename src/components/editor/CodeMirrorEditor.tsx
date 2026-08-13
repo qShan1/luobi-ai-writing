@@ -8,6 +8,7 @@ import { openSearchPanel, closeSearchPanel, search } from '@codemirror/search'
 import { Sparkles, Bold } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../../lib/utils'
+import { Button } from '../ui/Button'
 
 /** 统计字数（简单字符数统计，包含空格换行等格式符） */
 function countWords(text: string): number {
@@ -391,21 +392,15 @@ export default function CodeMirrorEditor({
                 </div>
               )}
               <div className="flex items-center gap-2 justify-end">
-                <button
-                  className="px-2.5 py-1 text-xs rounded-md transition-colors"
-                  style={{ border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)' }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-                  onClick={handleRejectAI}
-                >{t('codeMirrorEditor.cancel')}</button>
-                <button
-                  className="px-2.5 py-1 text-xs rounded-md font-medium transition-colors"
-                  style={{ backgroundColor: 'var(--color-accent)', color: '#fff' }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                <Button variant="outline" size="sm" onClick={handleRejectAI}>
+                  {t('codeMirrorEditor.cancel')}
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-[var(--color-accent)] text-white hover:opacity-90"
                   disabled={aiResult === ''}
                   onClick={handleAcceptAI}
-                >{t('codeMirrorEditor.replace')}</button>
+                >{t('codeMirrorEditor.replace')}</Button>
               </div>
             </div>
           ) : (
@@ -413,10 +408,7 @@ export default function CodeMirrorEditor({
               {mode === 'document' && (
                 <>
                   <button
-                    className="p-1 rounded"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    className="p-1 rounded-[var(--radius-sm)] text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                     onClick={() => {
                       // document模式下的格式转换
                       if (selectionRange && editorRef.current?.view) {
@@ -440,9 +432,7 @@ export default function CodeMirrorEditor({
               {AI_ACTIONS.map(action => (
                 <button
                   key={action.key}
-                  className={cn('p-1.5 rounded flex items-center gap-1 transition-colors', action.color)}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                  className={cn('p-1.5 rounded-[var(--radius-sm)] flex items-center gap-1 transition-colors hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]', action.color)}
                   onClick={() => handleAIAction(action.prompt, action.key)}
                 >
                   <span className="text-[10px] tracking-widest">{action.label}</span>
