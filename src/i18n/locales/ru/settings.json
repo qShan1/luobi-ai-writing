@@ -61,6 +61,8 @@
     "modelId": "ID модели",
     "modelName": "Название модели",
     "displayName": "Отображаемое имя",
+    "displayNameHint": "Псевдоним только для интерфейса; провайдеру не отправляется",
+    "modelNameHint": "Официальный ID модели для API-вызовов; должен совпадать с названиями провайдера",
     "modelNamePlaceholder": "напр.: DeepSeek основная / GPT-4o резервная",
     "apiKey": "API-ключ",
     "apiKeyPlaceholder": "sk-...",

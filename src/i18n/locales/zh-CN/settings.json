@@ -61,6 +61,8 @@
     "modelId": "模型 ID",
     "modelName": "模型标识",
     "displayName": "显示名称",
+    "displayNameHint": "仅用于界面显示的别名，不会发送给服务商",
+    "modelNameHint": "调用 API 时使用的官方模型 ID，需与服务商支持的名称完全一致",
     "modelNamePlaceholder": "如：DeepSeek 主力 / GPT-4o 备用",
     "apiKey": "API Key",
     "apiKeyPlaceholder": "sk-...",

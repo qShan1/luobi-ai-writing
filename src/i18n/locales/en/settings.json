@@ -61,6 +61,8 @@
     "modelId": "Model ID",
     "modelName": "Model Name",
     "displayName": "Display name",
+    "displayNameHint": "Alias shown in the UI only; not sent to the provider",
+    "modelNameHint": "Official model ID used in API calls; must match the provider's supported names",
     "modelNamePlaceholder": "e.g.: DeepSeek Primary / GPT-4o Backup",
     "apiKey": "API Key",
     "apiKeyPlaceholder": "sk-...",

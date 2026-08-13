@@ -579,6 +579,9 @@ function ModelForm({
           onChange={(e) => up('name', e.target.value)}
           placeholder={t('models.modelNamePlaceholder')}
         />
+        <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+          {t('models.displayNameHint')}
+        </p>
       </div>
 
       {/* 服务商 + 协议 */}
@@ -589,11 +592,11 @@ function ModelForm({
             value={model.provider}
             onChange={(e) => handleProviderChange(e.target.value as ModelProfile['provider'])}
           >
-            <option value="openai">OpenAI</option>
-            <option value="deepseek">DeepSeek</option>
-            <option value="gemini">Google Gemini</option>
-            <option value="ollama">{t('modelsProviders.ollama')}</option>
-            <option value="bigmodel">{t('modelsProviders.bigmodel')}</option>
+            {presets
+              .filter((p) => !isEmbedding || p.embeddingModels.length > 0 || model.provider === p.provider)
+              .map((p) => (
+                <option key={p.provider} value={p.provider}>{p.displayName}</option>
+              ))}
             <option value="custom">{t('modelsProviders.custom')}</option>
           </NativeSelect>
         </div>
@@ -657,6 +660,9 @@ function ModelForm({
             />
           </div>
         )}
+        <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+          {t('models.modelNameHint')}
+        </p>
       </div>
 
       {/* API 地址 */}
