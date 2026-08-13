@@ -4,6 +4,60 @@
 
 ---
 
+## 2026-08-13: 交互按压反馈查漏补缺 + 用户可见英文标识符清理
+**在既有键盘可达/ARIA 基础上，补齐剩余可点元素的按压反馈（active:scale）与 TW4 下缺失的 pointer 光标；并将侧边栏架构名等硬编码英文接入 i18n。不改变交互与数据流。**
+
+### A. 交互反馈
+- 按压反馈 `active:scale-[0.98]` + transform 过渡补齐到：`CharactersView` 角色卡片、`ChapterCardEditor`/`VersionHistory` 章节列表项、`ExportDialog` 导出格式卡、`DirectoryConfigDialog` `RadioOption`、`ArchitectureConfirmDialog` 步骤勾选与「逐步指导」折叠按钮、`BottomPanel` 历史任务行/活跃状态条/步骤标题行、`SettingsModal` 左侧导航与语言选择、`AIOutputPanel` 多任务切换按钮。
+- `DraftBoxGroup`：草稿条目与「显示归档」切换按钮补 `rounded` + hover/active/focus-visible/过渡（此前仅有 hover）。
+- Tailwind v4 preflight 已移除 button 默认 `cursor:pointer`：`.icon-btn` CSS 补 `cursor: pointer`；`EditorArea` Tab 关闭按钮、`KnowledgePanel` 删除按钮、`AgentConversation` 删除按钮、`AIOutputPanel` 思考/历史行、`MentionMenu`/`SlashCommandMenu` 选项、`SettingsModal` 导航/模型卡/字体下拉/玻璃模式/关闭行为按钮、`ArchitectureConfirmDialog`「全选」补 `cursor-pointer`。
+- `agent-tools.css`：`.tool-call-header` 增加 `:active` 按压；`.tool-call-name` 增加 `max-width/overflow/text-overflow` 截断。
+
+### B. 英文标识符
+- `SidebarSharedUtils`：删除硬编码英文的 `ARCH_FILES`（Premise/Character Map/…），`ProjectTree` 改用 i18n 化的 `getArchFiles()`。
+- `KnowledgeOverview`「Top」、`AgentHeader`「{{count}} tools」、`SlashCommandMenu`/`ToolCallBlock`「Skill」徽章、`HomeSidebarPanel`「No other recent projects」、`SettingsModal` `Close`/`Show|Hide API Key` tooltip 全部接入 i18n；`ToolCallBlock` tool 名加 `title` 悬停 + 截断。
+
+### 新增 i18n key
+- `panels.agent.toolsCount`、`panels.agent.skill`
+- `pages.knowledgeOverview.top`
+- `settings.models.showApiKey`、`settings.models.hideApiKey`
+（zh-CN / en / ru 三语齐全）
+
+### 验证
+- `pnpm exec tsc --noEmit` 通过
+- `pnpm lint` 通过
+- `vitest run src/i18n/__tests__/i18n.test.ts` 通过（三语 key 一致性）
+
+---
+
+## 2026-08-13: 可访问性查漏补缺（第二轮）— 键盘可达 + ARIA 状态
+
+**在既有树/卡片/菜单键盘化的基础上，补齐剩余 onClick 元素的焦点环、键盘操作与 ARIA 状态，不改变交互与布局。**
+
+### 实现
+- `src/components/panels/EditorArea.tsx` — 编辑器 Tab 由纯 `<div>` 改为 `role="tablist"` + `role="tab"`、`tabIndex`、`aria-selected`、Enter/Space 激活、focus-visible 焦点环（带 `!important` 覆盖激活指示线）；三点菜单按钮补 `aria-expanded`/`aria-haspopup="menu"`。
+- `src/components/panels/AIOutputPanel.tsx` — 步骤摘要头部补 `role="button"`/`tabIndex`/Enter/Space/`aria-expanded`/焦点环；思考区折叠按钮补 `aria-expanded`。
+- `src/components/panels/BottomPanel.tsx` — 历史任务行、活跃任务状态条、步骤标题行三个可折叠 `<div>` 全部补 `role="button"`/`tabIndex`/`aria-expanded`/Enter/Space/焦点环。
+- `src/components/panels/agent/AgentInputBox.tsx` — 模式/模型下拉触发器补 `aria-expanded`/`aria-haspopup`；「+」按钮补 `aria-expanded`。
+- `src/components/panels/agent/AgentHeader.tsx` — 更多菜单按钮补 `aria-expanded`/`aria-haspopup`。
+- `src/components/panels/agent/ToolCallBlock.tsx` — 折叠头部补 `aria-expanded`。
+- `src/components/ui/IconBtn.tsx` — 组件支持 `aria-expanded`/`aria-haspopup` 透传（此前不可传）。
+- `src/components/layout/LeftToolWindowBar.tsx`、`RightToolWindowBar.tsx` — 视图/底部面板切换按钮补 `aria-pressed` 激活态。
+- `src/components/dialogs/ArchitectureConfirmDialog.tsx` — 步骤勾选用 `<label>` 补 `role="checkbox"`/`aria-checked`/`tabIndex`/Enter/Space/焦点环；「全选」与「逐步指导」按钮补焦点环、`aria-expanded`。
+- `src/components/dialogs/ExportDialog.tsx` — 导出格式单选 `<div>` 补 `role="radio"`/`aria-checked`/`tabIndex`/Enter/Space/焦点环。
+- `src/components/dialogs/DirectoryConfigDialog.tsx` — `RadioOption` 补 `role="radio"`/`aria-checked`/`tabIndex`/Enter/Space/焦点环。
+- `src/components/editor/VersionHistory.tsx`、`ChapterCardEditor.tsx`、`WorldBuildingEditor.tsx`、`CharactersView.tsx` — 列表项/卡片补 `role="button"`/`tabIndex`/Enter/Space/焦点环。
+- `src/components/editor/DraftEditor.tsx` — 审稿维度勾选 `<label>` 补 `role="checkbox"`/`aria-checked`/`tabIndex`/Enter/Space/焦点环。
+- `src/components/editor/ThreeWayMerge.tsx` — 采纳按钮补 `aria-label`/`aria-pressed`/焦点环。
+- `src/components/ui/MarkdownContent.tsx`、`PostProcessStatusPanel.tsx`、`settings/PromptSettings.tsx` — 折叠按钮补 `aria-expanded`。
+- `src/components/settings/SettingsModal.tsx` — 字体下拉触发器补 `aria-expanded`/`aria-haspopup="listbox"`。
+
+### 验证
+- `pnpm exec tsc --noEmit` ✅
+- `pnpm lint` ✅
+
+---
+
 ## 2026-08-13: UI 质感提升 — 三区层次、磨砂状态栏、控件与圆角规范统一
 
 **拉平三区底色层次、加磨砂状态栏与柔和投影，统一状态标签/复选框/按钮 hover 与圆角规范。**

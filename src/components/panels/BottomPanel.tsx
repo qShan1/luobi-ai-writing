@@ -266,7 +266,16 @@ function HistoryRunRow({ run }: { run: WorkflowRun }) {
   return (
     <div className="rounded" style={{ borderBottom: '1px solid var(--color-border)' }}>
       <div
-        className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded cursor-pointer select-none transition-colors hover:bg-[var(--color-hover)]"
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setExpanded(v => !v)
+          }
+        }}
+        className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded cursor-pointer select-none transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         onClick={() => setExpanded(v => !v)}
       >
         {failed
@@ -439,7 +448,16 @@ function ActiveRunPanel({
     <div>
       {/* ── 状态条（始终可见，点击折叠/展开） ── */}
       <div
-        className="flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer select-none"
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setExpanded(v => !v)
+          }
+        }}
+        className="flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer select-none transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         onClick={() => setExpanded(v => !v)}
       >
         {/* 状态图标 */}
@@ -612,8 +630,17 @@ function WorkflowStepItem({
       >
         {/* 步骤标题行 */}
         <div
-          className={`flex items-center gap-1 py-1 ${hasDetail ? 'cursor-pointer' : ''}`}
+          role={hasDetail ? 'button' : undefined}
+          tabIndex={hasDetail ? 0 : undefined}
+          aria-expanded={hasDetail ? expanded : undefined}
           onClick={hasDetail ? () => setExpanded(v => !v) : undefined}
+          onKeyDown={hasDetail ? (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setExpanded(v => !v)
+            }
+          } : undefined}
+          className={`flex items-center gap-1 py-1 rounded transition-[background-color,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${hasDetail ? 'cursor-pointer hover:bg-[var(--color-hover)] active:scale-[0.98]' : ''}`}
         >
           {hasDetail && (
             expanded

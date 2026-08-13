@@ -94,6 +94,8 @@
     "projectScope": "Проект",
     "skillCount": "Навыков: {{count}}",
     "skillSlashHint": "Введите / для быстрого вызова навыков",
+    "toolsCount": "{{count}} инструментов",
+    "skill": "Навык",
     "addContext": "Добавить контекст",
     "mediaFiles": "Медиафайлы",
     "mention": "@Упоминание",

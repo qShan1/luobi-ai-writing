@@ -59,9 +59,18 @@ export default function ExportDialog({ isOpen, onClose }: Props) {
             {FORMAT_OPTIONS.map((opt) => (
               <div
                 key={opt.value}
+                role="radio"
+                tabIndex={0}
+                aria-checked={format === opt.value}
                 onClick={() => setFormat(opt.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setFormat(opt.value)
+                  }
+                }}
                 className={cn(
-                  'flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border',
+                  'flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]',
                   format === opt.value
                     ? 'bg-[var(--color-active)] border-[var(--color-accent)]'
                     : 'bg-[var(--color-panel)] border-[var(--color-border)] hover:bg-[var(--color-hover)]'

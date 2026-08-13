@@ -479,6 +479,7 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
         {/* Tab 列表可滚动区域 */}
         <div
           ref={tabBarRef}
+          role="tablist"
           className="flex items-center flex-1 h-full overflow-x-auto"
           style={{ scrollbarWidth: 'none' }}
         >
@@ -486,7 +487,10 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
             <div
               key={tab.id}
               ref={tab.id === activeTabId ? activeTabRef : undefined}
-              className={`flex items-center gap-1.5 px-3 h-full text-sm cursor-pointer group flex-shrink-0 relative transition-colors ${activeTabId === tab.id ? '' : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]'}`}
+              role="tab"
+              tabIndex={0}
+              aria-selected={activeTabId === tab.id}
+              className={`flex items-center gap-1.5 px-3 h-full text-sm cursor-pointer group flex-shrink-0 relative transition-colors focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]! ${activeTabId === tab.id ? '' : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]'}`}
               style={{
                 backgroundColor: activeTabId === tab.id ? 'var(--color-tab-active)' : undefined,
                 /* JetBrains 激活 Tab：顶部 2px 葵紫色指示线 */
@@ -498,6 +502,12 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
                 color: activeTabId === tab.id ? 'var(--color-text)' : undefined,
               }}
               onClick={() => setActiveTab(tab.id)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setActiveTab(tab.id)
+                }
+              }}
               onContextMenu={e => {
                 e.preventDefault()
                 setActiveTab(tab.id)
@@ -526,7 +536,7 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
               ) : (
                 <button
                   type="button"
-                  className="opacity-0 group-hover:opacity-100 ml-0.5 p-0.5 rounded transition-[background-color,opacity,transform] hover:bg-[var(--color-hover)] active:scale-[0.96] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]"
+                  className="opacity-0 group-hover:opacity-100 ml-0.5 p-0.5 rounded transition-[background-color,opacity,transform] hover:bg-[var(--color-hover)] active:scale-[0.96] cursor-pointer focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]"
                   style={{ color: 'var(--color-text-muted)' }}
                   onClick={e => { e.stopPropagation(); tryCloseTab(tab.id) }}
                 >
@@ -560,6 +570,8 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
             ref={moreButtonRef}
             className="icon-btn flex-shrink-0"
             title={t('editorArea.openEditors')}
+            aria-expanded={moreMenuOpen}
+            aria-haspopup="menu"
             onClick={() => setMoreMenuOpen(prev => !prev)}
           >
             <MoreHorizontal size={14} />

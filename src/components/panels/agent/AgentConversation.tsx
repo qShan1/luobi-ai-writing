@@ -316,7 +316,7 @@ function RecentConversationItem({
             e.stopPropagation()
             onDelete()
           }}
-          className="hidden group-hover:flex items-center justify-center w-4 h-4 rounded opacity-50 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+          className="hidden group-hover:flex items-center justify-center w-4 h-4 rounded opacity-50 hover:opacity-100 transition-opacity cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
           style={{ color: 'var(--color-text-secondary)' }}
           title={t('agentConversation.deleteConversation')}
         >

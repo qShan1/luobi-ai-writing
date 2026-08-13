@@ -64,6 +64,8 @@
     "apiKey": "API-ключ",
     "apiKeyPlaceholder": "sk-...",
     "apiKeyOllamaPlaceholder": "Можно оставить пустым для локального развертывания",
+    "showApiKey": "Показать API-ключ",
+    "hideApiKey": "Скрыть API-ключ",
     "baseUrl": "Базовый URL API",
     "baseUrlPlaceholder": "https://api.openai.com",
     "baseUrlHint": "Автозаполнение официальным URL {{provider}}. Измените вручную при использовании прокси.",

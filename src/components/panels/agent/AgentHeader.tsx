@@ -113,6 +113,8 @@ export default function AgentHeader() {
             title={t('agent.moreOptions')}
             onClick={() => { setShowMore(v => !v); setSubView('main') }}
             active={showMore}
+            aria-expanded={showMore}
+            aria-haspopup="menu"
             size={18}
           >
             <MoreHorizontal size={15} strokeWidth={1.5} />
@@ -287,7 +289,7 @@ function MCPSubView({
               </span>
               {server.status === 'connected' && server.toolCount > 0 && (
                 <span className="text-2xs opacity-50 flex-shrink-0">
-                  {server.toolCount} tools
+                  {t('agent.toolsCount', { count: server.toolCount })}
                 </span>
               )}
               {server.status === 'error' && (

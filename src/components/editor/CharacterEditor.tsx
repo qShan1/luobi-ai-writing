@@ -118,7 +118,6 @@ export default function CharacterEditor() {
           <BaseEmptyState
             icon={<Users size={36} />}
             message={currentProject ? t('characterEditor.selectOrCreate') : t('characterEditor.openProjectFirst')}
-            opacity={currentProject ? 0.3 : 0.4}
           />
         ) : viewMode === 'state' ? (
           <div className="max-w-2xl mx-auto px-6 py-4">

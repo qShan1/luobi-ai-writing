@@ -22,7 +22,7 @@ import {
   LeafItem,
 } from './SidebarShared'
 import {
-  ARCH_FILES, renderIcon, showSidebarMenu,
+  getArchFiles, renderIcon, showSidebarMenu,
   openArchFile, openBuiltinEditor,
 } from './SidebarSharedUtils'
 import DraftBoxGroup from './DraftBoxGroup'
@@ -84,40 +84,34 @@ export default function ProjectTree() {
   if (!currentProject) {
     return (
       <EmptyState
-        icon={<span className="text-4xl opacity-60" style={{ color: 'var(--color-text-muted)' }}><FolderOpen size={36} /></span>}
+        icon={<FolderOpen size={36} />}
         message={t('projectTree.noProject')}
+        description={t('projectTree.noProjectDesc')}
         className="p-4 pb-[15vh]"
-        opacity={1}
-      >
-        <span
-          className="text-xs text-center mt-0.5"
-          style={{ color: 'var(--color-text-muted)' }}
-        >
-          {t('projectTree.noProjectDesc')}
-        </span>
-        {/* 操作按钮 */}
-        <div className="flex flex-col gap-2 mt-3 w-full">
-          <Button
-            variant="default"
-            className="w-full"
-            onClick={() => useLayoutStore.getState().openNewProject()}
-          >
-            {t('projectTree.newProject')}
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={async () => {
-              const folder = await ipc.invoke('dialog:select-folder')
-              if (folder) {
-                useProjectStore.getState().openProject(folder)
-              }
-            }}
-          >
-            {t('projectTree.openProject')}
-          </Button>
-        </div>
-      </EmptyState>
+        action={
+          <div className="flex flex-col gap-2 mt-3 w-full">
+            <Button
+              variant="default"
+              className="w-full"
+              onClick={() => useLayoutStore.getState().openNewProject()}
+            >
+              {t('projectTree.newProject')}
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={async () => {
+                const folder = await ipc.invoke('dialog:select-folder')
+                if (folder) {
+                  useProjectStore.getState().openProject(folder)
+                }
+              }}
+            >
+              {t('projectTree.openProject')}
+            </Button>
+          </div>
+        }
+      />
     )
   }
 
@@ -143,7 +137,8 @@ export default function ProjectTree() {
   )
 
   // 故事架构进度
-  const archDone = ARCH_FILES.filter(f => archStatus[f.key]).length
+  const archFiles = getArchFiles()
+  const archDone = archFiles.filter(f => archStatus[f.key]).length
 
   return (
     <div className="text-sm">
@@ -238,7 +233,7 @@ function WorldBuildingGroup({
   const { t } = useTranslation('panels')
   const [open, setOpen] = useState(true)
 
-  const allDone = archDone === ARCH_FILES.length
+  const allDone = archDone === getArchFiles().length
 
   return (
     <div>
@@ -282,14 +277,14 @@ function WorldBuildingGroup({
                 : 'var(--color-text-muted)'
           }}
         >
-          {archDone}/{ARCH_FILES.length}
+          {archDone}/{getArchFiles().length}
         </span>
       </div>
 
       {/* 子文件列表（点击直接在 Markdown 编辑器打开） */}
       {open && (
         <div>
-          {ARCH_FILES.map(f => {
+          {getArchFiles().map(f => {
             const isGenerated = archStatus[f.key]
             const filePath = `luobi://core/${f.key}`
             return (

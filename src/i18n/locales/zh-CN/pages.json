@@ -45,6 +45,7 @@
     "searchResults": "检索结果 ({{count}} 条)",
     "clear": "清除",
     "fullTextMatch": "全文匹配",
-    "similarity": "相似度 {{score}}%"
+    "similarity": "相似度 {{score}}%",
+    "top": "Top"
   }
 }

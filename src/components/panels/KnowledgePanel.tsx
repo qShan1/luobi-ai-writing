@@ -111,7 +111,6 @@ export default function KnowledgePanel() {
         icon={<BookOpen size={36} />} 
         message={t('knowledge.openProjectFirst')} 
         className="pb-[15vh]" 
-        opacity={0.4} 
       />
     )
   }
@@ -171,7 +170,7 @@ export default function KnowledgePanel() {
                   <button
                     onClick={() => handleDeleteDocument(doc)}
                     title={t('knowledge.delete')}
-                    className="opacity-0 group-hover:opacity-100 flex items-center justify-center p-1 rounded transition-colors text-[var(--color-text-muted)] hover:text-red-400 hover:bg-[var(--color-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                    className="opacity-0 group-hover:opacity-100 flex items-center justify-center p-1 rounded transition-colors cursor-pointer text-[var(--color-text-muted)] hover:text-red-400 hover:bg-[var(--color-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                   >
                     <Trash2 size={12} />
                   </button>

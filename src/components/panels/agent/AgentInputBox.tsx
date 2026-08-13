@@ -278,6 +278,8 @@ export default function AgentInputBox() {
           <div ref={contextRef}>
             <IconBtn
               title={t('agent.addContext')}
+              aria-expanded={showContextMenu}
+              aria-haspopup="menu"
               onClick={() => {
                 setShowModeMenu(false)
                 setShowModelMenu(false)
@@ -296,6 +298,8 @@ export default function AgentInputBox() {
                 setShowModelMenu(false)
                 setShowModeMenu(v => !v)
               }}
+              aria-expanded={showModeMenu}
+              aria-haspopup="menu"
               className="active-press flex items-center gap-1 py-1 pl-1.5 pr-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-panel)] text-xs transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)]"
               style={{
                 color: 'var(--color-text-secondary)',
@@ -345,6 +349,8 @@ export default function AgentInputBox() {
                 setShowModeMenu(false)
                 setShowModelMenu(v => !v)
               }}
+              aria-expanded={showModelMenu}
+              aria-haspopup="menu"
               className="active-press flex items-center gap-1 py-1 pl-1.5 pr-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-panel)] text-xs min-w-0 transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)]"
               style={{
                 color: 'var(--color-text-secondary)',

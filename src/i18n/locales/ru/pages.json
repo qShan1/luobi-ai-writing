@@ -45,6 +45,7 @@
     "searchResults": "Результаты поиска ({{count}})",
     "clear": "Очистить",
     "fullTextMatch": "Полнотекстовое совпадение",
-    "similarity": "Сходство {{score}}%"
+    "similarity": "Сходство {{score}}%",
+    "top": "Топ"
   }
 }

@@ -28,11 +28,16 @@
   background-color: var(--color-hover);
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease,
+              transform 0.15s var(--ease-out);
 }
 
 .tool-call-header:hover {
   background-color: var(--color-border);
+}
+
+.tool-call-header:active {
+  transform: scale(0.98);
 }
 
 .tool-call-icon {
@@ -45,6 +50,10 @@
   font-weight: 600;
   color: var(--color-text);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  max-width: 180px;
 }
 
 .tool-call-source-badge {

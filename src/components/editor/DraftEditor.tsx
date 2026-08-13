@@ -512,13 +512,22 @@ export default function DraftEditor({ filePath, content }: Props) {
                     {REVIEW_DIMS.map(d => (
                       <label
                         key={d.key}
-                        className="flex items-center gap-1.5 cursor-pointer select-none px-2 py-1 rounded-md text-xs"
+                        role="checkbox"
+                        tabIndex={0}
+                        aria-checked={reviewDims[d.key]}
+                        className="flex items-center gap-1.5 cursor-pointer select-none px-2 py-1 rounded-md text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                         style={{
                           border: `1px solid ${reviewDims[d.key] ? 'var(--color-accent)' : 'var(--color-border)'}`,
                           backgroundColor: reviewDims[d.key] ? 'rgba(var(--color-accent-rgb),0.1)' : 'transparent',
                           color: reviewDims[d.key] ? 'var(--color-accent)' : 'var(--color-text-muted)',
                         }}
                         onClick={() => setReviewDims(prev => ({ ...prev, [d.key]: !prev[d.key] }))}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            setReviewDims(prev => ({ ...prev, [d.key]: !prev[d.key] }))
+                          }
+                        }}
                       >
                         <div
                           className="w-3 h-3 rounded flex items-center justify-center flex-shrink-0"

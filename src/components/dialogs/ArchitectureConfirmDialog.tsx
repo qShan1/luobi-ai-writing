@@ -206,7 +206,7 @@ export default function ArchitectureConfirmDialog({
               </p>
               <button
                 onClick={() => setChecked({ premise: true, characters: true, worldbuilding: true, synopsis: true })}
-                className="text-xs underline"
+                className="text-xs underline rounded cursor-pointer hover:text-[var(--color-text)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]"
                 style={{ color: 'var(--color-text-muted)' }}
               >
                 {t('common:selectAll')}
@@ -219,8 +219,17 @@ export default function ArchitectureConfirmDialog({
               return (
                 <label
                   key={f.key}
-                  className="flex items-center gap-2.5 cursor-pointer select-none"
+                  role="checkbox"
+                  tabIndex={0}
+                  aria-checked={isChecked}
+                  className="flex items-center gap-2.5 cursor-pointer select-none rounded transition-[background-color,transform] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]"
                   onClick={() => toggleStep(f.key)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      toggleStep(f.key)
+                    }
+                  }}
                 >
                   {/* 复选框 */}
                   <div
@@ -269,8 +278,9 @@ export default function ArchitectureConfirmDialog({
               style={{ border: '1px solid var(--color-border)' }}
             >
               <button
-                className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium cursor-pointer"
+                className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium cursor-pointer rounded transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                 style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-panel)' }}
+                aria-expanded={showGuidance}
                 onClick={() => setShowGuidance(!showGuidance)}
               >
                 {showGuidance ? <ChevronDown size={12} /> : <ChevronRight size={12} />}

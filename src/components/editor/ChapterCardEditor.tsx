@@ -317,13 +317,21 @@ export default function ChapterCardEditor() {
             {blueprints.map((bp, idx) => (
               <div
                 key={bp.chapterNumber}
+                role="button"
+                tabIndex={0}
                 className={cn(
-                  'group relative px-2.5 py-2 rounded-md text-xs cursor-pointer mb-0.5 transition-colors',
+                  'group relative px-2.5 py-2 rounded-md text-xs cursor-pointer mb-0.5 transition-[background-color,transform] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
                   selectedIdx === idx
                     ? 'bg-[var(--color-active)] text-[var(--color-text)]'
                     : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)]'
                 )}
                 onClick={() => setSelectedIdx(idx)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setSelectedIdx(idx)
+                  }
+                }}
               >
                 <div className="flex items-center gap-1.5">
                   <span className="font-mono text-[0.7rem] opacity-40 flex-shrink-0">

@@ -368,6 +368,7 @@ function ThinkingBlock({ content, streaming, t }: { content: string; streaming?:
       {/* 头部：点击可展开/折叠 */}
       <button
         onClick={() => setExpanded(v => !v)}
+        aria-expanded={expanded}
         className="w-full flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-[var(--radius-sm)] transition-[background-color,color,transform] duration-100 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
         style={{ color: 'var(--color-text-muted)' }}
       >

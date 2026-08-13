@@ -64,6 +64,7 @@ export default function ToolCallBlock({ toolCall }: Props) {
       <div
         role="button"
         tabIndex={0}
+        aria-expanded={expanded}
         className="tool-call-header cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         onClick={() => setExpanded(v => !v)}
         onKeyDown={e => {
@@ -77,12 +78,12 @@ export default function ToolCallBlock({ toolCall }: Props) {
           <Wrench size={12} style={{ color: 'var(--color-text-muted)' }} />
         </div>
 
-        <span className="tool-call-name">{toolName}</span>
+        <span className="tool-call-name" title={toolName}>{toolName}</span>
 
         {/* 来源徽章 */}
         {source && (
           <span className={`tool-call-source-badge ${source}`}>
-            {source === 'builtin' ? t('toolCall.builtin') : source === 'mcp' ? 'MCP' : 'Skill'}
+            {source === 'builtin' ? t('toolCall.builtin') : source === 'mcp' ? 'MCP' : t('agent.skill')}
           </span>
         )}
 

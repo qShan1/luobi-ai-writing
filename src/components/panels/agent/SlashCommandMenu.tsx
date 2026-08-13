@@ -89,7 +89,7 @@ export default function SlashCommandMenu({ query, onSelect, onClose, position }:
           role="option"
           aria-selected={i === selectedIndex}
           onClick={() => onSelect(cmd)}
-          className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+          className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-left transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
           style={{
             backgroundColor: i === selectedIndex ? 'var(--color-hover)' : 'transparent',
             color: 'var(--color-text)',
@@ -116,7 +116,7 @@ export default function SlashCommandMenu({ query, onSelect, onClose, position }:
                 color: 'var(--color-success)',
               }}
             >
-              Skill
+              {t('agent.skill')}
             </span>
           )}
         </button>

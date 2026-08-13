@@ -47,6 +47,7 @@ export default function RightToolWindowBar() {
       <button
         onClick={() => handleClick('agent')}
         title={t('activityBar.agent')}
+        aria-pressed={aiPanelOpen && rightView === 'agent'}
         className="tool-btn"
         style={{
           height: 30,
@@ -65,6 +66,7 @@ export default function RightToolWindowBar() {
       <button
         onClick={() => handleClick('ai-output')}
         title={t('aiPanel.aiOutput', { ns: 'panels' })}
+        aria-pressed={aiPanelOpen && rightView === 'ai-output'}
         className="tool-btn relative"
         style={{
           height: 30,

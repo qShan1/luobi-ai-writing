@@ -98,7 +98,7 @@ export default function HomeSidebarPanel() {
               ))}
             {recentProjects.filter(p => p.path !== currentProject?.path).length === 0 && (
               <p className="text-xs px-2 py-1 opacity-50" style={{ color: 'var(--color-text-muted)' }}>
-                No other recent projects
+                {t('home.noOtherProjects', { ns: 'panels' })}
               </p>
             )}
           </div>

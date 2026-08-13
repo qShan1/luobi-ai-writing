@@ -216,6 +216,7 @@ function TemplateItem({
       {/* 折叠头部 */}
       <button
         className="w-full flex items-center gap-2.5 px-4 py-3 text-left transition-colors hover:bg-[var(--color-hover)] outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+        aria-expanded={isExpanded}
         onClick={onToggle}
       >
         {isExpanded ? (

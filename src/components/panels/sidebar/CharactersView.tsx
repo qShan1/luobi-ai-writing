@@ -27,7 +27,6 @@ export default function CharactersView() {
         icon={<Users size={36} />} 
         message={t('common:noProject')} 
         className="pb-[15vh]" 
-        opacity={0.4} 
       />
     )
   }
@@ -54,13 +53,21 @@ export default function CharactersView() {
         {characters.map((c) => (
           <div
             key={c.name}
+            role="button"
+            tabIndex={0}
+            onClick={() => setSelectedName(c.name)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setSelectedName(c.name)
+              }
+            }}
             className={cn(
-              'px-2.5 py-1.5 rounded-md text-xs cursor-pointer mb-0.5',
+              'px-2.5 py-1.5 rounded-md text-xs cursor-pointer mb-0.5 transition-[background-color,transform] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
               selectedName === c.name
                 ? 'bg-[var(--color-active)] text-[var(--color-text)]'
                 : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)]'
             )}
-            onClick={() => setSelectedName(c.name)}
           >
             <div className="font-medium">{c.name || t('characters.unnamed')}</div>
             <div className="text-[0.7rem] mt-0.5 opacity-60">{ROLE_LABELS[c.role]}</div>

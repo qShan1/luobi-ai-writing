@@ -158,7 +158,7 @@ function DraftChapterGroup({
           {archivedDrafts.length > 0 && (
             <button
               type="button"
-              className="flex items-center gap-1 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
+              className="flex items-center gap-1 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left rounded-[var(--radius-sm)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
               style={{ paddingLeft: 54 }}
               onClick={() => setShowArchived(v => !v)}
             >
@@ -223,7 +223,7 @@ function DraftItem({
   return (
     <button
       type="button"
-      className="relative flex items-center gap-1.5 cursor-pointer hover:bg-[var(--color-hover)] w-full bg-transparent border-none text-left"
+      className="relative flex items-center gap-1.5 cursor-pointer hover:bg-[var(--color-hover)] w-full bg-transparent border-none text-left rounded-[var(--radius-sm)] transition-[background-color,transform] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
       style={{
         paddingLeft: 50,
         paddingRight: 8,

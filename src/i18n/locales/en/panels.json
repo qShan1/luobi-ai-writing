@@ -94,6 +94,8 @@
     "projectScope": "Project",
     "skillCount": "{{count}} skill(s)",
     "skillSlashHint": "Type / to quickly invoke skills",
+    "toolsCount": "{{count}} tool(s)",
+    "skill": "Skill",
     "addContext": "Add Context",
     "mediaFiles": "Media files",
     "mention": "@Mention",

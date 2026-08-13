@@ -190,7 +190,7 @@ export default function WorldBuildingEditor() {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto relative">
-          <EmptyState icon={<BookOpen size={36} />} message={t('worldBuilding.openProjectFirst')} opacity={0.4} />
+          <EmptyState icon={<BookOpen size={36} />} message={t('worldBuilding.openProjectFirst')} />
         </div>
       </div>
     )
@@ -275,8 +275,10 @@ export default function WorldBuildingEditor() {
           return (
             <div key={f.key} className="space-y-2">
               <div
+                role="button"
+                tabIndex={0}
                 className={cn(
-                  'rounded-lg border p-4 flex items-center gap-4 cursor-pointer transition-[border-color,background-color,opacity,transform] hover:border-[var(--color-accent)] active:scale-[0.98]',
+                  'rounded-lg border p-4 flex items-center gap-4 cursor-pointer transition-[border-color,background-color,opacity,transform] hover:border-[var(--color-accent)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]',
                   isRunning
                     ? 'border-[var(--color-accent)]'
                     : charExtractFailed || isFailed
@@ -294,6 +296,12 @@ export default function WorldBuildingEditor() {
                   opacity: loading ? 0.6 : 1,
                 }}
                 onClick={() => openArchFile(f)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    openArchFile(f)
+                  }
+                }}
                 title={t('worldBuilding.clickToViewDesc', { desc: f.desc })}
               >
                 {/* 状态图标 */}

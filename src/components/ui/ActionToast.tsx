@@ -1,23 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-/**
- * Luobi ActionToast — 带操作按钮的增强通知
- *
- * 用于 AI 工作流完成后弹出带操作按钮的通知（如「打开查看」「忽略」）。
- * 基于独立的 React Portal 渲染，不依赖 Toast.tsx 的容器。
- *
- * 使用 CSS 动画类（action-toast-enter / action-toast-exit）统一进出场效果。
- *
- * 用法：
- *   import { actionToast } from '@/components/ui/ActionToast'
- *   actionToast.show({
- *     type: 'success',
- *     message: '✅ 草稿已生成',
- *     actions: [
- *       { label: '打开查看', onClick: () => openDraft() },
- *     ],
- *   })
- */
-
 import { createRoot } from 'react-dom/client'
 import { useEffect, useState, useCallback } from 'react'
 import { X, CheckCircle2, AlertTriangle, Info, Sparkles } from 'lucide-react'
@@ -25,27 +6,18 @@ import i18n from '../../i18n'
 import { Button } from './Button'
 import { IconBtn } from './IconBtn'
 
-// ===== 类型定义 =====
-
 export type ActionToastType = 'success' | 'info' | 'warning' | 'ai'
 
 export interface ActionToastAction {
-  /** 按钮文案 */
   label: string
-  /** 点击回调（点击后 Toast 自动关闭） */
   onClick?: () => void | Promise<void>
-  /** 按钮风格：主色('primary') 或灰色('ghost') */
   variant?: 'primary' | 'ghost'
 }
 
 export interface ActionToastOptions {
-  /** 通知类型（决定图标和左边框颜色） */
   type?: ActionToastType
-  /** 通知消息 */
   message: string
-  /** 操作按钮列表（最多 2 个） */
   actions?: ActionToastAction[]
-  /** 自动消失时间（毫秒），设 0 表示不自动消失。默认 8000 */
   duration?: number
 }
 
@@ -53,12 +25,9 @@ interface ActionToastItem extends ActionToastOptions {
   id: number
 }
 
-// ===== 全局状态 =====
-
 let _counter = 0
 let _addItem: ((item: ActionToastItem) => void) | null = null
 
-/** 挂载 ActionToast 容器到 DOM */
 function ensureContainer() {
   if (document.getElementById('luobi-action-toast-root')) return
   const container = document.createElement('div')
@@ -66,8 +35,6 @@ function ensureContainer() {
   document.body.appendChild(container)
   createRoot(container).render(<ActionToastContainer />)
 }
-
-// ===== 容器组件 =====
 
 function ActionToastContainer() {
   const [items, setItems] = useState<ActionToastItem[]>([])
@@ -103,24 +70,21 @@ function ActionToastContainer() {
   )
 }
 
-// ===== 单条 ActionToast =====
-
-/** 类型→视觉映射 */
-const TYPE_STYLE: Record<ActionToastType, { border: string; icon: React.ReactNode }> = {
+const TYPE_STYLE: Record<ActionToastType, { accent: string; icon: React.ReactNode }> = {
   success: {
-    border: 'var(--color-success)',
+    accent: 'var(--color-success)',
     icon: <CheckCircle2 size={16} style={{ color: 'var(--color-success)', flexShrink: 0 }} />,
   },
   info: {
-    border: 'var(--color-info)',
+    accent: 'var(--color-info)',
     icon: <Info size={16} style={{ color: 'var(--color-info)', flexShrink: 0 }} />,
   },
   warning: {
-    border: 'var(--color-warning)',
+    accent: 'var(--color-warning)',
     icon: <AlertTriangle size={16} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />,
   },
   ai: {
-    border: 'var(--color-accent)',
+    accent: 'var(--color-accent)',
     icon: <Sparkles size={16} style={{ color: 'var(--color-accent)', flexShrink: 0 }} />,
   },
 }
@@ -133,7 +97,6 @@ function ActionToastCard({ item, onRemove }: { item: ActionToastItem; onRemove: 
     let t2: ReturnType<typeof setTimeout>
     let t3: ReturnType<typeof setTimeout>
     if (duration > 0) {
-      // 退场动画
       t2 = setTimeout(() => setIsExiting(true), duration - 300)
       t3 = setTimeout(() => onRemove(item.id), duration)
     }
@@ -155,7 +118,7 @@ function ActionToastCard({ item, onRemove }: { item: ActionToastItem; onRemove: 
     dismiss()
   }
 
-  const { border, icon } = TYPE_STYLE[item.type || 'info']
+  const { accent, icon } = TYPE_STYLE[item.type || 'info']
 
   return (
     <div
@@ -166,19 +129,18 @@ function ActionToastCard({ item, onRemove }: { item: ActionToastItem; onRemove: 
         gap: 8,
         padding: '12px 14px',
         borderRadius: 'var(--radius-xl)',
-        backgroundColor: 'var(--color-sidebar)',
+        backgroundColor: `color-mix(in srgb, var(--color-sidebar) 90%, ${accent})`,
+        backdropFilter: 'blur(24px)',
         border: '1px solid var(--color-border)',
-        borderLeft: `3px solid ${border}`,
+        borderLeft: `3px solid ${accent}`,
         boxShadow: 'var(--shadow-popover)',
         maxWidth: 400,
         minWidth: 260,
-        /* 使用 both 填充模式，让 0% 关键帧在动画前就应用，杜绝闪烁 */
         animation: isExiting
-          ? 'action-toast-exit 0.25s ease-out both'
-          : 'action-toast-enter 0.3s ease-out both',
+          ? 'toast-exit 0.25s var(--ease-out) both'
+          : 'toast-enter 0.3s var(--ease-out) both',
       }}
     >
-      {/* 第一行：图标 + 消息 + 关闭 */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
         {icon}
         <span
@@ -202,7 +164,6 @@ function ActionToastCard({ item, onRemove }: { item: ActionToastItem; onRemove: 
         </IconBtn>
       </div>
 
-      {/* 第二行：操作按钮 */}
       {item.actions && item.actions.length > 0 && (
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
           {item.actions.map((action, i) => (
@@ -221,19 +182,13 @@ function ActionToastCard({ item, onRemove }: { item: ActionToastItem; onRemove: 
   )
 }
 
-// ===== 公共 API =====
-
 export const actionToast = {
-  /**
-   * 显示带操作按钮的 Toast 通知
-   */
   show: (options: ActionToastOptions) => {
     ensureContainer()
     const item: ActionToastItem = { id: ++_counter, ...options }
     requestAnimationFrame(() => _addItem?.(item))
   },
 
-  /** 工作流完成快捷方法 */
   workflowComplete: (message: string, openAction?: () => void | Promise<void>) => {
     ensureContainer()
     const actions: ActionToastAction[] = []

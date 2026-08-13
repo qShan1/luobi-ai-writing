@@ -94,6 +94,8 @@
     "projectScope": "项目",
     "skillCount": "{{count}} 个技能",
     "skillSlashHint": "输入 / 可快速调用技能",
+    "toolsCount": "{{count}} 个工具",
+    "skill": "技能",
     "addContext": "添加上下文",
     "mediaFiles": "媒体文件",
     "mention": "@提及",

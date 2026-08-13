@@ -426,9 +426,11 @@ export default function ThreeWayMerge({
                 {/* 右栏（含采用按钮） */}
                 <div className={`twm-cell twm-cell-right ${isApplied ? 'processed' : ''}`}>
                   <div className="twm-hunk-row">
-                    <button className={`twm-adopt ${isApplied ? 'adopted' : ''}`}
+                    <button className={`twm-adopt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] ${isApplied ? 'adopted' : ''}`}
                       onClick={() => toggleHunk(hunk.index)}
-                      title={isApplied ? t('threeWayMerge.revertTooltip') : t('threeWayMerge.adoptTooltip')}>
+                      title={isApplied ? t('threeWayMerge.revertTooltip') : t('threeWayMerge.adoptTooltip')}
+                      aria-label={isApplied ? t('threeWayMerge.revertTooltip') : t('threeWayMerge.adoptTooltip')}
+                      aria-pressed={isApplied}>
                       {isApplied ? '✓' : '«'}
                     </button>
                     <div className="twm-hunk-text">

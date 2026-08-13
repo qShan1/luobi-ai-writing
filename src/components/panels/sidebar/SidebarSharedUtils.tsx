@@ -80,13 +80,6 @@ export const getArchFiles = (): ArchFile[] => [
   { key: 'synopsis', fileName: 'synopsis.md', label: i18n.t('sidebar.synopsis', { ns: 'panels' }), iconName: 'map', desc: i18n.t('sidebar.synopsisDesc', { ns: 'panels' }) },
 ]
 
-export const ARCH_FILES: ArchFile[] = [
-  { key: 'premise', fileName: 'premise.md', label: 'Premise', iconName: 'target', desc: 'Logline, core conflict, golden finger' },
-  { key: 'characters', fileName: 'characters.md', label: 'Character Map', iconName: 'users', desc: 'Character arcs, relationship web' },
-  { key: 'worldbuilding', fileName: 'worldbuilding.md', label: 'Worldbuilding', iconName: 'globe', desc: 'Core rules, class fractures' },
-  { key: 'synopsis', fileName: 'synopsis.md', label: 'Synopsis', iconName: 'map', desc: 'Three-act plot skeleton' },
-]
-
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
   target: Target, users: Users, globe: Globe, map: Map, 'book-open': BookOpen,
   'folder-tree': FolderTree, 'layout-list': LayoutList, 'file-pen': FilePen,

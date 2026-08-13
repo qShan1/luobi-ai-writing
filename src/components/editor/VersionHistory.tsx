@@ -142,13 +142,21 @@ export default function VersionHistory() {
             chapters.map((ch) => (
               <div
                 key={ch.id}
+                role="button"
+                tabIndex={0}
                 className={cn(
-                  'px-2.5 py-1.5 rounded-md text-xs cursor-pointer mb-0.5 transition-colors',
+                  'px-2.5 py-1.5 rounded-md text-xs cursor-pointer mb-0.5 transition-[background-color,transform] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
                   selectedChapter === ch.id
                     ? 'bg-[var(--color-active)] text-[var(--color-text)]'
                     : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)]'
                 )}
                 onClick={() => setSelectedChapter(ch.id)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setSelectedChapter(ch.id)
+                  }
+                }}
               >
                 <span className="font-mono text-[0.7rem] opacity-50 mr-1">
                   {ch.chapter_number}

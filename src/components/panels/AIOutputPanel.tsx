@@ -8,6 +8,7 @@ import { parseThink } from '../../lib/think'
 import MarkdownContent from '../ui/MarkdownContent'
 import { Button } from '../ui/Button'
 import { IconBtn } from '../ui/IconBtn'
+import { EmptyState } from '../ui/EmptyState'
 
 /**
  * 右侧面板「AI 输出」视图
@@ -80,7 +81,7 @@ export default function AIOutputPanel() {
         ) : (
           <div className="h-full overflow-y-auto">
             {recentHistory.length === 0 ? (
-              <EmptyState />
+              <EmptyState icon={<Sparkles size={36} />} message={t('aiPanel.noOutput')} />
             ) : (
               <div className="px-3 py-3">
                 <HistoryList items={recentHistory} onSelect={setViewRunId} />
@@ -89,19 +90,6 @@ export default function AIOutputPanel() {
           </div>
         )}
       </div>
-    </div>
-  )
-}
-
-
-// ===== 空状态 =====
-
-function EmptyState() {
-  const { t } = useTranslation('panels')
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-2 px-6" style={{ color: 'var(--color-text-muted)' }}>
-      <Sparkles size={20} style={{ opacity: 0.2 }} />
-      <span className="text-xs opacity-60">{t('aiPanel.noOutput')}</span>
     </div>
   )
 }
@@ -169,7 +157,7 @@ function ActiveRunView({
             <button
               key={r.id}
               onClick={() => onSwitchRun(r.id)}
-              className="text-[0.68rem] px-2 py-0.5 rounded transition-[background-color,color] flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+              className="text-[0.68rem] px-2 py-0.5 rounded transition-[background-color,color,transform] duration-150 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] cursor-pointer flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
               style={{
                 backgroundColor: r.id === run.id ? 'var(--color-hover)' : 'transparent',
                 color: r.id === run.id ? 'var(--color-text)' : 'var(--color-text-muted)',
@@ -282,7 +270,16 @@ function StepOutputBlock({ step, index, total, isActiveRun, isCurrentStep }: { s
       {/* 头部摘要项，点击折叠/展开 */}
       <div
         onClick={() => { if (rawText) setExpanded(!expanded) }}
-        className="flex items-center gap-2 px-2 py-1.5 rounded-md text-xs transition-colors"
+        role={rawText ? 'button' : undefined}
+        tabIndex={rawText ? 0 : undefined}
+        aria-expanded={rawText ? expanded : undefined}
+        onKeyDown={rawText ? (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setExpanded(v => !v)
+          }
+        } : undefined}
+        className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${rawText ? 'cursor-pointer' : ''}`}
         style={{
           cursor: rawText ? 'pointer' : 'default',
           backgroundColor: isRunning ? 'var(--color-hover)' : 'transparent',
@@ -405,7 +402,8 @@ function ThinkingBlock({ thinking, showCursor, hasContent }: { thinking: string;
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
-        className="group flex items-center gap-1.5 w-full text-left text-xs min-h-6 py-1 select-none transition-colors hover:text-[var(--color-text)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+        aria-expanded={expanded}
+        className="group flex items-center gap-1.5 w-full text-left text-xs min-h-6 py-1 select-none transition-colors hover:text-[var(--color-text)] active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         style={{ color: 'var(--color-text-muted)', opacity: 0.8 }}
       >
         <ChevronRight
@@ -463,7 +461,7 @@ function HistoryList({ items, onSelect }: { items: WorkflowRun[]; onSelect: (id:
           <button
             key={run.id}
             onClick={() => onSelect(run.id)}
-            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors hover:bg-[var(--color-hover)] active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
           >
             {run.status === 'completed'
               ? <CheckCircle2 size={10} style={{ color: 'var(--color-success)', flexShrink: 0, opacity: 0.6 }} />

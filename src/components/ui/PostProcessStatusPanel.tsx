@@ -131,6 +131,7 @@ export function PostProcessStatusPanel({
       {/* 折叠头部 */}
       <button
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
         className="w-full flex items-center justify-between px-3 py-2 text-left cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]"
       >
         <div className="flex items-center gap-1.5">

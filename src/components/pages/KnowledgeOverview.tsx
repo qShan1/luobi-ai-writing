@@ -94,7 +94,7 @@ export default function KnowledgeOverview() {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto relative">
-          <EmptyState icon={<BookOpen size={36} />} message={t('openProjectFirst')} opacity={0.4} />
+          <EmptyState icon={<BookOpen size={36} />} message={t('openProjectFirst')} />
         </div>
       </div>
     )
@@ -238,7 +238,7 @@ export default function KnowledgeOverview() {
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
               <div className="flex items-center gap-1 flex-shrink-0">
-                <span className="text-[0.7rem] text-[var(--color-text-muted)]">Top</span>
+                <span className="text-[0.7rem] text-[var(--color-text-muted)]">{t('top')}</span>
                 <Input
                   type="number"
                   min={1}

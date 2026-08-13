@@ -218,9 +218,18 @@ function RadioOption({
 }) {
   return (
     <label
-      className="flex items-center gap-2 text-xs cursor-pointer select-none"
+      role="radio"
+      tabIndex={0}
+      aria-checked={checked}
+      className="flex items-center gap-2 text-xs cursor-pointer select-none rounded transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]"
       style={{ color: 'var(--color-text-secondary)' }}
       onClick={onChange}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onChange()
+        }
+      }}
     >
       <div
         className="w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0"

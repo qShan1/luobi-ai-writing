@@ -64,6 +64,8 @@
     "apiKey": "API Key",
     "apiKeyPlaceholder": "sk-...",
     "apiKeyOllamaPlaceholder": "Can be left empty for local deployment",
+    "showApiKey": "Show API Key",
+    "hideApiKey": "Hide API Key",
     "baseUrl": "API Base URL",
     "baseUrlPlaceholder": "https://api.openai.com",
     "baseUrlHint": "Auto-filled with {{provider}} official URL. Modify manually if using a proxy.",

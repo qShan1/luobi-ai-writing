@@ -56,6 +56,7 @@ export default function LeftToolWindowBar() {
         <button
           onClick={() => setSidebarView('home')}
           title={t('activityBar.home')}
+          aria-pressed={homeActive}
           className="tool-btn"
           style={{
             height: 30,
@@ -77,6 +78,7 @@ export default function LeftToolWindowBar() {
               key={id}
               onClick={() => setSidebarView(id)}
               title={label}
+              aria-pressed={isActive}
               className="tool-btn"
               style={{
                 boxShadow: isActive ? 'inset 2px 0 0 var(--color-activity-indicator)' : 'none',
@@ -106,6 +108,7 @@ export default function LeftToolWindowBar() {
               <button
                 onClick={() => setBottomTab(id)}
                 title={label}
+                aria-pressed={isActive}
                 className="tool-btn"
                 style={{
                   boxShadow: isActive ? 'inset 2px 0 0 var(--color-activity-indicator)' : 'none',

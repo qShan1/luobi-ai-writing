@@ -19,13 +19,17 @@ export interface IconBtnProps {
   badge?: number
   /** 图标按钮尺寸 (px)，默认为 22 */
   size?: 12 | 18 | 22
+  'aria-expanded'?: boolean
+  'aria-haspopup'?: 'menu' | 'listbox' | 'dialog'
 }
 
-export function IconBtn({ children, title, onClick, disabled, active, badge, size = 22 }: IconBtnProps) {
+export function IconBtn({ children, title, onClick, disabled, active, badge, size = 22, 'aria-expanded': ariaExpanded, 'aria-haspopup': ariaHaspopup }: IconBtnProps) {
   return (
     <button
       title={title}
       disabled={disabled}
+      aria-expanded={ariaExpanded}
+      aria-haspopup={ariaHaspopup}
       onClick={onClick}
       className={`group relative flex items-center justify-center rounded-[var(--radius-sm)] transition-[background-color,color,transform,box-shadow] duration-200 ease-out hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] disabled:pointer-events-none cursor-pointer ${
         active ? 'bg-[var(--color-hover)] text-[var(--color-text)]' : 'text-[var(--color-text-secondary)]'

@@ -45,6 +45,7 @@
     "searchResults": "Search Results ({{count}})",
     "clear": "Clear",
     "fullTextMatch": "Full-text match",
-    "similarity": "Similarity {{score}}%"
+    "similarity": "Similarity {{score}}%",
+    "top": "Top"
   }
 }

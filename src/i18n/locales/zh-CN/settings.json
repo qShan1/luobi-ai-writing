@@ -64,6 +64,8 @@
     "apiKey": "API Key",
     "apiKeyPlaceholder": "sk-...",
     "apiKeyOllamaPlaceholder": "本地部署可留空",
+    "showApiKey": "显示 API Key",
+    "hideApiKey": "隐藏 API Key",
     "baseUrl": "API 地址",
     "baseUrlPlaceholder": "https://api.openai.com",
     "baseUrlHint": "已自动填入 {{provider}} 官方地址，如使用中转地址可手动修改",

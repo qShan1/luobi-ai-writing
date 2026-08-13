@@ -680,6 +680,7 @@
     height: 22px;
     border-radius: var(--radius-sm);
     color: var(--color-text-secondary);
+    cursor: pointer;
     transition: background var(--transition-fast),
                 color var(--transition-fast),
                 transform 0.15s var(--ease-out);
