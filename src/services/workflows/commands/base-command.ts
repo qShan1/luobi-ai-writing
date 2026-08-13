@@ -71,7 +71,7 @@ export abstract class BaseWorkflowCommand<TResult = string> {
   ): Promise<string> {
     const llmStore = useLLMStore.getState()
     const model = llmStore.models.find((m) => m.id === llmStore.defaultModelId)
-    const maxTokens = Math.max(model?.maxTokens ?? 0, 8192)
+    const maxTokens = Math.max(model?.maxTokens ?? 0, 16384)
     return this.callLLMWithBuilder(builder, callbacks, { maxTokens }, context)
   }
 

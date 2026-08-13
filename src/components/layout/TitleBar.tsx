@@ -201,7 +201,7 @@ export default function TitleBar() {
         </button>
 
         {/* 设置 */}
-        <IconBtn onClick={openSettings} title={t('titleBar.settings')} size={22}>
+        <IconBtn onClick={() => openSettings()} title={t('titleBar.settings')} size={22}>
           <Settings size={13} strokeWidth={1.5} />
         </IconBtn>
       </div>

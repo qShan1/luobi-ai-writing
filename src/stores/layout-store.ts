@@ -143,9 +143,9 @@ export const useLayoutStore = create<LayoutState>()(
       openBottomTab: (tab) => set({ bottomPanelOpen: true, bottomTab: tab }),
 
       // 全局弹窗 Actions
-      openSettings: (section) => set({ settingsOpen: true, settingsSection: section ?? null }),
+      openSettings: (section) => set({ settingsOpen: true, settingsSection: typeof section === 'string' ? section : null }),
       closeSettings: () => set({ settingsOpen: false, settingsSection: null }),
-      setSettingsSection: (section) => set({ settingsSection: section }),
+      setSettingsSection: (section) => set({ settingsSection: typeof section === 'string' ? section : null }),
       openNewProject: () => set({ newProjectOpen: true }),
       closeNewProject: () => set({ newProjectOpen: false }),
       openExport: () => set({ exportOpen: true }),

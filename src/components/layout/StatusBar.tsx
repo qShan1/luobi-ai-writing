@@ -65,7 +65,7 @@ export default function StatusBar() {
         {defaultModel ? (
           <StatusBarSegment
             title={t('statusBar.currentModel', { name: defaultModel.name })}
-            onClick={openSettings}
+            onClick={() => openSettings()}
           >
             <Wifi size={11} />
             <span className="opacity-80 max-w-[120px] truncate">{defaultModel.name}</span>
@@ -73,7 +73,7 @@ export default function StatusBar() {
         ) : (
           <StatusBarSegment
             title={t('statusBar.clickToConfigModel')}
-            onClick={openSettings}
+            onClick={() => openSettings()}
           >
             <span className="opacity-50">{t('statusBar.noModel')}</span>
           </StatusBarSegment>

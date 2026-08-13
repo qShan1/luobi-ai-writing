@@ -15,11 +15,9 @@ interface Props {
   onSelect: (command: SlashCommand) => void
   /** 关闭菜单 */
   onClose: () => void
-  /** 菜单位置 */
-  position?: { bottom: number; left: number }
 }
 
-export default function SlashCommandMenu({ query, onSelect, onClose, position }: Props) {
+export default function SlashCommandMenu({ query, onSelect, onClose }: Props) {
   const { t } = useTranslation('panels')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -67,10 +65,8 @@ export default function SlashCommandMenu({ query, onSelect, onClose, position }:
       aria-label={t('agent.commands')}
       aria-orientation="vertical"
       aria-activedescendant={`option-${selectedIndex}`}
-      className="menu-pop absolute z-50 py-1 rounded-lg shadow-lg"
+      className="menu-pop z-50 py-1 rounded-lg shadow-lg"
       style={{
-        bottom: position?.bottom ?? 'calc(100% + 4px)',
-        left: position?.left ?? 0,
         width: 280,
         maxHeight: 300,
         overflowY: 'auto',

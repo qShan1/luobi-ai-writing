@@ -4,6 +4,51 @@
 
 ---
 
+## 2026-08-13: AI 面板浮层遮挡/裁剪修复 + 工具栏按钮挤压修复
+
+**AI 助手面板下拉（上下文/模式/模型/斜杠/提及/更多）被 `overflow-hidden` 链与 `backdrop-filter` stacking context 裁剪遮挡，改为 Portal 到 body 的 fixed 浮层；修复模型名/模式文字导致的按钮被撑大换行。不改变交互与数据流。**
+
+### A. 遮挡修复（根因）
+- **根因**：`AIPanel` 根 `overflow-hidden` + `flex-1 overflow-hidden` + `EmptyState` 的 `overflow-y-auto` 会裁剪向上弹出的绝对定位下拉；`.liquid-glass-panel` 的 `backdrop-filter` 又让整个面板自成 stacking context，下拉的 `z-50` 被困在面板内。
+- 新增 `src/components/ui/Popover.tsx`：`createPortal` 到 `document.body` + `position: fixed`，用 `getBoundingClientRect` 计算相对触发器的坐标，监听 `scroll`/`resize`/触发器 `ResizeObserver` 自动重定位，并自管外部点击关闭（同时判定触发器与浮层）。
+- `AgentInputBox.tsx`：上下文菜单、模式菜单、模型菜单、SlashCommandMenu、MentionMenu 全部改由 Popover 承载；移除三个 `useOutsideClick` 调用。
+- `AgentHeader.tsx`：更多菜单改由 Popover 承载，移除 `useOutsideClick`。
+- `SlashCommandMenu.tsx` / `MentionMenu.tsx`：去掉绝对定位（由 Popover 的 fixed 容器承载）。
+- `ui/Tooltip.tsx` 本就用 radix `Portal` 渲染到 body，不受 overflow 影响，未改动。
+
+### B. 按钮挤压/换行修复
+- 模型按钮文字 `truncate` 补 `min-w-0`（flex item 否则无法收缩省略）。
+- 模式按钮文字补 `whitespace-nowrap`（避免窄面板下文字换行把按钮撑高）。
+- `AgentHeader` 标题补 `whitespace-nowrap`。
+
+### 验证
+- `pnpm exec tsc --noEmit` 通过
+- `pnpm lint` 通过
+
+---
+
+## 2026-08-13: 设置界面动效 + 切换卡顿修复
+
+**设置弹窗：补 section 切换过渡与弹窗入场动画；用懒加载缓存 + `React.memo` 消除快速切换侧边栏时的延迟。不改变设置功能与交互。**
+
+### A. 动效（`src/components/settings/SettingsModal.tsx`）
+- 弹窗本体入场：遮罩淡入（0.2s）+ 面板 `scale(0.97)`→1 + 透明度（0.22s，`motion/react`，`useReducedMotion` 时跳过动画）。
+- section 内容区切换：每个已访问的 section 用 `.animate-fade-in-up`（淡入 + 上移 12px，0.25s `--ease-out`），`display` 切换时 CSS 动画自动重放；`prefers-reduced-motion` 由全局规则降级。
+
+### B. 卡顿根因与修复
+- **根因**：切换 section 时旧 section 卸载、新 section 挂载，每次挂载都重跑 `useEffect` 的 IPC 调用（`config:list-system-fonts`/`config:get`/`loadModels`/`loadCloseBehavior`）并同步渲染重列表，快速点击形成 IPC + 重渲染风暴。
+- **修复**：
+  - 懒加载缓存：section 首次访问才挂载，之后保持挂载（`display:none` 隐藏），切回不再重新渲染/重新拉取。
+  - 各 section 组件包 `React.memo`，父组件因导航状态重渲染时，已缓存（隐藏）的 section 不再重渲染；`LLMSection` 的 `purposes` 数组提升为模块常量，保证 memo 生效。
+- 只改 `SettingsModal.tsx`，未动 `index.css` 配色与交互逻辑。
+
+### 验证
+- `pnpm exec tsc --noEmit` 通过
+- `pnpm exec eslint src/components/settings/SettingsModal.tsx` 通过
+- `pnpm lint` 整体失败为既有 WIP 文件 `Toast.tsx` 的 unused eslint-disable 问题（非本次改动引入）
+
+---
+
 ## 2026-08-13: 交互按压反馈查漏补缺 + 用户可见英文标识符清理
 **在既有键盘可达/ARIA 基础上，补齐剩余可点元素的按压反馈（active:scale）与 TW4 下缺失的 pointer 光标；并将侧边栏架构名等硬编码英文接入 i18n。不改变交互与数据流。**
 

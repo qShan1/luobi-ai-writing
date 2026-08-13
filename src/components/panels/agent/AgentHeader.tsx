@@ -9,7 +9,7 @@ import { confirm } from '../../ui/Confirm'
 import { IconBtn } from '../../ui/IconBtn'
 import { MenuItem } from '../../ui/MenuItem'
 import { Button } from '../../ui/Button'
-import { useOutsideClick } from '../../../hooks/useOutsideClick'
+import Popover from '../../ui/Popover'
 
 /**
  * Agent 面板顶部工具栏
@@ -21,9 +21,6 @@ export default function AgentHeader() {
   const [showMore, setShowMore] = useState(false)
   const [subView, setSubView] = useState<'main' | 'mcp' | 'skills'>('main')
   const moreRef = useRef<HTMLDivElement>(null)
-
-  // 点击外部关闭更多菜单
-  useOutsideClick(moreRef, () => { setShowMore(false); setSubView('main') }, showMore)
 
   // MCP 状态
   const { servers: mcpServers, tools: mcpTools } = useMCPStore()
@@ -67,7 +64,7 @@ export default function AgentHeader() {
         }}
       >
         <Sparkles size={11} strokeWidth={2} className="flex-shrink-0" />
-        <span className="select-none">AGENT</span>
+        <span className="select-none whitespace-nowrap">AGENT</span>
       </div>
 
       {/* 右侧工具按钮组 */}
@@ -122,8 +119,14 @@ export default function AgentHeader() {
 
           {/* 更多菜单下拉 */}
           {showMore && (
-            <div
-              className="menu-pop-top absolute right-0 top-full mt-1 z-50 py-1 rounded-lg shadow-lg"
+            <Popover
+              open={showMore}
+              triggerRef={moreRef}
+              placement="below"
+              align="end"
+              gap={4}
+              onClose={() => { setShowMore(false); setSubView('main') }}
+              className="menu-pop-top z-50 py-1 rounded-lg shadow-lg"
               style={{
                 width: subView === 'main' ? 200 : 260,
                 backgroundColor: 'var(--color-sidebar)',
@@ -179,7 +182,7 @@ export default function AgentHeader() {
                   onBack={() => setSubView('main')}
                 />
               )}
-            </div>
+            </Popover>
           )}
         </div>
 

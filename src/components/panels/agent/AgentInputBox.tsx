@@ -11,9 +11,9 @@ import { useTranslation } from 'react-i18next'
 import { useAgentStore, type AgentMode } from '../../../stores/agent-store'
 import { useLLMStore } from '../../../stores/llm-store'
 import type { ModelProfile } from '../../../shared/ipc-channels'
-import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { IconBtn } from '../../ui/IconBtn'
 import { MenuItem } from '../../ui/MenuItem'
+import Popover from '../../ui/Popover'
 import SlashCommandMenu from './SlashCommandMenu'
 import MentionMenu from './MentionMenu'
 import type { SlashCommand, MentionTarget } from '../../../services/agent/intent-router'
@@ -115,6 +115,7 @@ export default function AgentInputBox() {
   const contextRef = useRef<HTMLDivElement>(null)
   const modeRef = useRef<HTMLDivElement>(null)
   const modelRef = useRef<HTMLDivElement>(null)
+  const inputBoxRef = useRef<HTMLDivElement>(null)
 
   // 调整文本框高度的通用函数
   const adjustHeight = useCallback(() => {
@@ -151,11 +152,6 @@ export default function AgentInputBox() {
     adjustHeight()
   }, [inputText, adjustHeight])
 
-  // 点击外部关闭下拉（用 useOutsideClick 统一管理三个 ref）
-  useOutsideClick(contextRef, () => setShowContextMenu(false), showContextMenu)
-  useOutsideClick(modeRef, () => setShowModeMenu(false), showModeMenu)
-  useOutsideClick(modelRef, () => setShowModelMenu(false), showModelMenu)
-
   /** 发送或停止 */
   const handleSendOrStop = useCallback(async () => {
     if (generating) {
@@ -191,6 +187,7 @@ export default function AgentInputBox() {
 
   return (
     <div
+      ref={inputBoxRef}
       className="relative flex flex-col gap-0 p-1.5"
       style={{
         backgroundColor: 'var(--color-hover)',
@@ -200,26 +197,36 @@ export default function AgentInputBox() {
     >
       {/* / 命令菜单 */}
       {showSlashMenu && (
-        <SlashCommandMenu
-          query={slashQuery}
-          onSelect={handleSlashSelect}
-          onClose={() => setShowSlashMenu(false)}
-        />
+        <Popover open={showSlashMenu} triggerRef={inputBoxRef} placement="above" gap={4} align="start">
+          <SlashCommandMenu
+            query={slashQuery}
+            onSelect={handleSlashSelect}
+            onClose={() => setShowSlashMenu(false)}
+          />
+        </Popover>
       )}
 
       {/* @ 提及菜单 */}
       {showMentionMenu && (
-        <MentionMenu
-          query={mentionQuery}
-          onSelect={handleMentionSelect}
-          onClose={() => setShowMentionMenu(false)}
-        />
+        <Popover open={showMentionMenu} triggerRef={inputBoxRef} placement="above" gap={4} align="start">
+          <MentionMenu
+            query={mentionQuery}
+            onSelect={handleMentionSelect}
+            onClose={() => setShowMentionMenu(false)}
+          />
+        </Popover>
       )}
 
       {/* 上下文菜单（+ 按钮弹出） */}
       {showContextMenu && (
-        <div
-          className="menu-pop absolute bottom-[calc(100%+8px)] left-0 z-50 py-1 rounded-lg shadow-lg"
+        <Popover
+          open={showContextMenu}
+          triggerRef={inputBoxRef}
+          placement="above"
+          gap={8}
+          align="start"
+          onClose={() => setShowContextMenu(false)}
+          className="menu-pop z-50 py-1 rounded-lg shadow-lg"
           style={{
             width: 180,
             backgroundColor: 'var(--color-sidebar)',
@@ -244,7 +251,7 @@ export default function AgentInputBox() {
             handleInputChange('/')
             textareaRef.current?.focus()
           }} />
-        </div>
+        </Popover>
       )}
 
       {/* 输入区域 */}
@@ -306,13 +313,19 @@ export default function AgentInputBox() {
               }}
             >
               <ChevronDown size={13} strokeWidth={1.5} />
-              <span className="select-none">{currentMode === 'planning' ? t('agent.modeDeep') : t('agent.modeFast')}</span>
+              <span className="select-none whitespace-nowrap">{currentMode === 'planning' ? t('agent.modeDeep') : t('agent.modeFast')}</span>
             </button>
 
             {/* 模式选择下拉 */}
             {showModeMenu && (
-              <div
-                className="menu-pop absolute bottom-full left-0 mb-1 z-50 py-1 rounded-lg shadow-lg"
+              <Popover
+                open={showModeMenu}
+                triggerRef={modeRef}
+                placement="above"
+                gap={4}
+                align="start"
+                onClose={() => setShowModeMenu(false)}
+                className="menu-pop z-50 py-1 rounded-lg shadow-lg"
                 style={{
                   width: 240,
                   backgroundColor: 'var(--color-sidebar)',
@@ -337,7 +350,7 @@ export default function AgentInputBox() {
                   desc={t('agent.fastModeDesc')}
                   onClick={() => { setMode('fast'); setShowModeMenu(false) }}
                 />
-              </div>
+              </Popover>
             )}
           </div>
 
@@ -358,15 +371,21 @@ export default function AgentInputBox() {
               }}
             >
               <ChevronDown size={13} strokeWidth={1.5} className="flex-shrink-0" />
-              <span className="truncate select-none">
+              <span className="truncate min-w-0 select-none">
                 {currentModel?.name ?? (chatModels.length === 0 ? t('agent.noModelConfigured') : t('agent.selectModel'))}
               </span>
             </button>
 
             {/* 模型选择下拉 */}
             {showModelMenu && (
-              <div
-                className="menu-pop absolute bottom-full left-0 mb-1 z-50 py-1 rounded-lg shadow-lg"
+              <Popover
+                open={showModelMenu}
+                triggerRef={modelRef}
+                placement="above"
+                gap={4}
+                align="start"
+                onClose={() => setShowModelMenu(false)}
+                className="menu-pop z-50 py-1 rounded-lg shadow-lg"
                 style={{
                   width: 220,
                   backgroundColor: 'var(--color-sidebar)',
@@ -396,7 +415,7 @@ export default function AgentInputBox() {
                     />
                   ))
                 )}
-              </div>
+              </Popover>
             )}
           </div>
         </div>

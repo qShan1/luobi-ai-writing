@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, memo } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import {
   X, Plus, Trash2, Check, Save, Globe, Cpu, Database,
   Type, Settings2, Zap, Eye, EyeOff, ChevronDown, MessageSquare,
@@ -48,6 +49,18 @@ const SECTIONS: SectionItem[] = [
   { id: 'about', label: 'About & Support', icon: <span style={{ color: 'var(--color-error)', fontSize: 14 }}>❤️</span>, descriptionKey: 'general.aboutDesc' },
 ]
 
+const MemoPromptSettings = memo(PromptSettings)
+const MemoLanguageSection = memo(LanguageSection)
+const MemoLLMSection = memo(LLMSection)
+const MemoProxySection = memo(ProxySection)
+const MemoEditorSection = memo(EditorSection)
+const MemoEffectsSection = memo(EffectsSection)
+const MemoWindowSection = memo(WindowSection)
+const MemoAboutSection = memo(AboutSection)
+
+const GENERATION_PURPOSES: ModelProfile['purposes'] = ['generation', 'refinement', 'summary']
+const EMBEDDING_PURPOSES: ModelProfile['purposes'] = ['embedding']
+
 // ==================== 主组件 ====================
 
 interface SettingsModalProps {
@@ -60,16 +73,41 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   const { t } = useTranslation('settings')
   const section = (useLayoutStore(s => s.settingsSection) ?? 'llm') as SettingsSection
   const setSettingsSection = useLayoutStore(s => s.setSettingsSection)
+  const reduceMotion = useReducedMotion()
+  // 懒加载缓存：首次访问的 section 才挂载，之后保持挂载，切回时不再重新渲染/重新拉取
+  const [mounted, setMounted] = useState<Partial<Record<SettingsSection, boolean>>>({ [section]: true })
 
   if (!open) return null
 
+  if (!mounted[section]) {
+    setMounted((m) => ({ ...m, [section]: true }))
+  }
+
+  const renderSection = (id: SettingsSection) => {
+    switch (id) {
+      case 'language': return <MemoLanguageSection />
+      case 'llm': return <MemoLLMSection purposes={GENERATION_PURPOSES} purposeLabel={t('general.models')} />
+      case 'embedding': return <MemoLLMSection purposes={EMBEDDING_PURPOSES} purposeLabel={t('general.embedding')} />
+      case 'proxy': return <MemoProxySection />
+      case 'editor': return <MemoEditorSection />
+      case 'effects': return <MemoEffectsSection />
+      case 'prompts': return <MemoPromptSettings />
+      case 'window': return <MemoWindowSection />
+      case 'about': return <MemoAboutSection />
+      default: return null
+    }
+  }
+
   return (
-    <div
+    <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }}
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div
+      <motion.div
         className="relative flex w-full max-w-[880px] max-h-[80vh] rounded-2xl overflow-hidden"
         style={{
           background: 'color-mix(in srgb, var(--color-editor-bg) 80%, transparent)',
@@ -78,6 +116,9 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           WebkitBackdropFilter: 'blur(28px) saturate(160%)',
           boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.35), 0 25px 50px -12px rgba(0,0,0,0.25)',
         }}
+        initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.22, ease: 'easeOut' }}
       >
         {/* 左侧导航 */}
         <aside
@@ -134,19 +175,23 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
 
           {/* 区域内容 */}
           <div className="flex-1 overflow-y-auto px-6 py-5">
-            {section === 'language' && <LanguageSection />}
-            {section === 'llm' && <LLMSection purposes={['generation', 'refinement', 'summary']} purposeLabel={t('general.models')} />}
-            {section === 'embedding' && <LLMSection purposes={['embedding']} purposeLabel={t('general.embedding')} />}
-            {section === 'proxy' && <ProxySection />}
-            {section === 'editor' && <EditorSection />}
-            {section === 'effects' && <EffectsSection />}
-            {section === 'prompts' && <PromptSettings />}
-            {section === 'window' && <WindowSection />}
-            {section === 'about' && <AboutSection />}
+            {SECTIONS.map((s) => {
+              if (!mounted[s.id]) return null
+              return (
+                <div
+                  key={s.id}
+                  className="animate-fade-in-up"
+                  style={{ display: s.id === section ? 'block' : 'none' }}
+                  aria-hidden={s.id !== section}
+                >
+                  {renderSection(s.id)}
+                </div>
+              )
+            })}
           </div>
         </main>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 

@@ -950,17 +950,44 @@
 
 /* ===== 统一通知 / 对话框动画 ===== */
 
-/* Toast 进场 - 弹跳效果 */
+/* Toast 进场 - 轻微上移 + 缩放入场 */
 @keyframes toast-enter {
-  0% { opacity: 0; transform: translateY(20px) scale(0.9); }
-  60% { transform: translateY(-4px) scale(1.02); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Toast 退场 - 下滑消失 */
+/* Toast 退场 - 快速淡出 + 轻微下沉 */
 @keyframes toast-exit {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(16px) scale(0.95); }
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(4px) scale(0.98); }
+}
+
+/* Toast 卡片 - 液态玻璃（半透明面板 + 模糊 + 顶部白色高光） */
+.toast-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.toast-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  pointer-events: none;
+}
+
+.toast-card--enter { animation: toast-enter 0.25s var(--ease-out) both; }
+.toast-card--exit  { animation: toast-exit 0.15s var(--ease-out) both; }
+
+/* Reduced motion: 纯 opacity 过渡，无位移/缩放 */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes toast-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes toast-fade-out { from { opacity: 1; } to { opacity: 0; } }
+  .toast-card--enter { animation-name: toast-fade-in;  animation-duration: 0.18s !important; }
+  .toast-card--exit  { animation-name: toast-fade-out; animation-duration: 0.18s !important; }
 }
 
 /* Dialog / Confirm / AlertDialog 进场 - 缩放+上移 */
