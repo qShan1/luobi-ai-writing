@@ -300,10 +300,9 @@ export default function DraftEditor({ filePath, content }: Props) {
     <div className="h-full flex flex-col overflow-hidden">
       {/* 顶部工具栏 */}
       <div
-        className="flex items-center justify-between gap-2 px-3 h-9 flex-shrink-0"
+        className="liquid-glass-panel flex items-center justify-between gap-2 px-3 h-9 flex-shrink-0"
         style={{
           borderBottom: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-editor-bg)',
         }}
       >
         {/* 左侧：章节标题 + 版本 */}

@@ -102,20 +102,16 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }}
+       style={{ backgroundColor: 'rgba(0,0,0,0.42)', backdropFilter: 'blur(12px)' }}
       initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <motion.div
-        className="relative flex w-full max-w-[880px] max-h-[80vh] rounded-2xl overflow-hidden"
+         className="liquid-glass-panel relative flex h-[80vh] min-h-[520px] w-full max-w-[880px] max-h-[calc(100vh-2rem)] rounded-2xl overflow-hidden"
         style={{
-          background: 'color-mix(in srgb, var(--color-editor-bg) 80%, transparent)',
           border: '1px solid var(--color-border)',
-          backdropFilter: 'blur(28px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(28px) saturate(160%)',
-          boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.35), 0 25px 50px -12px rgba(0,0,0,0.25)',
         }}
         initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -123,9 +119,8 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       >
         {/* 左侧导航 */}
         <aside
-          className="flex flex-col w-60 flex-shrink-0 py-5 gap-1"
+          className="liquid-glass-panel flex flex-col w-60 flex-shrink-0 py-5 gap-1"
           style={{
-            backgroundColor: 'var(--color-sidebar)',
             borderRight: '1px solid var(--color-border)',
           }}
         >
@@ -418,12 +413,12 @@ function ModelCard({
   return (
     <div
       className={cn(
-        'flex items-center gap-3 px-4 py-3 rounded-xl group transition-colors',
+        'settings-model-card flex items-center gap-3 px-4 py-3 rounded-xl group transition-colors',
+        isDefault && 'is-default',
         isDefault
           ? 'border border-[var(--color-accent)]'
           : 'border border-[var(--color-border)] hover:border-[var(--color-accent)]',
       )}
-      style={{ backgroundColor: isDefault ? 'color-mix(in srgb, var(--color-accent) 5%, var(--color-panel))' : 'var(--color-panel)' }}
     >
       {/* 图标 */}
       <div
@@ -1252,7 +1247,7 @@ function WindowSection() {
 function AboutSection() {
   return (
     <div className="space-y-6 max-w-[600px] p-2">
-      <div className="flex flex-col items-center justify-center py-8 rounded-xl space-y-2" style={{ backgroundColor: 'var(--color-sidebar)', border: '1px solid var(--color-border)' }}>
+      <div className="liquid-glass-panel flex flex-col items-center justify-center py-8 rounded-xl space-y-2" style={{ border: '1px solid var(--color-border)' }}>
         <h1 className="text-2xl font-bold brand-gradient tracking-wider">落笔</h1>
         <p className="text-sm opacity-80" style={{ color: 'var(--color-text)' }}>v{__APP_VERSION__}</p>
         <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>本地优先的 AI 小说创作工作台</p>

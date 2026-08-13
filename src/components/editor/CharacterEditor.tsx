@@ -60,10 +60,9 @@ export default function CharacterEditor() {
     <div className="h-full flex flex-col overflow-hidden bg-[var(--color-bg)]">
       {/* 统一顶部工具栏 */}
       <div
-        className="flex items-center justify-between gap-2 px-3 h-9 flex-shrink-0"
+        className="liquid-glass-panel flex items-center justify-between gap-2 px-3 h-9 flex-shrink-0"
         style={{
           borderBottom: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-editor-bg)',
         }}
       >
         <div className="flex items-center gap-1.5 min-w-0">

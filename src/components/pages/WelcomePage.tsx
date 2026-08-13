@@ -56,7 +56,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             variants={enterCard}
           >
             <div
-              className="welcome-action-button welcome-action-primary group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-4 py-2 cursor-pointer bg-[var(--color-accent)] text-white border border-transparent shadow-[var(--shadow-sm)] transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-[var(--color-accent-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+              className="welcome-action-button welcome-primary group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-4 py-2 cursor-pointer bg-[var(--color-accent)] text-white border border-transparent shadow-[var(--shadow-sm)] transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-[var(--color-accent-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onNewProject}
               role="button"
               tabIndex={0}
@@ -71,7 +71,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             variants={enterCard}
           >
             <div
-              className="welcome-action-button welcome-action-secondary group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2 cursor-pointer bg-[var(--color-panel)] text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+              className="welcome-action-button welcome-secondary liquid-glass-panel group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2 cursor-pointer text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onOpenProject}
               role="button"
               tabIndex={0}
@@ -86,7 +86,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             variants={enterCard}
           >
             <div
-              className="welcome-action-button welcome-action-secondary group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2 cursor-pointer bg-[var(--color-panel)] text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+              className="welcome-action-button welcome-secondary liquid-glass-panel group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2 cursor-pointer text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onImportNovel}
               role="button"
               tabIndex={0}

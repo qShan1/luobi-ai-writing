@@ -84,7 +84,7 @@ const DEFAULT_STATE = {
   sidebarView: 'project' as SidebarView,
   sidebarWidth: 20,
   aiPanelOpen: true,
-  aiPanelWidth: 20,
+  aiPanelWidth: 24,
   rightView: 'agent' as RightView,
   bottomPanelOpen: true,
   bottomTab: 'tasks' as BottomTab,
@@ -129,7 +129,7 @@ export const useLayoutStore = create<LayoutState>()(
 
       toggleAIPanel: () => set((s) => ({ aiPanelOpen: !s.aiPanelOpen })),
       setAIPanelOpen: (open) => set({ aiPanelOpen: open }),
-      setAIPanelWidth: (width) => set((s) => ({ aiPanelWidth: clampNum(width, 10, 40, s.aiPanelWidth) })),
+       setAIPanelWidth: (width) => set((s) => ({ aiPanelWidth: clampNum(width, 18, 40, s.aiPanelWidth) })),
       setRightView: (view) => set({ rightView: view }),
       openRightPanel: (view) => set({ aiPanelOpen: true, rightView: view }),
 
@@ -177,7 +177,7 @@ export const useLayoutStore = create<LayoutState>()(
           // 净化面板尺寸：历史数据可能被写成 null/NaN（JSON.stringify(NaN)=null），
           // 若直接透传会导致 react-resizable-panels defaultSize=null 崩溃白屏
           sidebarWidth: readNum(p.sidebarWidth, current.sidebarWidth),
-          aiPanelWidth: readNum(p.aiPanelWidth, current.aiPanelWidth),
+           aiPanelWidth: clampNum(readNum(p.aiPanelWidth, current.aiPanelWidth), 18, 40, current.aiPanelWidth),
           bottomPanelHeight: readNum(p.bottomPanelHeight, current.bottomPanelHeight),
           // 弹窗状态永远从默认值开始
           settingsOpen: false,

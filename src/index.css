@@ -1492,9 +1492,9 @@
 /* 环境背景：柔和光晕渐变，作为玻璃磨砂的内容层 */
 .app-liquid-bg {
   background:
-    radial-gradient(1200px 800px at 12% -5%, rgba(var(--color-accent-rgb), 0.20), transparent 60%),
-    radial-gradient(1000px 700px at 108% 18%, rgba(var(--color-accent-rgb), 0.14), transparent 55%),
-    radial-gradient(900px 700px at 82% 105%, rgba(var(--color-accent-rgb), 0.10), transparent 60%),
+    radial-gradient(1200px 800px at 12% -5%, rgba(var(--color-accent-rgb), 0.28), transparent 60%),
+    radial-gradient(1000px 700px at 108% 18%, color-mix(in srgb, var(--color-gold) 22%, transparent), transparent 55%),
+    radial-gradient(900px 700px at 82% 105%, rgba(var(--color-accent-rgb), 0.16), transparent 60%),
     var(--color-bg);
 }
 
@@ -1503,9 +1503,30 @@
   background: var(--color-panel);
 }
 
+.statusbar-frost.liquid-glass-panel {
+  background: var(--color-statusbar);
+}
+
+.liquid-glass-control {
+  background: var(--color-panel);
+}
+
+.liquid-glass-menu {
+  background: var(--color-sidebar);
+}
+
+.knowledge-surface {
+  background: var(--color-editor-bg);
+}
+
+.knowledge-backfill {
+  background: color-mix(in srgb, var(--color-warning) 6%, transparent);
+}
+
 /* effects 开启：高透磨砂 + 白色高光边 + 浮起投影（Apple 液态玻璃） */
 .liquid-enabled .liquid-glass-panel {
   background: color-mix(in srgb, var(--color-panel) 38%, transparent);
+  border-color: color-mix(in srgb, #fff 20%, var(--color-border));
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
   box-shadow:
@@ -1513,11 +1534,104 @@
     0 8px 24px -14px rgba(0, 0, 0, 0.14);
 }
 
+.liquid-enabled .statusbar-frost.liquid-glass-panel {
+  background: color-mix(in srgb, var(--color-statusbar) 88%, transparent);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  box-shadow: 0 -1px 0 var(--color-border), 0 -12px 28px -16px rgba(0, 0, 0, 0.12);
+}
+
+.liquid-enabled .liquid-glass-control,
+.liquid-enabled .liquid-glass-menu,
+.liquid-enabled .welcome-shell {
+  background: color-mix(in srgb, var(--color-panel) 38%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+}
+
+.liquid-enabled .welcome-shell {
+  background: color-mix(in srgb, var(--color-editor-bg) 62%, transparent);
+}
+
+.liquid-enabled .knowledge-surface:not(.liquid-glass-panel) {
+  background: color-mix(in srgb, var(--color-editor-bg) 72%, transparent);
+}
+
+.liquid-enabled .knowledge-backfill {
+  background: color-mix(in srgb, var(--color-warning) 7%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+}
+
+.liquid-enabled input,
+.liquid-enabled textarea,
+.liquid-enabled select {
+  background: color-mix(in srgb, var(--color-panel) 58%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  backdrop-filter: blur(10px) saturate(130%);
+}
+
+.novel-config-section {
+  background: var(--color-sidebar);
+}
+
+.settings-model-card {
+  background: var(--color-panel);
+}
+
+.settings-model-card.is-default {
+  background: color-mix(in srgb, var(--color-accent) 5%, var(--color-panel));
+}
+
+.liquid-enabled .settings-model-card {
+  background: color-mix(in srgb, var(--color-panel) 48%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  backdrop-filter: blur(14px) saturate(145%);
+}
+
+.liquid-enabled .settings-model-card.is-default {
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+}
+
+.liquid-enabled .novel-config-section {
+  background: color-mix(in srgb, var(--color-panel) 46%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent);
+}
+
 @media (prefers-reduced-transparency: reduce) {
+  .statusbar-frost.liquid-glass-panel,
+  .knowledge-surface,
+  .knowledge-backfill,
+  .liquid-glass-control,
+  .liquid-glass-menu {
+    background: var(--color-panel);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .liquid-enabled .liquid-glass-panel {
     background: var(--color-panel);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     box-shadow: none;
+  }
+
+  .liquid-enabled .tool-call-block,
+  .liquid-enabled .confirm-card,
+  .liquid-enabled .artifact-card {
+    background: var(--color-panel);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .liquid-enabled input,
+  .liquid-enabled textarea,
+  .liquid-enabled select {
+    background: var(--color-panel);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }

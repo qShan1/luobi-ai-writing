@@ -188,9 +188,8 @@ export default function AgentInputBox() {
   return (
     <div
       ref={inputBoxRef}
-      className="relative flex flex-col gap-0 p-1.5"
+      className="liquid-glass-panel relative flex flex-col gap-0 p-1.5"
       style={{
-        backgroundColor: 'var(--color-hover)',
         border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-md)',  /* 4px 方正风格 */
       }}
@@ -226,11 +225,10 @@ export default function AgentInputBox() {
           gap={8}
           align="start"
           onClose={() => setShowContextMenu(false)}
-          className="menu-pop z-50 py-1 rounded-lg shadow-lg"
-          style={{
-            width: 180,
-            backgroundColor: 'var(--color-sidebar)',
-            border: '1px solid var(--color-border)',
+           className="liquid-glass-menu menu-pop z-50 py-1 rounded-lg shadow-lg"
+           style={{
+             width: 180,
+             border: '1px solid var(--color-border)',
             boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
           }}
         >
@@ -307,7 +305,7 @@ export default function AgentInputBox() {
               }}
               aria-expanded={showModeMenu}
               aria-haspopup="menu"
-              className="active-press flex items-center gap-1 py-1 pl-1.5 pr-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-panel)] text-xs transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)]"
+               className="liquid-glass-control active-press flex items-center gap-1 py-1 pl-1.5 pr-1.5 rounded-md border border-[var(--color-border)] text-xs transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)]"
               style={{
                 color: 'var(--color-text-secondary)',
               }}
@@ -325,11 +323,10 @@ export default function AgentInputBox() {
                 gap={4}
                 align="start"
                 onClose={() => setShowModeMenu(false)}
-                className="menu-pop z-50 py-1 rounded-lg shadow-lg"
-                style={{
-                  width: 240,
-                  backgroundColor: 'var(--color-sidebar)',
-                  border: '1px solid var(--color-border)',
+                 className="liquid-glass-menu menu-pop z-50 py-1 rounded-lg shadow-lg"
+                 style={{
+                   width: 240,
+                   border: '1px solid var(--color-border)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
                 }}
               >
@@ -364,7 +361,7 @@ export default function AgentInputBox() {
               }}
               aria-expanded={showModelMenu}
               aria-haspopup="menu"
-              className="active-press flex items-center gap-1 py-1 pl-1.5 pr-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-panel)] text-xs min-w-0 transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)]"
+               className="liquid-glass-control active-press flex items-center gap-1 py-1 pl-1.5 pr-1.5 rounded-md border border-[var(--color-border)] text-xs min-w-0 transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)]"
               style={{
                 color: 'var(--color-text-secondary)',
                 maxWidth: 140,
@@ -385,11 +382,10 @@ export default function AgentInputBox() {
                 gap={4}
                 align="start"
                 onClose={() => setShowModelMenu(false)}
-                className="menu-pop z-50 py-1 rounded-lg shadow-lg"
-                style={{
-                  width: 220,
-                  backgroundColor: 'var(--color-sidebar)',
-                  border: '1px solid var(--color-border)',
+                 className="liquid-glass-menu menu-pop z-50 py-1 rounded-lg shadow-lg"
+                 style={{
+                   width: 220,
+                   border: '1px solid var(--color-border)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
                   maxHeight: 280,
                   overflowY: 'auto',

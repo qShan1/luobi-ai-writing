@@ -42,7 +42,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%]',
+        'liquid-glass-panel fixed left-[50%] top-[50%] z-50 w-full max-w-lg max-h-[calc(100vh-2rem)] overflow-y-auto translate-x-[-50%] translate-y-[-50%]',
         'rounded-2xl outline-none',
         'border border-[var(--color-border)]',
         'duration-200 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out',
@@ -50,14 +50,7 @@ const DialogContent = React.forwardRef<
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         className
       )}
-      style={{
-        background: 'color-mix(in srgb, var(--color-panel) 70%, transparent)',
-        backdropFilter: 'blur(24px) saturate(160%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-        boxShadow:
-          'inset 0 1px 0 0 rgba(255,255,255,0.35), 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.05)',
-      }}
-      {...props}
+       {...props}
     >
       {children}
       <DialogPrimitive.Close

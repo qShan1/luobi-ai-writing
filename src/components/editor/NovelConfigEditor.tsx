@@ -11,6 +11,7 @@ import { Input } from '../ui/Input'
 import { Textarea } from '../ui/Textarea'
 import { NativeSelect } from '../ui/NativeSelect'
 import GenerateConfigDialog from '../dialogs/GenerateConfigDialog'
+import Popover from '../ui/Popover'
 
 /** Genre options with i18n labels (values kept in Chinese for backward compatibility) */
 const GENRE_OPTIONS = [
@@ -354,7 +355,7 @@ function Section({
   const showAIButton = aiFieldKey != null && onAIGenerate != null
 
   return (
-    <div className="p-4 rounded-xl bg-[var(--color-sidebar)] border border-[var(--color-border)]">
+    <div className="novel-config-section p-4 rounded-xl border border-[var(--color-border)]">
       <div className="flex items-start justify-between mb-3">
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold text-[var(--color-text)]">{title}</h3>
@@ -385,58 +386,45 @@ function Section({
 /** 表单字段 */
 function Field({ label, tipItems, children }: { label: string; tipItems?: string[]; children: React.ReactNode }) {
   const [showTip, setShowTip] = useState(false)
-  const tipRef = useRef<HTMLDivElement>(null)
+  const tipRef = useRef<HTMLSpanElement>(null)
 
   return (
     <div>
       <label className="text-xs mb-1 flex items-center gap-1 font-medium text-[var(--color-text-muted)]">
         {label}
         {tipItems && tipItems.length > 0 && (
-          <span
-            style={{ position: 'relative', display: 'inline-flex' }}
-            onMouseEnter={() => setShowTip(true)}
-            onMouseLeave={() => setShowTip(false)}
-          >
-            <Info size={11} style={{ opacity: 0.5 }} />
-            {showTip && (
-              <div
-                ref={tipRef}
-                style={{
-                  position: 'absolute',
-                  bottom: '100%',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  marginBottom: 6,
-                  padding: '8px 12px',
-                  borderRadius: 8,
-                  fontSize: 11,
-                  lineHeight: 1.6,
-                  whiteSpace: 'pre-line',
-                  color: 'var(--color-text)',
-                  background: 'var(--color-bg-elevated, var(--color-sidebar))',
-                  border: '1px solid var(--color-border)',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
-                  zIndex: 9999,
-                  width: 260,
-                  pointerEvents: 'none',
-                }}
-              >
-                {tipItems.map((item, i) => {
-                  // Handle both Chinese "：" and English ":" separators
-                  const separator = item.includes('：') ? '：' : ': '
-                  const parts = item.split(separator)
-                  const title = parts[0]
-                  const rest = parts.slice(1).join(separator)
-                  return (
-                    <div key={i} style={{ paddingLeft: 0 }}>
-                      <span style={{ color: 'var(--color-accent)', fontWeight: 600 }}>{title}</span>
-                      {separator + rest}
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </span>
+            <span
+              ref={tipRef}
+              style={{ display: 'inline-flex' }}
+              onMouseEnter={() => setShowTip(true)}
+              onMouseLeave={() => setShowTip(false)}
+            >
+              <Info size={11} style={{ opacity: 0.5 }} />
+              {showTip && (
+                <Popover
+                  open={showTip}
+                  triggerRef={tipRef}
+                  placement="above"
+                  align="start"
+                  gap={6}
+                  className="liquid-glass-menu rounded-lg px-3 py-2 text-[11px] leading-relaxed"
+                  style={{ width: 260, pointerEvents: 'none' }}
+                >
+                  {tipItems.map((item, i) => {
+                    const separator = item.includes('：') ? '：' : ': '
+                    const parts = item.split(separator)
+                    const title = parts[0]
+                    const rest = parts.slice(1).join(separator)
+                    return (
+                      <div key={i}>
+                        <span style={{ color: 'var(--color-accent)', fontWeight: 600 }}>{title}</span>
+                        {separator + rest}
+                      </div>
+                    )
+                  })}
+                </Popover>
+              )}
+            </span>
         )}
       </label>
       {children}

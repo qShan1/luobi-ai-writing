@@ -80,7 +80,7 @@ export default function BottomPanel() {
         </div>
 
         {/* 右侧：关闭按钮 */}
-        <IconBtn onClick={toggleBottomPanel} title={t('common.closePanel')} size={18}>
+        <IconBtn onClick={toggleBottomPanel} title={t('closePanel', { ns: 'common' })} size={18}>
           <X size={12} strokeWidth={1.5} />
         </IconBtn>
       </div>
@@ -762,19 +762,19 @@ function LogsView() {
         <Button
           variant="ghost" size="icon"
           onClick={() => setAutoScroll(!autoScroll)}
-          title={autoScroll ? t('common.autoScrollOn') : t('common.autoScrollOff')}
+          title={autoScroll ? t('autoScrollOn', { ns: 'common' }) : t('autoScrollOff', { ns: 'common' })}
           className={autoScroll ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}
         >
           <ChevronsDown size={13} />
         </Button>
-        <Button variant="ghost" size="icon" onClick={clearLogs} title={t('common.clearLogs')}>
+        <Button variant="ghost" size="icon" onClick={clearLogs} title={t('clearLogs', { ns: 'common' })}>
           <Trash2 size={13} />
         </Button>
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 pb-2 font-mono text-xs leading-5">
         {globalLogs.length === 0 && (
-          <div className="text-center py-8 opacity-30">{t('common.noLogs')}</div>
+          <div className="text-center py-8 opacity-30">{t('noLogs', { ns: 'common' })}</div>
         )}
         {globalLogs.map((log, i) => (
           <motion.div
@@ -849,22 +849,22 @@ function ModelsView() {
           style={{ borderBottom: '1px solid var(--color-border)' }}
         >
           <div className="text-caption text-[var(--color-text-muted)]">
-            <span className="font-bold text-sm text-[var(--color-text)]">{stats.totalCalls}</span> {t('common.calls')}
+            <span className="font-bold text-sm text-[var(--color-text)]">{stats.totalCalls}</span> {t('calls', { ns: 'common' })}
           </div>
           <div className="text-caption text-[var(--color-text-muted)]">
-            <span className="font-bold text-sm text-[var(--color-text)]">{(stats.totalTokens / 1000).toFixed(1)}k</span> {t('common.tokens')}
+            <span className="font-bold text-sm text-[var(--color-text)]">{(stats.totalTokens / 1000).toFixed(1)}k</span> {t('tokens', { ns: 'common' })}
           </div>
           <div className="text-caption text-[var(--color-text-muted)]">
-            {t('common.input')} <span className="font-mono text-[var(--color-text-secondary)]">{(stats.totalPromptTokens / 1000).toFixed(1)}k</span>
+            {t('input', { ns: 'common' })} <span className="font-mono text-[var(--color-text-secondary)]">{(stats.totalPromptTokens / 1000).toFixed(1)}k</span>
           </div>
           <div className="text-caption text-[var(--color-text-muted)]">
-            {t('common.output')} <span className="font-mono text-[var(--color-text-secondary)]">{(stats.totalCompletionTokens / 1000).toFixed(1)}k</span>
+            {t('output', { ns: 'common' })} <span className="font-mono text-[var(--color-text-secondary)]">{(stats.totalCompletionTokens / 1000).toFixed(1)}k</span>
           </div>
         </div>
       )}
       <div className="flex-1 overflow-y-auto font-mono text-xs">
         {history.length === 0 ? (
-          <div className="flex items-center justify-center h-full opacity-30 text-sm">{t('common.noRecords')}</div>
+          <div className="flex items-center justify-center h-full opacity-30 text-sm">{t('noRecords', { ns: 'common' })}</div>
         ) : (
           <table className="w-full">
             <thead>
@@ -872,12 +872,12 @@ function ModelsView() {
                 className="text-caption text-[var(--color-text-muted)]"
                 style={{ borderBottom: '1px solid var(--color-border)' }}
               >
-                <th className="text-left px-4 py-1 font-medium">{t('common.time')}</th>
-                <th className="text-left px-2 py-1 font-medium">{t('common.model')}</th>
-                <th className="text-left px-2 py-1 font-medium">{t('common.purpose')}</th>
-                <th className="text-right px-2 py-1 font-medium">{t('common.tokens')}</th>
-                <th className="text-right px-2 py-1 font-medium">{t('common.duration')}</th>
-                <th className="text-center px-2 py-1 font-medium">{t('common.status')}</th>
+                <th className="text-left px-4 py-1 font-medium">{t('time', { ns: 'common' })}</th>
+                <th className="text-left px-2 py-1 font-medium">{t('model', { ns: 'common' })}</th>
+                <th className="text-left px-2 py-1 font-medium">{t('purpose', { ns: 'common' })}</th>
+                <th className="text-right px-2 py-1 font-medium">{t('tokens', { ns: 'common' })}</th>
+                <th className="text-right px-2 py-1 font-medium">{t('duration', { ns: 'common' })}</th>
+                <th className="text-center px-2 py-1 font-medium">{t('status', { ns: 'common' })}</th>
               </tr>
             </thead>
             <tbody>

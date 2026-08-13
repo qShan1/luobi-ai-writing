@@ -65,12 +65,11 @@ export default function SlashCommandMenu({ query, onSelect, onClose }: Props) {
       aria-label={t('agent.commands')}
       aria-orientation="vertical"
       aria-activedescendant={`option-${selectedIndex}`}
-      className="menu-pop z-50 py-1 rounded-lg shadow-lg"
+      className="liquid-glass-menu menu-pop z-50 py-1 rounded-lg shadow-lg"
       style={{
         width: 280,
         maxHeight: 300,
         overflowY: 'auto',
-        backgroundColor: 'var(--color-sidebar)',
         border: '1px solid var(--color-border)',
         boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
       }}

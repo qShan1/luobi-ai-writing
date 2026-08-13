@@ -25,6 +25,7 @@ export interface ProjectCoreRow {
     worldbuilding: string
     characters_arch: string
     synopsis: string
+    core_outline: string
     character_states: string
     created_at: string
     updated_at: string
@@ -48,6 +49,7 @@ export interface ProjectCoreData {
     worldbuilding: string
     charactersArch: string
     synopsis: string
+    coreOutline: string
     characterStates: string
 }
 
@@ -70,6 +72,7 @@ function rowToData(row: ProjectCoreRow): ProjectCoreData {
         worldbuilding: row.worldbuilding,
         charactersArch: row.characters_arch,
         synopsis: row.synopsis,
+        coreOutline: row.core_outline,
         characterStates: row.character_states,
     }
 }
@@ -121,6 +124,7 @@ export class ProjectCoreRepository {
             worldbuilding: 'worldbuilding',
             charactersArch: 'characters_arch',
             synopsis: 'synopsis',
+            coreOutline: 'core_outline',
             characterStates: 'character_states',
         }
 

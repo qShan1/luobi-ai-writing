@@ -4,6 +4,41 @@
 
 ---
 
+## 2026-08-13: 小说配置持久化、Agent 尺寸与设置字体修复
+
+**根据实际运行截图修复四个用户路径问题，不更换架构、不新增依赖。**
+
+- 核心大纲新增独立 `project_core.core_outline` 字段，数据库 schema 升级到 v2；保存/更新/打开均使用该字段，不再错误复用架构 `synopsis`。
+- 情节结构说明浮层改用现有 Portal `Popover`，不再被配置编辑器的滚动容器裁剪。
+- Agent 面板最小宽度提升到 18%，默认宽度 24%，并给横向 PanelGroup 补 `min-w-0`，避免窄窗口下标题、模型和输入工具栏互相挤压。
+- 设置弹窗固定为视口高度，降低遮罩压暗程度；移除启动时遗留的 `setZoomLevel` 缩放覆盖，只保留 `setZoomFactor`。
+- 系统字体 `system:<name>` 现在可被主题 store 解析并写入 `--font-sans`，界面字体设置真正生效。
+- 强化液态玻璃环境光、输入控件、NovelConfig 分组和设置模型卡材质；Portal 浮层通过 `html.liquid-enabled` 继承玻璃状态。
+
+### 验证
+- `pnpm build` 通过。
+- 未运行完整测试套件；本次按用户要求以真实使用路径和构建结果为主。
+
+---
+
+## 2026-08-13: 液态玻璃覆盖补齐 + 浮层裁剪修复
+
+**用户反馈此前只有外围面板有玻璃质感，欢迎页、知识库、Agent 输入区、编辑器 Chrome 和弹窗仍是实体块。本次沿用现有液态玻璃实现，不新增依赖；正文编辑画布保持实心以保证阅读可读性。**
+
+- 欢迎页次级操作、知识库统计/搜索/回填区、Agent 输入/菜单、编辑器顶部信息栏与 Tab、设置弹窗、通用 Dialog 接入现有 `liquid-glass-panel`/控件材质。
+- Agent 工具调用、确认卡、产物卡改为低对比半透明层，减少卡片墙效果。
+- Slash/mention/context menu 统一玻璃菜单材质；侧栏右键菜单改为 Portal 到 `document.body`，避免被 `overflow-hidden` 和 `backdrop-filter` 裁剪。
+- 通用 Dialog 增加视口内最大高度和内部滚动，避免小窗口/大字体下底部不可达。
+- 修复 Welcome 页面 `welcome-action-*` 与 CSS `welcome-*` 类名断链，使主次操作尺寸样式重新生效。
+- 保留 `prefers-reduced-transparency` 降级路径。
+- 根据运行截图修复 `panels` 组件误用 `common.*` key 的 namespace 问题，底部模型调用统计/表头、日志按钮、知识库刷新和章节创建取消按钮不再显示 raw key。
+
+### 验证
+- `pnpm build` 通过。
+- 未运行完整测试套件；本轮以实际界面路径和构建结果为主。
+
+---
+
 ## 2026-08-13: AI 面板浮层遮挡/裁剪修复 + 工具栏按钮挤压修复
 
 **AI 助手面板下拉（上下文/模式/模型/斜杠/提及/更多）被 `overflow-hidden` 链与 `backdrop-filter` stacking context 裁剪遮挡，改为 Portal 到 body 的 fixed 浮层；修复模型名/模式文字导致的按钮被撑大换行。不改变交互与数据流。**

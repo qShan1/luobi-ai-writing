@@ -115,7 +115,7 @@ export function registerProjectController() {
           wordsPerChapter: updatedCoreData.wordsPerChapter,
           plotStructure: updatedCoreData.plotStructure as 'three_act' | 'heros_journey' | 'save_the_cat' | 'kishotenketsu' | 'multi_thread' | 'freeform',
           narrativePOV: updatedCoreData.narrativePov as 'third_limited' | 'first_person' | 'third_omniscient' | 'multi_pov',
-          coreOutline: updatedCoreData.synopsis,      // 旧字段映射
+          coreOutline: updatedCoreData.coreOutline,
           worldSetting: updatedCoreData.worldbuilding, // 旧字段映射
           goldenFinger: updatedCoreData.goldenFinger,
           protagonistProfile: updatedCoreData.charactersArch, // 旧字段映射
@@ -151,7 +151,10 @@ export function registerProjectController() {
           wordsPerChapter: data.novelConfig.wordsPerChapter,
           plotStructure: data.novelConfig.plotStructure,
           narrativePov: data.novelConfig.narrativePOV,
+          coreOutline: data.novelConfig.coreOutline ?? '',
           goldenFinger: data.novelConfig.goldenFinger,
+          worldbuilding: data.novelConfig.worldSetting ?? '',
+          charactersArch: data.novelConfig.protagonistProfile ?? '',
           globalGuidance: data.novelConfig.globalGuidance,
           writingStyle: data.novelConfig.writingStyle ?? '',
           referenceWorks: data.novelConfig.referenceWorks ?? '',
@@ -190,7 +193,10 @@ export function registerProjectController() {
           wordsPerChapter: data.novelConfig.wordsPerChapter,
           plotStructure: data.novelConfig.plotStructure,
           narrativePov: data.novelConfig.narrativePOV,
+          coreOutline: data.novelConfig.coreOutline ?? '',
           goldenFinger: data.novelConfig.goldenFinger,
+          worldbuilding: data.novelConfig.worldSetting ?? '',
+          charactersArch: data.novelConfig.protagonistProfile ?? '',
           globalGuidance: data.novelConfig.globalGuidance,
           writingStyle: data.novelConfig.writingStyle ?? '',
           referenceWorks: data.novelConfig.referenceWorks ?? '',

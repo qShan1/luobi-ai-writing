@@ -129,7 +129,7 @@ export default function KnowledgePanel() {
         <Button
           variant="ghost" size="icon"
           onClick={() => loadData()}
-          title={t('common.refresh')}
+            title={t('refresh', { ns: 'common' })}
           className="h-6 w-6"
         >
           <RefreshCw size={11} />

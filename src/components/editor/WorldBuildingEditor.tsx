@@ -202,8 +202,8 @@ export default function WorldBuildingEditor() {
     <div className="h-full flex flex-col overflow-hidden">
       {/* 顶部工具栏 */}
       <div
-        className="flex items-center justify-between gap-2 px-3 h-10 flex-shrink-0 border-b"
-        style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-sidebar)' }}
+        className="liquid-glass-panel flex items-center justify-between gap-2 px-3 h-10 flex-shrink-0 border-b"
+        style={{ borderColor: 'var(--color-border)' }}
       >
         <div className="flex items-center gap-1.5">
           <FolderTree size={14} style={{ color: 'var(--color-text-muted)' }} />

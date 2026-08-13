@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 /** 单条菜单项定义 */
 export interface ContextMenuItem {
@@ -69,16 +70,15 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
   const left = Math.min(position.x, window.innerWidth - MENU_W - 8)
   const top = Math.min(position.y, window.innerHeight - MENU_H - 8)
 
-  return (
+  return createPortal(
     <div
       ref={menuRef}
       role="menu"
-      className="fixed z-[9999] py-1 select-none"
+      className="liquid-glass-menu fixed z-[9999] py-1 select-none"
       style={{
         left,
         top,
         minWidth: MENU_W,
-        backgroundColor: 'var(--color-sidebar)',
         border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-xl)',
         boxShadow: 'var(--shadow-popover)',
@@ -165,6 +165,7 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
           </button>
         )
       })}
-    </div>
+    </div>,
+    document.body,
   )
 }

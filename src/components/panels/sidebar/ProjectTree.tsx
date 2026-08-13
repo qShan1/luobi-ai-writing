@@ -147,7 +147,7 @@ export default function ProjectTree() {
         <span className="font-semibold text-xs truncate" style={{ color: 'var(--color-text)' }}>
           {currentProject.name}
         </span>
-        <Button variant="ghost" size="icon" onClick={() => refreshAll()} title={t('common.refresh')}>
+        <Button variant="ghost" size="icon" onClick={() => refreshAll()} title={t('refresh', { ns: 'common' })}>
           <RefreshCw size={12} />
         </Button>
       </div>

@@ -88,6 +88,11 @@ export default function App() {
   const loadRecentProjects = useProjectStore((s) => s.loadRecentProjects)
   const loadCloseBehavior = useWindowStore((s) => s.loadCloseBehavior)
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('liquid-enabled', glassEnabled)
+    return () => document.documentElement.classList.remove('liquid-enabled')
+  }, [glassEnabled])
+
   // 初始化：主题 + LLM 模型 + 最近项目 + 缩放级别
   useEffect(() => {
     initTheme()
@@ -96,10 +101,6 @@ export default function App() {
     loadCloseBehavior()
     // 初始化 MCP Store
     useMCPStore.getState().init().catch(e => console.warn('[MCP] 初始化失败:', e))
-    if (ipc.isElectron) {
-      const savedZoom = localStorage.getItem('luobi-zoom-level')
-      if (savedZoom) ipc.setZoomLevel(parseFloat(savedZoom))
-    }
     // 初始化 ProjectService — 注册全局事件监听（生命周期与 App 一致）
     import('./services/project-service').then(({ initProjectService }) => {
       initProjectService()
@@ -160,7 +161,7 @@ export default function App() {
         │   │     BottomPanel (全宽)        │   │
         └───┴──────────────────────────────┴───┘
       */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-w-0 flex-1 overflow-hidden">
 
         {/* 左侧工具窗口栏（全高，包括底部面板区域） */}
         <LeftToolWindowBar />
@@ -168,7 +169,7 @@ export default function App() {
         {/* 纵向 PanelGroup：上层主区域 + 下层底部面板 */}
         <PanelGroup
           orientation="vertical"
-          className="flex-1"
+          className="min-w-0 flex-1"
           onLayoutChanged={(layout) => {
             // layout = [top%, bottom%]，仅在有底部面板时持久化
             if (layout.length >= 2) {
@@ -181,7 +182,7 @@ export default function App() {
           <Panel id="top" defaultSize={100 - bottomPanelHeight} minSize={30}>
             <PanelGroup
               orientation="horizontal"
-              className="flex-1 h-full"
+              className="min-w-0 flex-1 h-full"
               onLayoutChanged={(layout) => {
                 // layout 顺序随开闭变化：根据当前状态映射到 sidebar / editor / ai-panel
                 const { sidebarOpen: so, aiPanelOpen: ao } = useLayoutStore.getState()
@@ -219,7 +220,7 @@ export default function App() {
               {aiPanelOpen && (
                 <>
                   <PanelResizeHandle />
-                  <Panel id="ai-panel" collapsible collapsedSize={0} minSize={10} defaultSize={aiPanelWidth}>
+                  <Panel id="ai-panel" collapsible collapsedSize={0} minSize={18} defaultSize={aiPanelWidth}>
                     <ErrorBoundary fallbackLabel={t('aiPanelRenderError')}>
                       {rightView === 'ai-output' ? <AIOutputPanel /> : <AIPanel />}
                     </ErrorBoundary>

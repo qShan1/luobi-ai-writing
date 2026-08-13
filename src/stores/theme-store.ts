@@ -244,16 +244,20 @@ function applyZoom(zoom: number) {
 
 /** 将写作字体应用到 --font-writing，正文编辑器通过 CSS 变量引用 */
 function applyWritingFont(font: FontId) {
-  const opt = FONT_OPTIONS.find((o) => o.id === font)
-  if (opt) {
-    document.documentElement.style.setProperty('--font-writing', opt.family)
-  }
+  const family = resolveFontFamily(font)
+  if (family) document.documentElement.style.setProperty('--font-writing', family)
 }
 
 /** 将界面字体应用到 --font-sans，body/html 通过 font-family: var(--font-sans) 引用 */
 function applyUiFont(font: FontId) {
+  const family = resolveFontFamily(font)
+  if (family) document.documentElement.style.setProperty('--font-sans', family)
+}
+
+function resolveFontFamily(font: FontId): string | undefined {
   const opt = FONT_OPTIONS.find((o) => o.id === font)
-  if (opt) {
-    document.documentElement.style.setProperty('--font-sans', opt.family)
-  }
+  if (opt) return opt.family
+  if (!font.startsWith('system:')) return undefined
+  const name = font.slice('system:'.length).trim()
+  return name ? `'${name.replace(/'/g, "\\'")}', sans-serif` : undefined
 }

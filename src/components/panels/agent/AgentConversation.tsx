@@ -168,11 +168,10 @@ function ActiveConversation() {
       {!isAtBottom && (
         <button
           onClick={scrollToBottom}
-          className="absolute z-10 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-[border-color,color,transform,background-color] duration-200 ease-out hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
+          className="liquid-glass-control absolute z-10 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-[border-color,color,transform,background-color] duration-200 ease-out hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
           style={{
             right: 16,
             bottom: 100,
-            backgroundColor: 'var(--color-sidebar)',
             border: '1px solid var(--color-border)',
             color: 'var(--color-text-secondary)',
           }}

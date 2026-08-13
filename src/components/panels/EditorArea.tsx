@@ -58,10 +58,9 @@ function ProseEditorWrapper({
     <div className="h-full flex flex-col overflow-hidden">
       {/* 顶部信息栏（背景与编辑区一致） */}
       <div
-        className="flex items-center justify-between px-3 h-9 flex-shrink-0"
+        className="liquid-glass-panel flex items-center justify-between px-3 h-9 flex-shrink-0"
         style={{
           borderBottom: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-editor-bg)',
         }}
       >
         {/* 左侧：文件名 */}
@@ -469,10 +468,9 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
     >
       {/* Tab 条：左右箭头 + 可横向滚动区域 + 三个点菜单 */}
       <div
-        className="no-select flex items-center flex-shrink-0"
+        className="liquid-glass-panel no-select flex items-center flex-shrink-0"
         style={{
           height: 'var(--height-tab)',
-          backgroundColor: 'var(--color-tab-bg)',
           borderBottom: '1px solid var(--color-border)',
         }}
       >

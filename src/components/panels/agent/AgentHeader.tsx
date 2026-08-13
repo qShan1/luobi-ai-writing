@@ -126,11 +126,10 @@ export default function AgentHeader() {
               align="end"
               gap={4}
               onClose={() => { setShowMore(false); setSubView('main') }}
-              className="menu-pop-top z-50 py-1 rounded-lg shadow-lg"
-              style={{
-                width: subView === 'main' ? 200 : 260,
-                backgroundColor: 'var(--color-sidebar)',
-                border: '1px solid var(--color-border)',
+               className="liquid-glass-menu menu-pop-top z-50 py-1 rounded-lg shadow-lg"
+               style={{
+                 width: subView === 'main' ? 200 : 260,
+                 border: '1px solid var(--color-border)',
                 boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
               }}
             >

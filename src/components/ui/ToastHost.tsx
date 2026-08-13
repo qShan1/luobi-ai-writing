@@ -174,7 +174,7 @@ function ToastCard({ item }: { item: ToastItem }) {
                   {item.message}
                 </div>
               </div>
-              <IconBtn size={18} onClick={dismiss} title={i18n.t('common.close', '关闭')}>
+              <IconBtn size={18} onClick={dismiss} title={i18n.t('close', { ns: 'common', defaultValue: '关闭' })}>
                 <X size={13} />
               </IconBtn>
             </div>

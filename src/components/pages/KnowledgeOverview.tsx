@@ -129,7 +129,7 @@ export default function KnowledgeOverview() {
   }
 
   return (
-    <div className="h-full overflow-y-auto" style={{ backgroundColor: 'var(--color-editor-bg)' }}>
+      <div className="knowledge-surface h-full overflow-y-auto">
       <div className="max-w-4xl mx-auto px-8 py-6">
 
         {/* ===== 标题 ===== */}
@@ -170,8 +170,7 @@ export default function KnowledgeOverview() {
         {/* ===== 向量回填卡片 ===== */}
         {vectorlessCount > 0 && (
           <div
-            className="rounded-xl border border-amber-500/20 mb-6 overflow-hidden"
-            style={{ backgroundColor: 'rgba(245, 158, 11, 0.06)' }}
+            className="knowledge-backfill liquid-glass-panel rounded-xl border border-amber-500/20 mb-6 overflow-hidden"
           >
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-2">
@@ -209,8 +208,7 @@ export default function KnowledgeOverview() {
 
         {/* ===== 语义检索区域 ===== */}
         <div
-          className="rounded-xl border border-[var(--color-border)] mb-6 overflow-hidden"
-          style={{ backgroundColor: 'var(--color-sidebar)' }}
+          className="knowledge-surface liquid-glass-panel rounded-xl border border-[var(--color-border)] mb-6 overflow-hidden"
         >
           <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--color-border)]">
             <Search size={14} className="text-[var(--color-accent)] flex-shrink-0" />
@@ -319,8 +317,7 @@ function StatCard({ icon, label, value, accent, badge, badgeColor }: {
 }) {
   return (
     <div
-      className="rounded-xl p-4 border border-[var(--color-border)]"
-      style={{ backgroundColor: 'var(--color-sidebar)' }}
+      className="liquid-glass-panel rounded-xl p-4 border border-[var(--color-border)]"
     >
       <div className="flex items-center gap-2 mb-2">
         <span className="text-[var(--color-text-muted)]">{icon}</span>

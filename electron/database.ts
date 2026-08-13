@@ -40,7 +40,7 @@ export function closeProjectDatabase(): void {
 }
 
 /** 已执行的 schema 迁移版本号（用于幂等迁移） */
-const SCHEMA_VERSION = 1
+const SCHEMA_VERSION = 2
 
 /** 对老库执行 schema 迁移（加 UNIQUE/CHECK 约束等） */
 function migrateProjectDatabase(db: BetterSqlite3.Database): void {
@@ -107,6 +107,14 @@ function migrateProjectDatabase(db: BetterSqlite3.Database): void {
       }
     }
   }
+
+  // v1 → v2: 核心大纲与架构总大纲分离，避免生成架构时覆盖用户手写内容
+  if (currentVersion < 2) {
+    const columns = db.prepare(`PRAGMA table_info(project_core)`).all() as Array<{ name: string }>
+    if (!columns.some((column) => column.name === 'core_outline')) {
+      db.exec(`ALTER TABLE project_core ADD COLUMN core_outline TEXT DEFAULT ''`)
+    }
+  }
   db.pragma(`user_version = ${SCHEMA_VERSION}`)
 }
 
@@ -141,7 +149,8 @@ function createTables(db: BetterSqlite3.Database) {
       premise TEXT DEFAULT '',                    -- 故事前提
       worldbuilding TEXT DEFAULT '',              -- 世界观
       characters_arch TEXT DEFAULT '',            -- 人物群像网络
-      synopsis TEXT DEFAULT '',                   -- 情节总大纲
+       synopsis TEXT DEFAULT '',                   -- 情节总大纲
+       core_outline TEXT DEFAULT '',               -- 小说配置核心大纲（与架构总大纲分离）
       -- [系统缓存]
       character_states TEXT DEFAULT '',           -- 全书角色动态快照
       created_at TEXT DEFAULT (datetime('now')),
