@@ -76,6 +76,7 @@ export default function ChapterCardEditor() {
   const [loading, setLoading] = useState(true)
   const [dirty, setDirty] = useState(false)
   const [batchRunning, setBatchRunning] = useState(false)
+  const [selectedChapters, setSelectedChapters] = useState<Set<number>>(new Set())
   // 下一个可写的章节号
   const [nextWriteChapter, setNextWriteChapter] = useState<number | null>(null)
 
@@ -220,12 +221,29 @@ export default function ChapterCardEditor() {
       danger: true,
     })
     if (!ok) return
+    await ipc.invoke('db:blueprint-soft-delete', selected.chapterNumber)
     const newList = blueprints.filter((_, i) => i !== selectedIdx)
     setBlueprints(newList)
     const nextIdx = Math.max(0, selectedIdx - 1)
     setSelectedIdx(nextIdx)
     syncToTab(newList, nextIdx, true)
     setDirty(true)
+  }
+
+  const handleBatchDeleteChapters = async () => {
+    const targets = blueprints.filter(blueprint => selectedChapters.has(blueprint.chapterNumber))
+    if (targets.length === 0) return
+    const ok = await confirm(t('chapterCard.batchDeleteConfirm', { count: targets.length }), {
+      title: t('chapterCard.batchDeleteTitle'),
+      confirmText: t('chapterCard.batchDelete'),
+      danger: true,
+    })
+    if (!ok) return
+    for (const blueprint of targets) {
+      await ipc.invoke('db:blueprint-soft-delete', blueprint.chapterNumber)
+    }
+    setSelectedChapters(new Set())
+    await loadBlueprints(true)
   }
 
   /** 触发蓝图批量生成（来自 DirectoryConfigDialog 的确认回调） */
@@ -419,7 +437,12 @@ export default function ChapterCardEditor() {
           >
             <Sparkles size={12} />
             {t('chapterCard.aiGenerateBlueprint')}
-           </Button>
+          </Button>
+          {selectedChapters.size > 0 && (
+            <Button variant="outline" size="sm" onClick={handleBatchDeleteChapters}>
+              <Trash2 size={12} /> {selectedChapters.size}
+            </Button>
+          )}
            <Button variant="outline" size="sm" onClick={handleBatchDrafts} disabled={batchRunning || blueprints.length === 0}>
              <PenLine size={12} /> {batchRunning ? t('chapterCard.batchRunning') : t('chapterCard.batchDrafts')}
            </Button>
@@ -482,6 +505,19 @@ export default function ChapterCardEditor() {
                   }
                 }}
               >
+                <input
+                  type="checkbox"
+                  checked={selectedChapters.has(bp.chapterNumber)}
+                  onChange={() => setSelectedChapters(prev => {
+                    const next = new Set(prev)
+                    if (next.has(bp.chapterNumber)) next.delete(bp.chapterNumber)
+                    else next.add(bp.chapterNumber)
+                    return next
+                  })}
+                  onClick={e => e.stopPropagation()}
+                  aria-label={t('chapterCard.selectChapter', { chapter: bp.chapterNumber })}
+                  className="absolute left-1 top-2 h-3 w-3 accent-[var(--color-accent)]"
+                />
                 <div className="flex items-center gap-1.5">
                   <span className="font-mono text-[0.7rem] opacity-40 flex-shrink-0">
                     {bp.chapterNumber}

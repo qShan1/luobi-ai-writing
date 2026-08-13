@@ -66,6 +66,10 @@ export function registerDatabaseController() {
     return BlueprintRepository.getAll()
   })
 
+  ipcMain.handle('db:blueprint-get-trash', async () => {
+    return BlueprintRepository.getTrash()
+  })
+
   ipcMain.handle('db:blueprint-get', async (_event, chapterNumber: number) => {
     return BlueprintRepository.getByChapter(chapterNumber)
   })
@@ -97,6 +101,21 @@ export function registerDatabaseController() {
     } catch (err) {
       return { success: false, error: String(err) }
     }
+  })
+
+  ipcMain.handle('db:blueprint-soft-delete', async (_event, chapterNumber: number) => {
+    BlueprintRepository.softDelete(chapterNumber)
+    return { success: true }
+  })
+
+  ipcMain.handle('db:blueprint-restore', async (_event, chapterNumber: number) => {
+    BlueprintRepository.restore(chapterNumber)
+    return { success: true }
+  })
+
+  ipcMain.handle('db:blueprint-purge', async (_event, chapterNumber: number) => {
+    BlueprintRepository.purge(chapterNumber)
+    return { success: true }
   })
 
   // ============================================================
@@ -205,6 +224,15 @@ export function registerDatabaseController() {
   ipcMain.handle('db:draft-update-content', async (_event, id: number, content: string, wordCount: number) => {
     try {
       DraftRepository.updateContent(id, content, wordCount)
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: String(err) }
+    }
+  })
+
+  ipcMain.handle('db:draft-delete', async (_event, id: number) => {
+    try {
+      DraftRepository.delete(id)
       return { success: true }
     } catch (err) {
       return { success: false, error: String(err) }

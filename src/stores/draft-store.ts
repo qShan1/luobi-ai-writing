@@ -115,6 +115,12 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
 
 
   markDraftStatus: async (draftPath, chapterNumber, status) => {
+    const idMatch = draftPath.match(/^luobi:\/\/(?:draft|manuscript)\/(\d+)$/)
+    if (idMatch) {
+      await ipc.invoke('db:draft-update-status', Number(idMatch[1]), status)
+      await get().loadChapterDrafts(chapterNumber)
+      return
+    }
     // 从路径提取版本号
     const versionMatch = draftPath.match(/draft_v(\d+)\.md$/)
     if (!versionMatch) return

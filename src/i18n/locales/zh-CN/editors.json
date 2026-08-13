@@ -90,6 +90,9 @@
     "batchConfirmFinalize": "将按章节顺序定稿 {{count}} 章，已有定稿的章节会跳过。继续吗？",
     "batchCompleted": "批量任务完成：{{count}} 章",
     "batchStopped": "批量任务已停止：{{error}}",
+    "batchDeleteTitle": "批量删除蓝图",
+    "batchDeleteConfirm": "确认将 {{count}} 个蓝图移入垃圾桶吗？",
+    "batchDelete": "移入垃圾桶",
     "roles": {
       "setup": "建置",
       "setupAlt": "铺垫",

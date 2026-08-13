@@ -90,6 +90,9 @@
     "batchConfirmFinalize": "Последовательно финализировать {{count}} глав? Уже финализированные главы будут пропущены.",
     "batchCompleted": "Пакет завершён: {{count}} глав",
     "batchStopped": "Пакет остановлен: {{error}}",
+    "batchDeleteTitle": "Удалить планы",
+    "batchDeleteConfirm": "Переместить {{count}} планов в корзину?",
+    "batchDelete": "В корзину",
     "roles": {
       "setup": "Завязка",
       "setupAlt": "Завязка",

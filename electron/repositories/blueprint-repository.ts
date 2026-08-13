@@ -19,6 +19,7 @@ export interface BlueprintRow {
     notes_updated_at: string
     created_at: string
     updated_at: string
+    deleted_at: string
 }
 
 /** 前端使用的驼峰接口 */
@@ -59,7 +60,7 @@ export class BlueprintRepository {
         if (!db) return []
 
         const rows = db.prepare(
-            'SELECT * FROM blueprints ORDER BY chapter_number ASC'
+            "SELECT * FROM blueprints WHERE deleted_at = '' ORDER BY chapter_number ASC"
         ).all() as BlueprintRow[]
 
         return rows.map(rowToData)
@@ -71,7 +72,7 @@ export class BlueprintRepository {
         if (!db) return null
 
         const row = db.prepare(
-            'SELECT * FROM blueprints WHERE chapter_number = ?'
+            "SELECT * FROM blueprints WHERE chapter_number = ? AND deleted_at = ''"
         ).get(chapterNumber) as BlueprintRow | undefined
 
         return row ? rowToData(row) : null
@@ -83,7 +84,7 @@ export class BlueprintRepository {
         if (!db) return 0
 
         const row = db.prepare(
-            'SELECT COUNT(*) as cnt FROM blueprints'
+            "SELECT COUNT(*) as cnt FROM blueprints WHERE deleted_at = ''"
         ).get() as { cnt: number }
 
         return row.cnt
@@ -107,8 +108,9 @@ export class BlueprintRepository {
         characters = excluded.characters,
         suspense_hook = excluded.suspense_hook,
         user_guidance = excluded.user_guidance,
-        notes = excluded.notes,
-        notes_updated_at = excluded.notes_updated_at,
+         notes = excluded.notes,
+         notes_updated_at = excluded.notes_updated_at,
+         deleted_at = '',
         updated_at = datetime('now')
     `).run(
             data.chapterNumber,
@@ -139,9 +141,34 @@ export class BlueprintRepository {
 
     /** 删除蓝图 */
     static delete(chapterNumber: number): void {
+        BlueprintRepository.softDelete(chapterNumber)
+    }
+
+    /** 将蓝图移入垃圾桶 */
+    static softDelete(chapterNumber: number): void {
         const db = getProjectDb()
         if (!db) return
 
+        db.prepare("UPDATE blueprints SET deleted_at = datetime('now'), updated_at = datetime('now') WHERE chapter_number = ?").run(chapterNumber)
+    }
+
+    /** 获取垃圾桶中的蓝图 */
+    static getTrash(): BlueprintData[] {
+        const db = getProjectDb()
+        if (!db) return []
+        const rows = db.prepare("SELECT * FROM blueprints WHERE deleted_at != '' ORDER BY chapter_number ASC").all() as BlueprintRow[]
+        return rows.map(rowToData)
+    }
+
+    static restore(chapterNumber: number): void {
+        const db = getProjectDb()
+        if (!db) return
+        db.prepare("UPDATE blueprints SET deleted_at = '', updated_at = datetime('now') WHERE chapter_number = ?").run(chapterNumber)
+    }
+
+    static purge(chapterNumber: number): void {
+        const db = getProjectDb()
+        if (!db) return
         db.prepare('DELETE FROM blueprints WHERE chapter_number = ?').run(chapterNumber)
     }
 

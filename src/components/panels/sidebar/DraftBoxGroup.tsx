@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import { ChevronRight, ChevronDown, CheckCircle2, Circle, FileText, FolderOpen, Copy, Trash2, FilePen } from 'lucide-react'
+import { ChevronRight, ChevronDown, CheckCircle2, Circle, FileText, FolderOpen, Copy, Trash2, FilePen, Archive } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { DraftMeta } from '../../../stores/draft-store'
 import { useDraftStore, readDraftBody } from '../../../stores/draft-store'
@@ -22,6 +22,7 @@ export default function DraftBoxGroup({
 }) {
   const { t } = useTranslation('panels')
   const [open, setOpen] = useState(true)
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
 
   // 所有章节号排序
   const chapterNums = Object.keys(draftsByChapter)
@@ -33,28 +34,65 @@ export default function DraftBoxGroup({
     (draftsByChapter[n] || []).some(d => d.status !== 'archived')
   ).length
 
+  const toggleSelected = (id: number) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const archiveSelected = async () => {
+    const selected = Object.values(draftsByChapter).flat().filter(d => selectedIds.has(d.id) && d.status !== 'finalized')
+    if (selected.length === 0) return
+    const ok = await confirm(t('draftBox.batchArchiveConfirm', { count: selected.length }), {
+      title: t('draftBox.batchArchiveTitle'),
+      confirmText: t('draftBox.batchArchive'),
+      danger: true,
+    })
+    if (!ok) return
+    for (const draft of selected) {
+      await useDraftStore.getState().markDraftStatus(draft.filePath, draft.chapterNumber, 'archived')
+    }
+    setSelectedIds(new Set())
+    await useDraftStore.getState().loadAllDrafts()
+  }
+
   return (
     <div>
       {/* 草稿箱标题行 */}
-      <button
-        type="button"
-        className="tree-item gap-1.5 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
-        style={{ paddingLeft: 10 }}
-        onClick={() => setOpen(v => !v)}
-        title={t('draftBox.tooltip')}
-      >
-        {open
-          ? <ChevronDown size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
-          : <ChevronRight size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
-        }
-        <FilePen size={14} style={{ color: 'var(--color-text-muted)' }} />
-        <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{t('draftBox.title')}</span>
-        {activeChapterCount > 0 && (
-          <span className="ml-auto text-[0.7rem]" style={{ color: 'var(--color-text-muted)' }}>
-            {activeChapterCount} {t('common:chapters')}
-          </span>
+      <div className="flex items-center">
+        <button
+          type="button"
+          className="tree-item flex-1 gap-1.5 cursor-pointer select-none bg-transparent border-none py-0 text-left"
+          style={{ paddingLeft: 10 }}
+          onClick={() => setOpen(v => !v)}
+          title={t('draftBox.tooltip')}
+        >
+          {open
+            ? <ChevronDown size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+            : <ChevronRight size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          }
+          <FilePen size={14} style={{ color: 'var(--color-text-muted)' }} />
+          <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{t('draftBox.title')}</span>
+          {activeChapterCount > 0 && (
+            <span className="ml-auto text-[0.7rem]" style={{ color: 'var(--color-text-muted)' }}>
+              {activeChapterCount} {t('common:chapters')}
+            </span>
+          )}
+        </button>
+        {selectedIds.size > 0 && (
+          <button
+            type="button"
+            className="mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-[0.65rem] text-[var(--color-accent)] hover:bg-[var(--color-hover)]"
+            onClick={archiveSelected}
+            title={t('draftBox.batchArchive')}
+          >
+            <Archive size={12} /> {selectedIds.size}
+          </button>
         )}
-      </button>
+      </div>
 
       {open && (
         <div>
@@ -72,6 +110,8 @@ export default function DraftBoxGroup({
                 chapterNumber={chNum}
                 drafts={draftsByChapter[chNum] || []}
                 t={t}
+                selectedIds={selectedIds}
+                onToggleSelected={toggleSelected}
               />
             ))
           )}
@@ -87,10 +127,14 @@ function DraftChapterGroup({
   chapterNumber,
   drafts,
   t,
+  selectedIds,
+  onToggleSelected,
 }: {
   chapterNumber: number
   drafts: DraftMeta[]
   t: (key: string, opts?: Record<string, unknown>) => string
+  selectedIds: Set<number>
+  onToggleSelected: (id: number) => void
 }) {
   const [open, setOpen] = useState(true)
 
@@ -151,6 +195,8 @@ function DraftChapterGroup({
               draft={draft}
               chapterTitleText={displayTitle}
               t={t}
+              selected={selectedIds.has(draft.id)}
+              onToggleSelected={() => onToggleSelected(draft.id)}
             />
           ))}
 
@@ -189,11 +235,15 @@ function DraftItem({
   chapterTitleText,
   archived = false,
   t,
+  selected = false,
+  onToggleSelected,
 }: {
   draft: DraftMeta
   chapterTitleText: string
   archived?: boolean
   t: (key: string, opts?: Record<string, unknown>) => string
+  selected?: boolean
+  onToggleSelected?: () => void
 }) {
   /** 打开草稿到编辑器 */
   const openDraft = async () => {
@@ -221,9 +271,8 @@ function DraftItem({
   const isFinalized = draft.status === 'finalized'
 
   return (
-    <button
-      type="button"
-      className="relative flex items-center gap-1.5 cursor-pointer hover:bg-[var(--color-hover)] w-full bg-transparent border-none text-left rounded-[var(--radius-sm)] transition-[background-color,transform] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+    <div
+      className="relative flex items-center gap-1.5 cursor-pointer hover:bg-[var(--color-hover)] w-full rounded-[var(--radius-sm)] transition-[background-color,transform] duration-150 ease-out"
       style={{
         paddingLeft: 50,
         paddingRight: 8,
@@ -258,6 +307,22 @@ function DraftItem({
       ], e)}
       title={t('drafts.clickToOpenTitle', { title: `${chapterTitleText} v${draft.version}`, status: DRAFT_STATUS_LABEL[draft.status] || draft.status })}
     >
+      {!archived && onToggleSelected && (
+        <input
+          type="checkbox"
+          checked={selected}
+          disabled={isFinalized}
+          onChange={onToggleSelected}
+          onClick={e => e.stopPropagation()}
+          aria-label={t('draftBox.selectDraft', { version: draft.version })}
+          className="ml-1 h-3 w-3 flex-shrink-0 accent-[var(--color-accent)]"
+        />
+      )}
+      <button
+        type="button"
+        className="flex min-w-0 flex-1 items-center gap-1.5 bg-transparent border-none text-left"
+        onClick={openDraft}
+      >
       <FileText size={10} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
       <span className="text-xs flex-1 truncate" style={{ color: 'var(--color-text-secondary)' }}>
         {t('drafts.draftVersion', { version: draft.version })}
@@ -273,6 +338,7 @@ function DraftItem({
       {isFinalized && (
         <CheckCircle2 size={10} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
       )}
-    </button>
+      </button>
+    </div>
   )
 }

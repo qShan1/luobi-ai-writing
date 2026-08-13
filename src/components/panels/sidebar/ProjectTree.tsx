@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { ChevronRight, ChevronDown, RefreshCw, CheckCircle2, Circle, FolderOpen, Copy, FolderTree } from 'lucide-react'
+import { ChevronRight, ChevronDown, RefreshCw, CheckCircle2, Circle, FolderOpen, Copy, FolderTree, Trash2, RotateCcw, X } from 'lucide-react'
 import { useProjectStore } from '../../../stores/project-store'
 import { useWorkflowStore } from '../../../stores/workflow-store'
 import { useDraftStore } from '../../../stores/draft-store'
@@ -15,6 +15,8 @@ import { ipc } from '../../../services/ipc-client'
 import { Button } from '../../ui/Button'
 import { EmptyState } from '../../ui/EmptyState'
 import { useTranslation } from 'react-i18next'
+import { confirm } from '../../ui/Confirm'
+import type { BlueprintData } from '../../../../electron/repositories/blueprint-repository'
 
 
 
@@ -213,9 +215,77 @@ export default function ProjectTree() {
 
       {/* 4. 草稿箱 — 独立分区，按章节分组展示草稿 */}
       <DraftBoxGroup draftsByChapter={draftsByChapter} />
+      <TrashBin draftsByChapter={draftsByChapter} />
 
       {/* 5. 正文章节 — 仅显示已定稿 */}
       <ManuscriptGroup files={manuscriptFiles} projectPath={p} />
+    </div>
+  )
+}
+
+function TrashBin({ draftsByChapter }: { draftsByChapter: Record<number, import('../../../stores/draft-store').DraftMeta[]> }) {
+  const { t } = useTranslation('panels')
+  const [open, setOpen] = useState(false)
+  const [blueprints, setBlueprints] = useState<BlueprintData[]>([])
+  const archivedDrafts = Object.values(draftsByChapter).flat().filter(draft => draft.status === 'archived')
+
+  const loadTrash = useCallback(async () => {
+    setBlueprints(await ipc.invoke('db:blueprint-get-trash'))
+  }, [])
+
+  useEffect(() => { if (open) loadTrash() }, [open, loadTrash])
+
+  const restoreDraft = async (draft: import('../../../stores/draft-store').DraftMeta) => {
+    await useDraftStore.getState().markDraftStatus(draft.filePath, draft.chapterNumber, 'draft')
+  }
+
+  const purgeDraft = async (draft: import('../../../stores/draft-store').DraftMeta) => {
+    const ok = await confirm(t('trash.permanentConfirm', { title: draft.fileName }), { title: t('trash.permanentTitle'), confirmText: t('trash.permanent'), danger: true })
+    if (!ok) return
+    await ipc.invoke('db:draft-delete', draft.id)
+    await useDraftStore.getState().loadAllDrafts()
+  }
+
+  const purgeBlueprint = async (blueprint: BlueprintData) => {
+    const ok = await confirm(t('trash.blueprintPermanentConfirm', { chapter: blueprint.chapterNumber }), { title: t('trash.permanentTitle'), confirmText: t('trash.permanent'), danger: true })
+    if (!ok) return
+    await ipc.invoke('db:blueprint-purge', blueprint.chapterNumber)
+    loadTrash()
+  }
+
+  const total = archivedDrafts.length + blueprints.length
+  return (
+    <div>
+      <button
+        type="button"
+        className="tree-item gap-1.5 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
+        style={{ paddingLeft: 10 }}
+        onClick={() => setOpen(value => !value)}
+      >
+        {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+        <Trash2 size={14} style={{ color: 'var(--color-text-muted)' }} />
+        <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{t('trash.title')}</span>
+        {total > 0 && <span className="ml-auto text-[0.7rem]" style={{ color: 'var(--color-text-muted)' }}>{total}</span>}
+      </button>
+      {open && (
+        <div className="space-y-0.5 py-1 pl-8 pr-2">
+          {total === 0 && <div className="py-1 text-xs" style={{ color: 'var(--color-text-muted)' }}>{t('trash.empty')}</div>}
+          {archivedDrafts.map(draft => (
+            <div key={`draft-${draft.id}`} className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+              <span className="min-w-0 flex-1 truncate">{draft.fileName}</span>
+              <button type="button" title={t('trash.restore')} onClick={() => restoreDraft(draft)} className="p-1 rounded hover:bg-[var(--color-hover)]"><RotateCcw size={11} /></button>
+              <button type="button" title={t('trash.permanent')} onClick={() => purgeDraft(draft)} className="p-1 rounded hover:bg-[var(--color-hover)]"><X size={11} /></button>
+            </div>
+          ))}
+          {blueprints.map(blueprint => (
+            <div key={`blueprint-${blueprint.chapterNumber}`} className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+              <span className="min-w-0 flex-1 truncate">{t('trash.blueprint', { chapter: blueprint.chapterNumber, title: blueprint.title })}</span>
+              <button type="button" title={t('trash.restore')} onClick={async () => { await ipc.invoke('db:blueprint-restore', blueprint.chapterNumber); loadTrash() }} className="p-1 rounded hover:bg-[var(--color-hover)]"><RotateCcw size={11} /></button>
+              <button type="button" title={t('trash.permanent')} onClick={() => purgeBlueprint(blueprint)} className="p-1 rounded hover:bg-[var(--color-hover)]"><X size={11} /></button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

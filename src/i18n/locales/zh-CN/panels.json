@@ -432,7 +432,21 @@
   "draftBox": {
     "title": "草稿箱",
     "tooltip": "草稿箱：AI 生成后的章节草稿在此管理，定稿后进入正文章节",
-    "noDrafts": "暂无草稿（从章节蓝图点击「写作此章」创作）"
+    "noDrafts": "暂无草稿（从章节蓝图点击「写作此章」创作）",
+    "batchArchive": "批量归档",
+    "batchArchiveTitle": "批量归档草稿",
+    "batchArchiveConfirm": "确认将 {{count}} 个草稿移入垃圾桶吗？",
+    "selectDraft": "选择第 {{version}} 版草稿"
+  },
+  "trash": {
+    "title": "垃圾桶",
+    "empty": "垃圾桶为空",
+    "restore": "恢复",
+    "permanent": "彻底删除",
+    "permanentTitle": "彻底删除",
+    "permanentConfirm": "确认彻底删除 {{title}}？此操作不可恢复。",
+    "blueprint": "第 {{chapter}} 章：{{title}}",
+    "blueprintPermanentConfirm": "确认彻底删除第 {{chapter}} 章蓝图？此操作不可恢复。"
   },
   "toolCall": {
     "completed": "完成",

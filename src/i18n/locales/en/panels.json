@@ -432,7 +432,21 @@
   "draftBox": {
     "title": "Draft Box",
     "tooltip": "Draft Box: AI-generated chapter drafts are managed here. Finalized drafts move to manuscript chapters.",
-    "noDrafts": "No drafts yet (click 'Write this chapter' from the blueprint to start)"
+    "noDrafts": "No drafts yet (click 'Write this chapter' from the blueprint to start)",
+    "batchArchive": "Archive selected",
+    "batchArchiveTitle": "Archive Drafts",
+    "batchArchiveConfirm": "Move {{count}} drafts to the trash?",
+    "selectDraft": "Select draft version {{version}}"
+  },
+  "trash": {
+    "title": "Trash",
+    "empty": "Trash is empty",
+    "restore": "Restore",
+    "permanent": "Delete permanently",
+    "permanentTitle": "Delete permanently",
+    "permanentConfirm": "Permanently delete {{title}}? This cannot be undone.",
+    "blueprint": "Ch. {{chapter}}: {{title}}",
+    "blueprintPermanentConfirm": "Permanently delete the blueprint for Chapter {{chapter}}? This cannot be undone."
   },
   "toolCall": {
     "completed": "Completed",

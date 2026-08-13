@@ -255,10 +255,14 @@ export interface DatabaseChannels {
 
   // 2. blueprints
   'db:blueprint-get-all': { args: []; return: BlueprintData[] }
+  'db:blueprint-get-trash': { args: []; return: BlueprintData[] }
   'db:blueprint-get': { args: [chapterNumber: number]; return: BlueprintData | null }
   'db:blueprint-upsert': { args: [data: BlueprintData]; return: { success: boolean; error?: string } }
   'db:blueprint-upsert-many': { args: [items: BlueprintData[]]; return: { success: boolean; error?: string } }
   'db:blueprint-update-notes': { args: [chapterNumber: number, notes: string]; return: { success: boolean; error?: string } }
+  'db:blueprint-soft-delete': { args: [chapterNumber: number]; return: { success: boolean; error?: string } }
+  'db:blueprint-restore': { args: [chapterNumber: number]; return: { success: boolean; error?: string } }
+  'db:blueprint-purge': { args: [chapterNumber: number]; return: { success: boolean; error?: string } }
 
   // 3. characters
   'db:character-get-all': { args: []; return: CharacterData[] }
@@ -278,6 +282,7 @@ export interface DatabaseChannels {
   'db:draft-next-version': { args: [chapterNumber: number]; return: number }
   'db:draft-update-status': { args: [id: number, status: string, wordCount?: number]; return: { success: boolean; error?: string } }
   'db:draft-update-content': { args: [id: number, content: string, wordCount: number]; return: { success: boolean; error?: string } }
+  'db:draft-delete': { args: [id: number]; return: { success: boolean; error?: string } }
 
   // 5. revisions
   'db:revision-create': { args: [params: { baseDraftId: number; revisionIndex: number; revisionType: 'refine' | 'review-fix'; userPrompt?: string; reviewSourceId?: number; content: string; wordCount: number }]; return: { success: boolean; id?: number; error?: string } }

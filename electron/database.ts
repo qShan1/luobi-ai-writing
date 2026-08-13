@@ -40,7 +40,7 @@ export function closeProjectDatabase(): void {
 }
 
 /** 已执行的 schema 迁移版本号（用于幂等迁移） */
-const SCHEMA_VERSION = 2
+const SCHEMA_VERSION = 3
 
 /** 对老库执行 schema 迁移（加 UNIQUE/CHECK 约束等） */
 function migrateProjectDatabase(db: BetterSqlite3.Database): void {
@@ -115,6 +115,14 @@ function migrateProjectDatabase(db: BetterSqlite3.Database): void {
       db.exec(`ALTER TABLE project_core ADD COLUMN core_outline TEXT DEFAULT ''`)
     }
   }
+
+  // v2 → v3: 蓝图支持软删除，进入项目垃圾桶
+  if (currentVersion < 3) {
+    const columns = db.prepare(`PRAGMA table_info(blueprints)`).all() as Array<{ name: string }>
+    if (!columns.some((column) => column.name === 'deleted_at')) {
+      db.exec(`ALTER TABLE blueprints ADD COLUMN deleted_at TEXT DEFAULT ''`)
+    }
+  }
   db.pragma(`user_version = ${SCHEMA_VERSION}`)
 }
 
@@ -170,8 +178,9 @@ function createTables(db: BetterSqlite3.Database) {
       suspense_hook TEXT DEFAULT '',              -- 悬念钩子
       user_guidance TEXT DEFAULT '',              -- 用户预设指导
       notes TEXT DEFAULT '',                      -- 后处理提取的章节要点
-      notes_updated_at TEXT DEFAULT '',           -- notes 提取时间
-      created_at TEXT DEFAULT (datetime('now')),
+       notes_updated_at TEXT DEFAULT '',           -- notes 提取时间
+       deleted_at TEXT DEFAULT '',                  -- 垃圾桶软删除时间
+       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
     );
 

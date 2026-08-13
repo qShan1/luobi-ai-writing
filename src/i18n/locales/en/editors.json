@@ -90,6 +90,9 @@
     "batchConfirmFinalize": "Finalize {{count}} chapters in order? Already finalized chapters will be skipped.",
     "batchCompleted": "Batch complete: {{count}} chapters",
     "batchStopped": "Batch stopped: {{error}}",
+    "batchDeleteTitle": "Delete Blueprints",
+    "batchDeleteConfirm": "Move {{count}} blueprints to the trash?",
+    "batchDelete": "Move to Trash",
     "roles": {
       "setup": "Setup",
       "setupAlt": "Setup",
