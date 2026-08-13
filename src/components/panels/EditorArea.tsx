@@ -480,20 +480,16 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
             <div
               key={tab.id}
               ref={tab.id === activeTabId ? activeTabRef : undefined}
-              className="flex items-center gap-1.5 px-3 h-full text-sm cursor-pointer group flex-shrink-0 relative transition-colors"
+              className={`flex items-center gap-1.5 px-3 h-full text-sm cursor-pointer group flex-shrink-0 relative transition-colors ${activeTabId === tab.id ? '' : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]'}`}
               style={{
-                backgroundColor: activeTabId === tab.id
-                  ? 'var(--color-tab-active)'
-                  : 'transparent',
+                backgroundColor: activeTabId === tab.id ? 'var(--color-tab-active)' : undefined,
                 /* JetBrains 激活 Tab：顶部 2px 葵紫色指示线 */
                 boxShadow: activeTabId === tab.id
                   ? 'inset 0 2px 0 var(--color-tab-indicator)'
                   : 'none',
                 /* 无竖分割线 */
                 borderRight: 'none',
-                color: activeTabId === tab.id
-                  ? 'var(--color-text)'
-                  : 'var(--color-text-secondary)',
+                color: activeTabId === tab.id ? 'var(--color-text)' : undefined,
               }}
               onClick={() => setActiveTab(tab.id)}
               onContextMenu={e => {
@@ -501,26 +497,15 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
                 setActiveTab(tab.id)
                 setTabMenu({ tabId: tab.id, position: { x: e.clientX, y: e.clientY } })
               }}
-              onMouseEnter={e => {
-                if (tab.id !== activeTabId) {
-                  e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-                  e.currentTarget.style.color = 'var(--color-text)'
-                }
-              }}
-              onMouseLeave={e => {
-                if (tab.id !== activeTabId) {
-                  e.currentTarget.style.backgroundColor = 'transparent'
-                  e.currentTarget.style.color = 'var(--color-text-secondary)'
-                }
-              }}
             >
               <TabIcon type={tab.type} />
               <span className="max-w-[120px] truncate">{tab.name}</span>
 
               {/* 关闭按钮区域：dirty 时显示实心圆点（英文黑点），鼠标悬停展示关闭按钮 */}
               {tab.dirty ? (
-                <span
-                  className="relative w-3.5 h-3.5 flex items-center justify-center ml-0.5 flex-shrink-0 rounded group/close hover:bg-[var(--color-hover)] cursor-pointer transition-colors"
+                <button
+                  type="button"
+                  className="relative w-3.5 h-3.5 flex items-center justify-center ml-0.5 flex-shrink-0 rounded group/close hover:bg-[var(--color-hover)] cursor-pointer transition-colors active:scale-[0.96] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]"
                   onClick={e => { e.stopPropagation(); tryCloseTab(tab.id) }}
                   title={t('editorArea.unsavedClickToClose')}
                 >
@@ -531,14 +516,13 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
                   />
                   {/* hover 时显示 X */}
                   <X size={10} className="hidden group-hover/close:block" style={{ color: 'var(--color-text-muted)' }} />
-                </span>
+                </button>
               ) : (
                 <button
-                  className="opacity-0 group-hover:opacity-100 ml-0.5 p-0.5 rounded transition-opacity"
+                  type="button"
+                  className="opacity-0 group-hover:opacity-100 ml-0.5 p-0.5 rounded transition-[background-color,opacity,transform] hover:bg-[var(--color-hover)] active:scale-[0.96] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]"
                   style={{ color: 'var(--color-text-muted)' }}
                   onClick={e => { e.stopPropagation(); tryCloseTab(tab.id) }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   <X size={11} />
                 </button>

@@ -46,11 +46,9 @@ const DialogContent = React.forwardRef<
         'rounded-2xl outline-none',
         'bg-[var(--color-bg)] border border-[var(--color-border)]',
         'shadow-2xl shadow-black/20',
-        'duration-300 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out',
+        'duration-200 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-        'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[50%]',
-        'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[50%]',
         className
       )}
       style={{

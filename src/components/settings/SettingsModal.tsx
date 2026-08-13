@@ -1247,6 +1247,32 @@ function AboutSection() {
           支持本地小说项目、章节草稿、模型配置、导出和发布前整理。平台登录、验证码与最终发布仍由你确认。
         </p>
       </div>
+
+      {/* 支持与赞助 — 收款码 */}
+      <div className="space-y-4 pt-4">
+        <h3 className="text-sm font-semibold pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>支持与赞助</h3>
+        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+          如果落笔对你有帮助，欢迎扫码支持作者。
+        </p>
+        <div className="flex items-start gap-6 pt-2">
+          <div className="flex flex-col items-center gap-2">
+            <img
+              src="./buyme/alipay.jpg"
+              alt="支付宝收款码"
+              style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--color-border)' }}
+            />
+            <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>支付宝</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <img
+              src="./buyme/wepay.jpg"
+              alt="微信收款码"
+              style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--color-border)' }}
+            />
+            <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>微信支付</span>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

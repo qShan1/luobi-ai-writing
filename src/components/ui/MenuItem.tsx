@@ -19,24 +19,21 @@ export function MenuItem({ label, onClick, icon, shortcut, disabled, danger }: M
     <button
       onClick={!disabled ? onClick : undefined}
       disabled={disabled}
-      className="w-full flex items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors"
+      className={[
+        'w-full flex items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors',
+        'rounded-[var(--radius-sm)]',
+        'focus-visible:outline-none focus-visible:bg-[var(--color-hover)]',
+        disabled
+          ? 'cursor-not-allowed'
+          : 'cursor-pointer active:scale-[0.99] hover:bg-[var(--color-hover)]',
+        danger && !disabled && 'hover:bg-[color-mix(in_srgb,var(--color-error)_10%,transparent)]',
+      ].join(' ')}
       style={{
         color: danger
           ? 'var(--color-error)'
           : disabled
           ? 'var(--color-text-muted)'
           : 'var(--color-text)',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-      }}
-      onMouseEnter={e => {
-        if (!disabled) {
-          e.currentTarget.style.backgroundColor = danger
-            ? 'color-mix(in srgb, var(--color-error) 10%, transparent)'
-            : 'var(--color-hover)'
-        }
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.backgroundColor = 'transparent'
       }}
     >
       {icon && (

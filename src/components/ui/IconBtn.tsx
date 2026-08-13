@@ -27,26 +27,13 @@ export function IconBtn({ children, title, onClick, disabled, active, badge, siz
       title={title}
       disabled={disabled}
       onClick={onClick}
-      className="group relative flex items-center justify-center rounded transition-colors"
+      className={`group relative flex items-center justify-center rounded-[var(--radius-sm)] transition-[background-color,color,transform,box-shadow] duration-200 ease-out hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] disabled:pointer-events-none cursor-pointer ${
+        active ? 'bg-[var(--color-hover)] text-[var(--color-text)]' : 'text-[var(--color-text-secondary)]'
+      }`}
       style={{
         width: `${size}px`,
         height: `${size}px`,
-        color: active ? 'var(--color-text)' : 'var(--color-text-secondary)',
         opacity: disabled ? 0.4 : 1,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        backgroundColor: active ? 'var(--color-hover)' : 'transparent',
-      }}
-      onMouseEnter={e => {
-        if (!disabled && !active) {
-          e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-          e.currentTarget.style.color = 'var(--color-text)'
-        }
-      }}
-      onMouseLeave={e => {
-        if (!active) {
-          e.currentTarget.style.backgroundColor = 'transparent'
-          e.currentTarget.style.color = 'var(--color-text-secondary)'
-        }
       }}
     >
       {children}

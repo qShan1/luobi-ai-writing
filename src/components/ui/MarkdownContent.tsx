@@ -231,10 +231,8 @@ function CodeBlock({ lang, code, t }: { lang: string; code: string; t: (key: str
         </span>
         <button
           onClick={handleCopy}
-          className="text-[0.7rem] px-2 py-0.5 rounded transition-opacity hover:opacity-100 opacity-60"
+          className="text-[0.7rem] px-2 py-0.5 rounded transition-[background-color,opacity] hover:opacity-100 hover:bg-[var(--color-hover)] opacity-60"
           style={{ color: 'var(--color-text-secondary)' }}
-          onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-border)')}
-          onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
         >
           {t('markdownContent.copy')}
         </button>

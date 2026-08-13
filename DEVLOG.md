@@ -159,3 +159,23 @@ GlassFilter 的色差 + 位移折射在红色卡片上产生严重 RGB 通道分
 
 ### 验证
 - Commit: `9cd95cb`
+
+---
+
+## 2026-08-12: 按钮样式与可访问性统一
+
+**统一 StatusBar 与 EditorArea 的按钮交互、键盘可达与焦点样式**
+
+### 改动文件
+- `src/components/layout/StatusBar.tsx`
+- `src/components/panels/EditorArea.tsx`
+
+### 内容
+1. **StatusBarSegment**: 可点击段改 `<button>`（type=button），非可点击段保留 `<div>`；JS hover → `hover:bg-[rgba(var(--color-accent-rgb),0.08)]`，补 `active:scale-[0.98]` + `focus-visible` 焦点环。
+2. **AITaskCapsule**: 完成/多任务/单任务三个可点击胶囊 `<div>` → `<button>`，保留 `ai-task-capsule` 样式类，补 active 缩放与 focus-visible。
+3. **EditorArea 标签 hover**: 移除 `onMouseEnter/onMouseLeave` 手写 style，非激活 tab 用 `hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]` CSS，激活 tab 仍走内联背景。
+4. **EditorArea 关闭按钮**: JS hover → `hover:bg-[var(--color-hover)]`，补 `active:scale-[0.96]` + focus-visible；dirty 关闭圆点 `span` → `<button>`（键盘可达）。
+
+### 验证
+- `pnpm exec tsc --noEmit` ✅
+- `pnpm lint` ✅

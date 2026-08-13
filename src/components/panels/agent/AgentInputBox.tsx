@@ -12,6 +12,8 @@ import { useAgentStore, type AgentMode } from '../../../stores/agent-store'
 import { useLLMStore } from '../../../stores/llm-store'
 import type { ModelProfile } from '../../../shared/ipc-channels'
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
+import { IconBtn } from '../../ui/IconBtn'
+import { MenuItem } from '../../ui/MenuItem'
 import SlashCommandMenu from './SlashCommandMenu'
 import MentionMenu from './MentionMenu'
 import type { SlashCommand, MentionTarget } from '../../../services/agent/intent-router'
@@ -228,14 +230,14 @@ export default function AgentInputBox() {
           <div className="text-[0.7rem] px-3 pb-1 pt-1" style={{ color: 'var(--color-text-muted)' }}>
             {t('agent.addContext')}
           </div>
-          <ContextMenuItem icon={<AtSign size={13} />} label={t('agent.mention')} onClick={() => {
+          <MenuItem icon={<AtSign size={13} />} label={t('agent.mention')} onClick={() => {
             setShowContextMenu(false)
             // 插入 @ 字符并触发 MentionMenu
             setInputText(prev => prev + '@')
             handleInputChange(inputText + '@')
             textareaRef.current?.focus()
           }} />
-          <ContextMenuItem icon={<Workflow size={13} />} label={t('agent.workflowCommand')} onClick={() => {
+          <MenuItem icon={<Workflow size={13} />} label={t('agent.workflowCommand')} onClick={() => {
             setShowContextMenu(false)
             // 插入 / 字符并触发 SlashCommandMenu
             setInputText('/')
@@ -274,7 +276,7 @@ export default function AgentInputBox() {
 
           {/* + 添加上下文 */}
           <div ref={contextRef}>
-            <ToolbarIconBtn
+            <IconBtn
               title={t('agent.addContext')}
               onClick={() => {
                 setShowModeMenu(false)
@@ -283,7 +285,7 @@ export default function AgentInputBox() {
               }}
             >
               <Plus size={14} />
-            </ToolbarIconBtn>
+            </IconBtn>
           </div>
 
           {/* 模式选择 */}
@@ -294,18 +296,10 @@ export default function AgentInputBox() {
                 setShowModelMenu(false)
                 setShowModeMenu(v => !v)
               }}
-              className="active-press flex items-center gap-0.5 py-1 pl-1 pr-1.5 rounded-md text-xs transition-colors"
+              className="active-press flex items-center gap-0.5 py-1 pl-1 pr-1.5 rounded-md text-xs transition-colors hover:bg-[var(--color-hover)] hover:opacity-100"
               style={{
                 color: 'var(--color-text-secondary)',
                 opacity: 0.75,
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-                e.currentTarget.style.opacity = '1'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.opacity = '0.75'
               }}
             >
               <ChevronDown size={13} strokeWidth={1.5} />
@@ -352,19 +346,11 @@ export default function AgentInputBox() {
                 setShowModeMenu(false)
                 setShowModelMenu(v => !v)
               }}
-              className="active-press flex items-center gap-0.5 py-1 pl-0.5 pr-1.5 rounded-md text-xs min-w-0 transition-colors"
+              className="active-press flex items-center gap-0.5 py-1 pl-0.5 pr-1.5 rounded-md text-xs min-w-0 transition-colors hover:bg-[var(--color-hover)] hover:opacity-100"
               style={{
                 color: 'var(--color-text-secondary)',
                 opacity: 0.75,
                 maxWidth: 140,
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-                e.currentTarget.style.opacity = '1'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.opacity = '0.75'
               }}
             >
               <ChevronDown size={13} strokeWidth={1.5} className="flex-shrink-0" />
@@ -416,7 +402,7 @@ export default function AgentInputBox() {
           <button
             onClick={handleSendOrStop}
             disabled={!generating && !canSend}
-            className="flex items-center justify-center w-6 h-6 transition-[background-color,opacity] duration-150"
+            className="flex items-center justify-center w-6 h-6 transition-[background-color,opacity,transform,filter] duration-150 ease-out hover:brightness-110 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] disabled:pointer-events-none"
             style={{
               borderRadius: 'var(--radius-md)',
               backgroundColor: generating
@@ -444,72 +430,6 @@ export default function AgentInputBox() {
 
 // ===== 子组件 =====
 
-/** 工具栏图标按钮 */
-function ToolbarIconBtn({
-  children,
-  title,
-  onClick,
-}: {
-  children: React.ReactNode
-  title: string
-  onClick?: () => void
-}) {
-  return (
-    <button
-      title={title}
-      onClick={onClick}
-      className="active-press flex items-center justify-center p-1 rounded-full transition-colors"
-      style={{ color: 'var(--color-text-secondary)', opacity: 0.75 }}
-      onMouseEnter={e => {
-        e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-        e.currentTarget.style.opacity = '1'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.backgroundColor = 'transparent'
-        e.currentTarget.style.opacity = '0.75'
-      }}
-    >
-      {children}
-    </button>
-  )
-}
-
-/** 上下文菜单项 */
-function ContextMenuItem({
-  icon,
-  label,
-  onClick,
-  disabled,
-}: {
-  icon: React.ReactNode
-  label: string
-  onClick: () => void
-  disabled?: boolean
-}) {
-  const { t } = useTranslation('panels')
-  return (
-    <button
-      onClick={!disabled ? onClick : undefined}
-      disabled={disabled}
-      className="w-full flex items-center gap-2 px-3 py-1.5 text-xs transition-colors"
-      style={{
-        color: disabled ? 'var(--color-text-muted)' : 'var(--color-text)',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-      }}
-      onMouseEnter={e => {
-        if (!disabled) e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.backgroundColor = 'transparent'
-      }}
-    >
-      <span style={{ color: 'var(--color-text-secondary)' }}>{icon}</span>
-      {label}
-      {disabled && <span className="ml-auto text-[0.7rem] opacity-40">{t('agent.comingSoon')}</span>}
-    </button>
-  )
-}
-
 /** 模式菜单项 */
 function ModeMenuItem({
   mode,
@@ -529,17 +449,14 @@ function ModeMenuItem({
   return (
     <button
       onClick={onClick}
-      className="w-full flex flex-col items-start gap-0.5 px-3 py-2 text-left text-xs transition-colors rounded-md mx-1"
-      style={{
-        width: 'calc(100% - 8px)',
-        backgroundColor: isActive ? 'var(--color-hover)' : 'transparent',
-      }}
-      onMouseEnter={e => {
-        if (!isActive) e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-      }}
-      onMouseLeave={e => {
-        if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'
-      }}
+      className={[
+        'w-full flex flex-col items-start gap-0.5 px-3 py-2 text-left text-xs transition-colors',
+        'rounded-[var(--radius-sm)]',
+        'focus-visible:outline-none focus-visible:bg-[var(--color-hover)]',
+        isActive
+          ? 'cursor-default bg-[var(--color-hover)]'
+          : 'cursor-pointer hover:bg-[var(--color-hover)] active:scale-[0.99]',
+      ].join(' ')}
     >
       <div className="font-medium" style={{ color: 'var(--color-text)' }}>{label}</div>
       <div className="text-left leading-relaxed" style={{ color: 'var(--color-text-muted)', fontSize: "0.75rem" }}>{desc}</div>
@@ -560,16 +477,14 @@ function ModelMenuItem({
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between px-3 py-1.5 text-xs transition-colors"
-      style={{
-        backgroundColor: isActive ? 'var(--color-hover)' : 'transparent',
-      }}
-      onMouseEnter={e => {
-        if (!isActive) e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-      }}
-      onMouseLeave={e => {
-        if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'
-      }}
+      className={[
+        'w-full flex items-center justify-between px-3 py-1.5 text-xs transition-colors',
+        'rounded-[var(--radius-sm)]',
+        'focus-visible:outline-none focus-visible:bg-[var(--color-hover)]',
+        isActive
+          ? 'cursor-default bg-[var(--color-hover)]'
+          : 'cursor-pointer hover:bg-[var(--color-hover)] active:scale-[0.99]',
+      ].join(' ')}
     >
       <span
         className="font-medium truncate"

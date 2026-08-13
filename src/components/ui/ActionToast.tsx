@@ -193,19 +193,7 @@ function ActionToastCard({ item, onRemove }: { item: ActionToastItem; onRemove: 
         </span>
         <button
           onClick={dismiss}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 2,
-            flexShrink: 0,
-            color: 'var(--color-text-muted)',
-            lineHeight: 1,
-            borderRadius: 'var(--radius-sm)',
-            transition: 'color var(--transition-fast)',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-text)' }}
-          onMouseLeave={e => { e.currentTarget.style.color = 'var(--color-text-muted)' }}
+          className="bg-transparent border-0 cursor-pointer p-0.5 flex-shrink-0 leading-none rounded-[var(--radius-sm)] text-[var(--color-text-muted)] transition-colors duration-150 hover:text-[var(--color-text)]"
         >
           <X size={12} />
         </button>
@@ -218,37 +206,11 @@ function ActionToastCard({ item, onRemove }: { item: ActionToastItem; onRemove: 
             <button
               key={i}
               onClick={() => handleAction(action)}
-              style={{
-                padding: '4px 12px',
-                borderRadius: 'var(--radius-md)',
-                fontSize: 11,
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-                border: action.variant === 'ghost'
-                  ? '1px solid var(--color-border)'
-                  : '1px solid transparent',
-                backgroundColor: action.variant === 'ghost'
-                  ? 'transparent'
-                  : 'var(--color-accent)',
-                color: action.variant === 'ghost'
-                  ? 'var(--color-text-secondary)'
-                  : '#fff',
-              }}
-              onMouseEnter={e => {
-                if (action.variant === 'ghost') {
-                  e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-                } else {
-                  e.currentTarget.style.filter = 'brightness(1.1)'
-                }
-              }}
-              onMouseLeave={e => {
-                if (action.variant === 'ghost') {
-                  e.currentTarget.style.backgroundColor = 'transparent'
-                } else {
-                  e.currentTarget.style.filter = 'none'
-                }
-              }}
+              className={`px-3 py-1 rounded-[var(--radius-md)] text-[11px] font-medium cursor-pointer transition-[background-color,transform,filter] duration-150 ease-out active:scale-[0.96] ${
+                action.variant === 'ghost'
+                  ? 'border border-[var(--color-border)] bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)]'
+                  : 'border border-transparent bg-[var(--color-accent)] text-white hover:brightness-110'
+              }`}
             >
               {action.label}
             </button>

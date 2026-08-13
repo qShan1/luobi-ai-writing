@@ -185,6 +185,30 @@ export default function AgentHeader() {
 
 // ===== MCP 子视图 =====
 
+// ===== 子视图返回按钮 =====
+
+function SubViewBackButton({
+  label,
+  countText,
+  onClick,
+}: {
+  label: string
+  countText: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-[var(--radius-sm)] transition-[background-color,color,transform] duration-200 ease-out hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
+      style={{ color: 'var(--color-text-secondary)' }}
+    >
+      <ChevronRight size={12} style={{ transform: 'rotate(180deg)' }} />
+      <span className="font-medium">{label}</span>
+      <span className="ml-auto text-[0.68rem] opacity-50">{countText}</span>
+    </button>
+  )
+}
+
 function MCPSubView({
   servers,
   toolCount,
@@ -214,19 +238,11 @@ function MCPSubView({
   return (
     <>
       {/* 返回按钮 */}
-      <button
+      <SubViewBackButton
+        label={t('agent.mcpServers')}
+        countText={t('agent.onlineCount', { connected: connectedCount, total: servers.length })}
         onClick={onBack}
-        className="w-full flex items-center gap-1.5 px-3 py-1.5 text-xs transition-colors"
-        style={{ color: 'var(--color-text-secondary)' }}
-        onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-      >
-        <ChevronRight size={12} style={{ transform: 'rotate(180deg)' }} />
-        <span className="font-medium">{t('agent.mcpServers')}</span>
-        <span className="ml-auto text-[0.68rem] opacity-50">
-          {t('agent.onlineCount', { connected: connectedCount, total: servers.length })}
-        </span>
-      </button>
+      />
 
       <div style={{ height: 1, backgroundColor: 'var(--color-border)', margin: '2px 0' }} />
 
@@ -347,19 +363,11 @@ function SkillSubView({
   return (
     <>
       {/* 返回按钮 */}
-      <button
+      <SubViewBackButton
+        label={t('agent.skillList')}
+        countText={t('agent.skillCount', { count: skills.length })}
         onClick={onBack}
-        className="w-full flex items-center gap-1.5 px-3 py-1.5 text-xs transition-colors"
-        style={{ color: 'var(--color-text-secondary)' }}
-        onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-      >
-        <ChevronRight size={12} style={{ transform: 'rotate(180deg)' }} />
-        <span className="font-medium">{t('agent.skillList')}</span>
-        <span className="ml-auto text-[0.68rem] opacity-50">
-          {t('agent.skillCount', { count: skills.length })}
-        </span>
-      </button>
+      />
 
       <div style={{ height: 1, backgroundColor: 'var(--color-border)', margin: '2px 0' }} />
 

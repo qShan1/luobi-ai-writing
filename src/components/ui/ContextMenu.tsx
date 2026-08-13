@@ -110,7 +110,17 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
               onClose()
               item.onClick?.()
             }}
-            className="w-full flex items-center gap-2 px-3 py-1.5 text-left transition-colors"
+            className={[
+              'w-full flex items-center gap-2 px-3 py-1.5 text-left transition-colors',
+              'rounded-[var(--radius-sm)]',
+              'focus-visible:outline-none focus-visible:bg-[var(--color-hover)]',
+              item.disabled
+                ? 'cursor-not-allowed'
+                : 'cursor-pointer active:scale-[0.99] hover:bg-[var(--color-hover)]',
+              item.danger &&
+                !item.disabled &&
+                'hover:bg-[color-mix(in_srgb,var(--color-error)_10%,transparent)]',
+            ].join(' ')}
             style={{
               color: item.disabled
                 ? 'var(--color-text-muted)'
@@ -118,19 +128,7 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
                   ? 'var(--color-error)'
                   : 'var(--color-text)',
               opacity: item.disabled ? 0.45 : 1,
-              cursor: item.disabled ? 'not-allowed' : 'pointer',
-              backgroundColor: 'transparent',
               fontSize: 12,
-            }}
-            onMouseEnter={e => {
-              if (!item.disabled) {
-                e.currentTarget.style.backgroundColor = item.danger
-                  ? 'color-mix(in srgb, var(--color-error) 12%, transparent)'
-                  : 'var(--color-hover)'
-              }
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = 'transparent'
             }}
           >
             {/* 图标 */}

@@ -133,13 +133,14 @@ function AITaskCapsule() {
   // 完成态渲染
   if (!stepInfo && completedTitle) {
     return (
-      <div
-        className="ai-task-capsule ai-task-capsule--complete"
+      <button
+        type="button"
+        className="ai-task-capsule ai-task-capsule--complete active:scale-[0.98] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]"
         onClick={() => useLayoutStore.getState().openRightPanel('ai-output')}
       >
         <CheckCircle2 size={10} />
         <span className="truncate">{completedTitle.replace(/^[^\s]+\s/, '')} {t('statusBar.taskComplete')}</span>
-      </div>
+      </button>
     )
   }
 
@@ -151,8 +152,9 @@ function AITaskCapsule() {
   // 多任务模式
   if (activeRuns.length > 1) {
     return (
-      <div
-        className="ai-task-capsule"
+      <button
+        type="button"
+        className="ai-task-capsule active:scale-[0.98] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]"
         onClick={() => useLayoutStore.getState().openRightPanel('ai-output')}
         title={t('statusBar.viewTaskProgress')}
       >
@@ -162,15 +164,16 @@ function AITaskCapsule() {
           style={{ backgroundColor: 'var(--color-accent)' }}
         />
         <span>{activeRuns.length}{t('statusBar.tasksRunning')}</span>
-      </div>
+      </button>
     )
   }
 
   // 单任务模式：步骤名 + 微型进度条 + 百分比
   const effectiveProgress = Math.max(5, progress)
   return (
-    <div
-      className="ai-task-capsule"
+    <button
+      type="button"
+      className="ai-task-capsule active:scale-[0.98] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]"
       onClick={() => useLayoutStore.getState().openRightPanel('ai-output')}
       title={t('statusBar.viewAIDetails')}
     >
@@ -206,7 +209,7 @@ function AITaskCapsule() {
       <span className="font-mono text-[0.62rem] flex-shrink-0 opacity-80">
         {completed}/{total}
       </span>
-    </div>
+    </button>
   )
 }
 
@@ -221,23 +224,25 @@ function StatusBarSegment({
   title?: string
   onClick?: () => void
 }) {
+  const base = 'flex items-center gap-1 px-2 h-full'
+
+  if (!onClick) {
+    return (
+      <div className={`${base} cursor-default`} title={title}>
+        {children}
+      </div>
+    )
+  }
+
   return (
-    <div
-      className="flex items-center gap-1 px-2 h-full cursor-default transition-colors"
+    <button
+      type="button"
+      className={`${base} cursor-pointer border-none bg-transparent transition-[background-color,color,transform] hover:bg-[rgba(var(--color-accent-rgb),0.08)] active:scale-[0.98] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_var(--color-bg),0_0_0_4px_var(--color-focus-ring)]`}
       title={title}
       onClick={onClick}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
-      onMouseEnter={e => {
-        if (onClick) {
-          e.currentTarget.style.backgroundColor = 'rgba(var(--color-accent-rgb), 0.08)'
-        }
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.backgroundColor = 'transparent'
-      }}
     >
       {children}
-    </div>
+    </button>
   )
 }
 

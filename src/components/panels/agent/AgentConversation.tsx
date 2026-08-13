@@ -7,6 +7,7 @@ import { useLayoutStore } from '../../../stores/layout-store'
 import AgentMessage from './AgentMessage'
 import AgentInputBox from './AgentInputBox'
 import { formatRelativeTime } from '../../../utils/time'
+import { Button } from '../../ui/Button'
 
 /**
  * 对话区域主组件
@@ -169,7 +170,7 @@ function ActiveConversation() {
       {!isAtBottom && (
         <button
           onClick={scrollToBottom}
-          className="absolute z-10 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-[border-color,color]"
+          className="absolute z-10 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-[border-color,color,transform,background-color] duration-200 ease-out hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
           style={{
             right: 16,
             bottom: 100,
@@ -178,14 +179,6 @@ function ActiveConversation() {
             color: 'var(--color-text-secondary)',
           }}
           title={t('agentConversation.scrollToBottom')}
-          onMouseEnter={e => {
-            e.currentTarget.style.borderColor = 'var(--color-accent)'
-            e.currentTarget.style.color = 'var(--color-accent)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.borderColor = 'var(--color-border)'
-            e.currentTarget.style.color = 'var(--color-text-secondary)'
-          }}
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 5v14M19 12l-7 7-7-7" />
@@ -220,28 +213,18 @@ function AgentToolbar() {
     <div className="flex items-center justify-end mb-1.5">
 
       {/* 右侧：打开 AI 输出面板 */}
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={() => openRightPanel('ai-output')}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-[background-color,color] select-none"
-        style={{
-          color: 'var(--color-text-muted)',
-          border: '1px solid var(--color-border)',
-        }}
         title={t('agentConversation.switchToAIOutput')}
-        onMouseEnter={e => {
-          e.currentTarget.style.backgroundColor = 'var(--color-hover)'
-          e.currentTarget.style.color = 'var(--color-text)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.backgroundColor = 'transparent'
-          e.currentTarget.style.color = 'var(--color-text-muted)'
-        }}
+        className="border border-[var(--color-border)]"
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
         </svg>
         {t('agentConversation.aiWorkflow')}
-      </button>
+      </Button>
     </div>
   )
 }
@@ -265,15 +248,13 @@ function AgentHistoryPanel() {
         <span className="text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>
           {t('agentConversation.allConversations')}
         </span>
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => setShowHistory(false)}
-          className="text-xs px-2 py-0.5 rounded transition-colors"
-          style={{ color: 'var(--color-text-muted)' }}
-          onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-hover)')}
-          onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
         >
           {t('agentConversation.close')}
-        </button>
+        </Button>
       </div>
 
       {/* 会话列表 */}
