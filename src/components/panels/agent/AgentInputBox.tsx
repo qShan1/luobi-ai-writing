@@ -296,10 +296,9 @@ export default function AgentInputBox() {
                 setShowModelMenu(false)
                 setShowModeMenu(v => !v)
               }}
-              className="active-press flex items-center gap-0.5 py-1 pl-1 pr-1.5 rounded-md text-xs transition-colors hover:bg-[var(--color-hover)] hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+              className="active-press flex items-center gap-1 py-1 pl-1.5 pr-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-panel)] text-xs transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)]"
               style={{
                 color: 'var(--color-text-secondary)',
-                opacity: 0.75,
               }}
             >
               <ChevronDown size={13} strokeWidth={1.5} />
@@ -346,10 +345,9 @@ export default function AgentInputBox() {
                 setShowModeMenu(false)
                 setShowModelMenu(v => !v)
               }}
-              className="active-press flex items-center gap-0.5 py-1 pl-0.5 pr-1.5 rounded-md text-xs min-w-0 transition-colors hover:bg-[var(--color-hover)] hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+              className="active-press flex items-center gap-1 py-1 pl-1.5 pr-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-panel)] text-xs min-w-0 transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)]"
               style={{
                 color: 'var(--color-text-secondary)',
-                opacity: 0.75,
                 maxWidth: 140,
               }}
             >

@@ -168,36 +168,36 @@
   :root {
     /* ☀️ 浅色主题 — 清冷蓝调（从 Logo 蓝紫色系延伸） */
 
-    /* 背景层次（冷白蓝调，与Logo深蓝形成呼应） */
-    --color-bg: #F5F3EE;
-    --color-sidebar: #EEEAE2;
-    --color-panel: #FBFAF7;
+    /* 背景层次 — 冷白蓝调，强调分区辨识 */
+    --color-bg: #F4F2EE;
+    --color-sidebar: #E9E4DB;
+    --color-panel: #FFFFFF;
     --color-titlebar: #FBFAF7;
-    --color-activity-bar: #E7E2D8;
+    --color-activity-bar: #E4DFD4;
     --color-hover: #E9E4DA;
     --color-active: #DED7CB;
 
     /* 文字层次 */
-    --color-text: #22201D;
+    --color-text: #23211E;
     --color-text-secondary: #625D56;
     --color-text-muted: #8C857B;
 
     /* 边框 */
     --color-border: #D8D1C6;
 
-    /* 强调色（Logo 星空蓝） */
-    --color-accent: #A53D32;
-    --color-accent-hover: #8E3027;
-    --color-accent-rgb: 165, 61, 50;
+    /* 强调色 — 莫兰迪低饱和暗红（灰调，去廉价高饱和） */
+    --color-accent: #A2554A;
+    --color-accent-hover: #8D463C;
+    --color-accent-rgb: 162, 85, 74;
 
-    /* 品牌金色（Logo 星辰点睛） */
-    --color-gold: #A53D32;
+    /* 品牌金色（强调色同系，保持协调） */
+    --color-gold: #A2554A;
 
     /* 语义色（莫兰迪低饱和度高通透感） */
-    --color-success: #10b981;
-    --color-warning: #f59e0b;
-    --color-error: #f43f5e;
-    --color-info: #A53D32;
+    --color-success: #3E8E6E;
+    --color-warning: #B9862F;
+    --color-error: #C4564E;
+    --color-info: #A2554A;
 
     /* Tab 系统 */
     --color-tab-bg: transparent;
@@ -296,18 +296,18 @@
     /* 边框 — 深蓝色边框，微弱可见 */
     --color-border: #304039;
 
-    /* 强调色 — Logo 冰蓝 #7EC8E3 */
-    --color-accent: #9FBEA9;
-    --color-accent-hover: #B2CBB9;
-    --color-accent-rgb: 159, 190, 169;
+    /* 强调色 — 莫兰迪灰调红（深色下用较亮红保证可读） */
+    --color-accent: #C98B7F;
+    --color-accent-hover: #D89C90;
+    --color-accent-rgb: 201, 139, 127;
 
     /* 品牌金色 — Logo 星辰金 #C9A76C */
     --color-gold: #D9825B;
 
-    --color-success: #4ade80;
-    --color-warning: #fbbf24;
-    --color-error: #fb7185;
-    --color-info: #9FBEA9;
+    --color-success: #6FBF9A;
+    --color-warning: #D0A24A;
+    --color-error: #E07A70;
+    --color-info: #C98B7F;
 
     --color-tab-bg: transparent;
     --color-tab-active: #243129;
@@ -363,16 +363,16 @@
 
     --color-border: #DDD8D0;
 
-    /* 强调色 — Logo 薰衣草紫 #9B8EC8 */
-    --color-accent: #9B8EC8;
-    --color-accent-hover: #8B7EB8;
-    --color-accent-rgb: 155, 142, 200;
+    /* 强调色 — 莫兰迪灰调红（暖纸协调） */
+    --color-accent: #A55B4E;
+    --color-accent-hover: #924A3F;
+    --color-accent-rgb: 165, 91, 78;
 
     --color-gold: #C9A76C;
 
-    --color-success: #4d9e72;
-    --color-warning: #c8923a;
-    --color-error: #c45b5b;
+    --color-success: #55866B;
+    --color-warning: #B08A3E;
+    --color-error: #B25F58;
     --color-info: #7B92C0;
 
     --color-tab-bg: transparent;
@@ -429,15 +429,15 @@
 
     --color-border: #3C3C3C;
 
-    --color-accent: #0E639C;
-    --color-accent-hover: #1177BB;
-    --color-accent-rgb: 14, 99, 156;
+    --color-accent: #C88273;
+    --color-accent-hover: #D69283;
+    --color-accent-rgb: 200, 130, 115;
 
     --color-gold: #C9A76C;
 
-    --color-success: #89D185;
-    --color-warning: #CCA700;
-    --color-error: #F14C4C;
+    --color-success: #6DA67A;
+    --color-warning: #BFA04A;
+    --color-error: #D66860;
     --color-info: #3794FF;
 
     --color-tab-bg: transparent;
@@ -1258,15 +1258,17 @@
   .welcome-title { font-size: 24px; line-height: 1.2; font-weight: 650; margin: 0; letter-spacing: -0.02em; }
   .welcome-subtitle { font-size: 13px; margin: 6px 0 0; }
   .welcome-actions { display: grid; grid-template-columns: minmax(220px, 1.35fr) repeat(2, minmax(180px, 1fr)); gap: 12px; }
-  .welcome-primary, .welcome-secondary { min-height: 92px; border-radius: 4px; display: flex; align-items: center; text-align: left; gap: 14px; padding: 18px 20px; transition: border-color 160ms ease, background-color 160ms ease; cursor: pointer; }
-  .welcome-primary { justify-content: space-between; color: #fff; background: color-mix(in srgb, var(--color-accent) 82%, transparent); border: 1px solid color-mix(in srgb, var(--color-accent) 90%, transparent); box-shadow: none; }
-  .welcome-primary:hover { background: var(--color-accent-hover); }
-  .welcome-secondary { color: var(--color-text); background: transparent; border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent); }
-  .welcome-secondary:hover { border-color: var(--color-text-secondary); background: var(--color-hover); }
+  .welcome-primary, .welcome-secondary { min-height: 88px; border-radius: var(--radius-xl); display: flex; align-items: center; text-align: left; gap: 14px; padding: 16px 20px; cursor: pointer; box-shadow: var(--shadow-sm); transition: border-color 160ms var(--ease-out), background-color 160ms var(--ease-out), transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out); }
+  .welcome-primary { justify-content: space-between; color: #fff; background: var(--color-accent); border: 1px solid transparent; }
+  .welcome-primary:hover { background: var(--color-accent-hover); transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(var(--color-accent-rgb), 0.45); }
+  .welcome-primary:active { transform: translateY(0) scale(0.99); }
+  .welcome-secondary { color: var(--color-text); background: var(--color-panel); border: 1px solid var(--color-border); }
+  .welcome-secondary:hover { border-color: var(--color-accent); background: var(--color-hover); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .welcome-secondary:active { transform: translateY(0) scale(0.99); }
   .welcome-action-label, .welcome-action-desc { display: block; }
   .welcome-action-label { font-size: 13px; font-weight: 600; }
-  .welcome-action-desc { color: color-mix(in srgb, currentColor 65%, transparent); font-size: 11px; line-height: 1.5; margin-top: 5px; }
-  .welcome-primary .welcome-action-desc { color: rgba(255, 255, 255, 0.72); }
+  .welcome-action-desc { color: color-mix(in srgb, currentColor 68%, transparent); font-size: 11px; line-height: 1.5; margin-top: 5px; }
+  .welcome-primary .welcome-action-desc { color: rgba(255, 255, 255, 0.78); }
   .welcome-section-label { color: var(--color-text-muted); font-size: 11px; letter-spacing: 0; }
   @media (max-width: 900px) { .welcome-actions { grid-template-columns: 1fr; } .welcome-content { padding: 32px 24px; } }
 

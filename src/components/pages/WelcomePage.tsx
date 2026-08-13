@@ -2,7 +2,6 @@ import { motion, useReducedMotion, type Variants } from 'motion/react'
 import { FolderOpen, Clock, BookOpen, FileUp, Plus } from 'lucide-react'
 import { useProjectStore } from '../../stores/project-store'
 import { useThemeStore } from '../../stores/theme-store'
-import GlassSurface from '../effects/GlassSurface'
 
 interface WelcomePageProps {
   onNewProject: () => void
@@ -48,7 +47,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
         </div>
 
         <motion.div
-          className="welcome-actions mb-10"
+          className="flex flex-wrap gap-3 mb-10"
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.03 } } }}
@@ -56,11 +55,8 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
           <motion.div
             variants={enterCard}
           >
-            <GlassSurface
-              className="welcome-primary group"
-              cornerRadius={10}
-              padding="18px 22px"
-              highlight
+            <div
+              className="welcome-action-button welcome-action-primary group flex items-center justify-between gap-5 rounded-[var(--radius-lg)] px-5 py-3.5 min-w-[250px] cursor-pointer text-left bg-[var(--color-accent)] text-white border border-transparent shadow-[var(--shadow-sm)] transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-[var(--color-accent-hover)] hover:shadow-[0_8px_20px_-6px_rgba(var(--color-accent-rgb),0.45)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onNewProject}
               role="button"
               tabIndex={0}
@@ -71,16 +67,14 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
                 <span className="welcome-action-desc">从题材、设定和章节蓝图开始</span>
               </span>
               <Plus size={20} strokeWidth={1.8} />
-            </GlassSurface>
+            </div>
           </motion.div>
 
           <motion.div
             variants={enterCard}
           >
-            <GlassSurface
-              className="welcome-secondary group"
-              cornerRadius={10}
-              padding="18px 22px"
+            <div
+              className="welcome-action-button welcome-action-secondary group flex items-center gap-3 rounded-[var(--radius-lg)] px-4 py-3.5 min-w-[190px] cursor-pointer text-left bg-[var(--color-panel)] text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onOpenProject}
               role="button"
               tabIndex={0}
@@ -88,16 +82,14 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             >
               <FolderOpen size={18} strokeWidth={1.8} />
               <span><span className="welcome-action-label">打开项目</span><span className="welcome-action-desc">继续本地作品</span></span>
-            </GlassSurface>
+            </div>
           </motion.div>
 
           <motion.div
             variants={enterCard}
           >
-            <GlassSurface
-              className="welcome-secondary group"
-              cornerRadius={10}
-              padding="18px 22px"
+            <div
+              className="welcome-action-button welcome-action-secondary group flex items-center gap-3 rounded-[var(--radius-lg)] px-4 py-3.5 min-w-[190px] cursor-pointer text-left bg-[var(--color-panel)] text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onImportNovel}
               role="button"
               tabIndex={0}
@@ -105,7 +97,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             >
               <FileUp size={18} strokeWidth={1.8} />
               <span><span className="welcome-action-label">导入旧稿</span><span className="welcome-action-desc">把现有章节带入工作台</span></span>
-            </GlassSurface>
+            </div>
           </motion.div>
         </motion.div>
 
@@ -129,10 +121,8 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
                   key={i}
                   variants={enterCard}
                 >
-                  <GlassSurface
-                    className="group"
-                    cornerRadius={8}
-                    padding="10px 14px"
+                  <div
+                    className="group flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-panel)] px-3.5 py-2.5 shadow-[var(--shadow-sm)] cursor-pointer transition-[transform,border-color,background-color] duration-150 hover:-translate-y-[1px] hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
                     onClick={() => openProject(p.path)}
                     role="button"
                     tabIndex={0}
@@ -149,15 +139,15 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
                         </span>
                       </div>
                     </div>
-                  </GlassSurface>
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         )}
 
-        <div className="mt-10">
-          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+        <div className="mt-12">
+          <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
             落笔将项目文件保存在本地目录中
           </p>
         </div>

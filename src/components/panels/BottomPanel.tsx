@@ -112,9 +112,18 @@ function TaskRunView() {
 
   if (activeRuns.length === 0 && history.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-3" style={{ color: 'var(--color-text-muted)' }}>
-        <Zap size={24} style={{ opacity: 0.5 }} />
-        <span className="text-xs">{t('bottomPanel.noTasks')}</span>
+      <div className="flex flex-col items-center justify-center h-full gap-3 px-4">
+        <div className="rounded-full p-3" style={{ backgroundColor: 'color-mix(in_srgb, var(--color-border) 40%, transparent)' }}>
+          <Zap size={24} style={{ color: 'var(--color-text-muted)' }} />
+        </div>
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+            {t('bottomPanel.noTasks')}
+          </span>
+          <span className="text-xs text-center" style={{ color: 'var(--color-text-muted)' }}>
+            {t('bottomPanel.noTasksHint')}
+          </span>
+        </div>
       </div>
     )
   }

@@ -33,7 +33,8 @@
       "log": "Log",
       "models": "Model Calls"
     },
-    "noTasks": "No tasks yet. Progress will appear here when an AI workflow starts.",
+    "noTasks": "No active tasks",
+    "noTasksHint": "Live progress will appear here once an AI workflow starts",
     "historyTasks": "Task History",
     "nextStep": "Next:",
     "continue": "Continue",

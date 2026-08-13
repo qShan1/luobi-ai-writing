@@ -111,7 +111,11 @@ export default function TitleBar() {
           className="titlebar-logo"
         />
         {projectName && (
-          <span className="text-xs ml-2 opacity-50" style={{ color: 'var(--color-titlebar-text)' }}>
+          <span
+            title={projectName}
+            className="text-xs ml-2 opacity-50 truncate overflow-hidden min-w-0 max-w-[160px] lg:max-w-[280px]"
+            style={{ color: 'var(--color-titlebar-text)' }}
+          >
             — {projectName}
           </span>
         )}

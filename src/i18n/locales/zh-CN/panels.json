@@ -33,7 +33,8 @@
       "log": "日志",
       "models": "模型调用"
     },
-    "noTasks": "暂无任务，AI 工作流启动后会在这里展示进度",
+    "noTasks": "暂无进行中的任务",
+    "noTasksHint": "AI 工作流启动后，进度会实时展示在这里",
     "historyTasks": "历史任务",
     "nextStep": "下一步：",
     "continue": "继续",

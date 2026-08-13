@@ -52,14 +52,22 @@ export default function AgentHeader() {
       style={{
         height: 'var(--height-panel-header)',
         borderBottom: '1px solid var(--color-border)',
+        backgroundColor: 'var(--color-hover)',
       }}
     >
       {/* 标题 */}
       <div
-        className="flex min-w-0 items-center overflow-hidden text-ellipsis whitespace-nowrap gap-1"
-        style={{ color: 'var(--color-text-secondary)', fontSize: '0.75rem', fontWeight: 500 }}
+        className="flex min-w-0 items-center gap-1 rounded-md px-1.5 py-0.5"
+        style={{
+          color: 'var(--color-accent)',
+          fontSize: '0.7rem',
+          fontWeight: 600,
+          letterSpacing: '0.08em',
+          backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
+        }}
       >
-        AGENT
+        <Sparkles size={11} strokeWidth={2} className="flex-shrink-0" />
+        <span className="select-none">AGENT</span>
       </div>
 
       {/* 右侧工具按钮组 */}
