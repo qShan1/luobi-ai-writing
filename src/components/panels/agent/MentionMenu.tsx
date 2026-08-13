@@ -60,6 +60,10 @@ export default function MentionMenu({ query, onSelect, onClose, position }: Prop
   return (
     <div
       ref={menuRef}
+      role="listbox"
+      aria-label={t('agent.referenceContext')}
+      aria-orientation="vertical"
+      aria-activedescendant={`option-${selectedIndex}`}
       className="menu-pop absolute z-50 py-1 rounded-lg shadow-lg"
       style={{
         bottom: position?.bottom ?? 'calc(100% + 4px)',
@@ -78,6 +82,9 @@ export default function MentionMenu({ query, onSelect, onClose, position }: Prop
       {results.map((target, i) => (
         <button
           key={target.value}
+          id={`option-${i}`}
+          role="option"
+          aria-selected={i === selectedIndex}
           onClick={() => onSelect(target)}
           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-left transition-colors"
           style={{

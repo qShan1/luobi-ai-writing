@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useLayoutStore } from '../../stores/layout-store'
 import { useWorkflowStore, type WorkflowStep, type WorkflowRun } from '../../stores/workflow-store'
 import { Button } from '../ui/Button'
+import { Skeleton } from '../ui/Skeleton'
 
 /** 下方工具窗口 */
 export default function BottomPanel() {
@@ -575,16 +576,39 @@ function ModelsView() {
     promptTokens: number; completionTokens: number; totalTokens: number
     durationMs: number; success: boolean; createdAt: string
   }>>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => { loadData() }, [])
 
   const loadData = async () => {
+    setLoading(true)
     try {
       const { loadLLMData } = await import('../../services/stats-service')
       const { stats: s, history: h } = await loadLLMData(30)
       setStats(s)
       setHistory(h)
     } catch { /* 忽略 */ }
+    setLoading(false)
+  }
+
+  if (loading) {
+    return (
+      <div className="h-full flex flex-col overflow-hidden">
+        <div className="flex items-center gap-4 px-4 py-2 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-border)' }}>
+          <Skeleton className="h-4 w-12" />
+          <Skeleton className="h-4 w-14" />
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-16" />
+        </div>
+        <div className="flex-1 px-4 py-3 space-y-2.5">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-[85%]" />
+          <Skeleton className="h-4 w-[70%]" />
+          <Skeleton className="h-4 w-[90%]" />
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -350,7 +350,7 @@ export default function ChapterCardEditor() {
                   {bp.notes && (
                     <span
                       className="text-[0.7rem] px-1 py-0.5 rounded"
-                      style={{ backgroundColor: 'rgba(34,197,94,0.15)', color: 'rgb(34,197,94)' }}
+                      style={{ backgroundColor: 'color-mix(in srgb, var(--color-success) 15%, transparent)', color: 'var(--color-success)' }}
                       title={t('chapterCard.hasNotesTooltip')}
                     >
                       {t('chapterCard.hasNotes')}
@@ -495,7 +495,7 @@ export default function ChapterCardEditor() {
                   className="p-3 rounded-lg border"
                   style={{
                     borderColor: 'var(--color-border)',
-                    backgroundColor: 'rgba(34,197,94,0.04)',
+                    backgroundColor: 'color-mix(in srgb, var(--color-success) 4%, transparent)',
                   }}
                 >
                   <Label className="flex items-center gap-1.5">

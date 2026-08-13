@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react'
-import { RefreshCw, CheckCircle2, XCircle, AlertTriangle, Clock, ChevronDown, ChevronUp } from 'lucide-react'
+import { RefreshCw, CheckCircle2, XCircle, AlertTriangle, Clock, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/Button'
 import { useProjectStore } from '../../stores/project-store'
@@ -85,8 +85,18 @@ export function PostProcessStatusPanel({
     }
   }, [status, onStatusLoad])
 
+  // 加载中 → 轻量占位
+  if (loading) {
+    return (
+      <div className={cn('flex items-center gap-1.5 px-2 py-1 rounded', className)}>
+        <Loader2 size={12} className="animate-spin text-[var(--color-text-muted)]" />
+        <span className="text-[10px] text-[var(--color-text-muted)]">{t('processing')}</span>
+      </div>
+    )
+  }
+
   // 无状态文件 → 不渲染
-  if (loading || !status) return null
+  if (!status) return null
 
   const steps = Object.entries(status.steps)
   const failedSteps = steps.filter(([, s]) => !s.ok)
