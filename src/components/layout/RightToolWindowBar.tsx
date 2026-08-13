@@ -36,10 +36,9 @@ export default function RightToolWindowBar() {
 
   return (
     <div
-      className="no-select flex flex-col items-center justify-start h-full py-0.5 gap-0.5"
+      className="liquid-glass-panel no-select flex flex-col items-center justify-start h-full py-0.5 gap-0.5"
       style={{
         width: 'var(--width-right-bar)',  /* 30px */
-        backgroundColor: 'var(--color-activity-bar)',
         borderLeft: '1px solid var(--color-border)',
         flexShrink: 0,
       }}

@@ -3,6 +3,7 @@ import { Panel, Group as PanelGroup, Separator as PanelResizeHandle, type PanelI
 import { useTranslation } from 'react-i18next'
 import { useThemeStore } from './stores/theme-store'
 import { useLayoutStore } from './stores/layout-store'
+import { useEffectsStore } from './stores/effects-store'
 import { useLLMStore } from './stores/llm-store'
 import { useProjectStore } from './stores/project-store'
 import { useMCPStore } from './stores/mcp-store'
@@ -65,6 +66,7 @@ function BottomPanelHost() {
 export default function App() {
   const { t } = useTranslation('common')
   const initTheme = useThemeStore((s) => s.initTheme)
+  const glassEnabled = useEffectsStore((s) => s.enabled)
   const sidebarOpen = useLayoutStore(s => s.sidebarOpen)
   const sidebarWidth = useLayoutStore(s => s.sidebarWidth)
   const aiPanelOpen = useLayoutStore(s => s.aiPanelOpen)
@@ -146,7 +148,7 @@ export default function App() {
   }, [])
 
   return (
-    <div className="flex flex-col w-full h-full overflow-hidden">
+    <div className={`flex flex-col w-full h-full overflow-hidden app-liquid-bg ${glassEnabled ? 'liquid-enabled' : ''}`}>
       {/* 标题栏 */}
       <TitleBar />
 

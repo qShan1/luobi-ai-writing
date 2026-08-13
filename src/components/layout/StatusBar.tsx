@@ -19,7 +19,7 @@ export default function StatusBar() {
 
   return (
     <div
-      className="statusbar-frost no-select flex items-center justify-between"
+      className="statusbar-frost liquid-glass-panel no-select flex items-center justify-between"
       style={{
         height: 'var(--height-statusbar)',
         color: 'var(--color-statusbar-text)',

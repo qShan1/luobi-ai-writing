@@ -95,10 +95,9 @@ export default function TitleBar() {
 
   return (
     <div
-      className="no-select flex items-center"
+      className="liquid-glass-panel no-select flex items-center"
       style={{
         height: 'var(--height-titlebar)',
-        backgroundColor: 'var(--color-titlebar)',
         borderBottom: '1px solid var(--color-border)',
         WebkitAppRegion: 'drag',
       } as React.CSSProperties}

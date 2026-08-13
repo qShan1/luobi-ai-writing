@@ -42,9 +42,8 @@ export default function BottomPanel() {
 
   return (
     <div
-      className="w-full h-full flex flex-col overflow-hidden"
+      className="liquid-glass-panel w-full h-full flex flex-col overflow-hidden"
       style={{
-        backgroundColor: 'var(--color-panel)',
         borderTop: '1px solid var(--color-border)',
       }}
     >

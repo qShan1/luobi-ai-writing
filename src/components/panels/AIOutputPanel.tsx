@@ -40,9 +40,8 @@ export default function AIOutputPanel() {
 
   return (
     <div
-      className="flex flex-col h-full overflow-hidden"
+      className="liquid-glass-panel flex flex-col h-full overflow-hidden"
       style={{
-        backgroundColor: 'var(--color-sidebar)',
         borderLeft: '1px solid var(--color-border)',
       }}
     >

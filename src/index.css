@@ -1417,3 +1417,38 @@
     transform: none;
   }
 }
+
+/* =====================================================================
+ * Liquid Glass — 高透液态玻璃（Apple 参数）
+ * 面板浮在环境渐变背景上，高透磨砂 + 白高光边
+ * ===================================================================== */
+
+/* 环境背景：柔和光晕渐变，作为玻璃磨砂的内容层 */
+.app-liquid-bg {
+  background:
+    radial-gradient(900px 600px at 12% -5%, rgba(var(--color-accent-rgb), 0.10), transparent 60%),
+    radial-gradient(800px 600px at 108% 18%, rgba(var(--color-accent-rgb), 0.07), transparent 55%),
+    var(--color-bg);
+}
+
+/* 面板玻璃基底：effects 关闭时回退纯色 */
+.liquid-glass-panel {
+  background: var(--color-panel);
+}
+
+/* effects 开启：高透磨砂 + 顶部白高光（Apple 液态玻璃） */
+.liquid-enabled .liquid-glass-panel {
+  background: color-mix(in srgb, var(--color-panel) 45%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: inset 0 1px 0 0 color-mix(in srgb, #fff 14%, transparent);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .liquid-enabled .liquid-glass-panel {
+    background: var(--color-panel);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+}

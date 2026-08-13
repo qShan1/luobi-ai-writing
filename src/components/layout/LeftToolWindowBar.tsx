@@ -42,10 +42,9 @@ export default function LeftToolWindowBar() {
 
   return (
     <div
-      className="no-select flex flex-col h-full"
+      className="liquid-glass-panel no-select flex flex-col h-full"
       style={{
         width: 'var(--width-left-bar)',  /* 36px */
-        backgroundColor: 'var(--color-activity-bar)',
         borderRight: '1px solid var(--color-border)',
         flexShrink: 0,
       }}
