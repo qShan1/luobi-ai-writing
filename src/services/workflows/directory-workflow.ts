@@ -59,17 +59,21 @@ export function parseTextBlueprints(content: string, startNum: number, endNum: n
             const n = Number(p.chapterNumber || p.chapter_number)
             return n >= startNum && n <= endNum
           })
-          .map((p: Record<string, unknown>) => ({
-            ...EMPTY_BLUEPRINT,
-            chapterNumber: Number(p.chapterNumber || p.chapter_number || 0),
-            title: String(p.title || t('workflowDefs.chapterTitleFallback', { chapter: p.chapterNumber })),
+           .map((p: Record<string, unknown>) => {
+             const chapterNumber = Number(p.chapterNumber || p.chapter_number || 0)
+             return {
+             ...EMPTY_BLUEPRINT,
+             chapterNumber,
+             title: String(p.title || t('workflowDefs.chapterTitleFallback', { chapter: chapterNumber }))
+               .replace(/\{\{(?:number|chapter)\}\}/g, String(chapterNumber)),
             role: String(p.role || t('workflowDefs.dirDefaultRole')),
             purpose: String(p.purpose || ''),
             keyEvents: String(p.keyEvents || p.key_events || ''),
             characters: Array.isArray(p.characters) ? p.characters : [],
             suspenseHook: String(p.suspenseHook || p.suspense_hook || ''),
-            userGuidance: '',
-          }))
+             userGuidance: '',
+             }
+           })
       }
     }
   } catch {
@@ -190,8 +194,21 @@ export function createDirectoryWorkflow(params: DirectoryWorkflowParams = { mode
       },
     ],
     onComplete: {
-      mode: 'silent',
+      mode: 'open',
       message: params.mode === 'append' ? t('workflowDefs.dirCompletedAppend') : t('workflowDefs.dirCompletedFull'),
+      openResult: async () => {
+        const { useEditorStore } = await import('../../stores/editor-store')
+        const existing = useEditorStore.getState().tabs.find(tab => tab.type === 'chapter-card')
+        if (existing?.dirty) return
+        const blueprints = await loadDirectoryBlueprints()
+        useEditorStore.getState().openFile({
+          id: 'chapter-card-editor',
+          name: t('chapterCard.title', { ns: 'editors' }),
+          type: 'chapter-card',
+          filePath: 'luobi://chapter-card',
+          content: JSON.stringify({ blueprints, selectedIdx: 0 }),
+        })
+      },
     },
   }
 }

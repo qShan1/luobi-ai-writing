@@ -145,7 +145,7 @@ function ToastCard({ item }: { item: ToastItem }) {
           maxWidth: 400,
           padding: '12px 14px',
           borderRadius: 'var(--radius-xl)',
-          backgroundColor: 'color-mix(in srgb, var(--color-panel) 80%, transparent)',
+          backgroundColor: 'color-mix(in srgb, var(--color-panel) 38%, transparent)',
           border: '1px solid color-mix(in srgb, var(--color-border) 80%, transparent)',
           borderLeft: `3px solid ${accent}`,
           boxShadow: 'var(--shadow-popover)',

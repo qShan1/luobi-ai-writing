@@ -6,6 +6,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useProjectStore } from '../../stores/project-store'
 import { useEditorStore } from '../../stores/editor-store'
+import { readDraftBody } from '../../stores/draft-store'
 import { useWorkflowStore } from '../../stores/workflow-store'
 import { useLayoutStore } from '../../stores/layout-store'
 import { ipc } from '../../services/ipc-client'
@@ -18,6 +19,7 @@ import {
   type ChapterBlueprint,
   type DirectoryWorkflowParams,
 } from '../../services/workflows/directory-workflow'
+import { createChapterWorkflow, createFinalizeWorkflow } from '../../services/workflows/chapter-workflow'
 import { guardDirectoryGeneration } from '../../services/workflow-guards'
 import DirectoryConfigDialog from '../dialogs/DirectoryConfigDialog'
 import { Button } from '../ui/Button'
@@ -73,6 +75,7 @@ export default function ChapterCardEditor() {
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [dirty, setDirty] = useState(false)
+  const [batchRunning, setBatchRunning] = useState(false)
   // 下一个可写的章节号
   const [nextWriteChapter, setNextWriteChapter] = useState<number | null>(null)
 
@@ -94,13 +97,13 @@ export default function ChapterCardEditor() {
     if (tab) useEditorStore.getState().markTabSaved(tab.id)
   }
 
-  const loadBlueprints = useCallback(async () => {
+  const loadBlueprints = useCallback(async (forceDatabase = false) => {
     if (!currentProject) return
     setLoading(true)
     try {
       const tab = useEditorStore.getState().tabs.find(t => t.type === 'chapter-card')
       let parsed: { blueprints: ChapterBlueprint[]; selectedIdx?: number } | null = null
-      if (tab?.content) {
+       if (!forceDatabase && tab?.dirty && tab.content) {
         try { parsed = JSON.parse(tab.content) } catch { parsed = null }
       }
       let data: ChapterBlueprint[]
@@ -136,7 +139,8 @@ export default function ChapterCardEditor() {
   useEffect(() => {
     return globalEventBus.on('WORKFLOW_COMPLETE', (payload) => {
       if (payload.type === 'directory') {
-        loadBlueprints()
+         const tab = useEditorStore.getState().tabs.find(tab => tab.type === 'chapter-card')
+         if (!tab?.dirty) loadBlueprints(true)
       }
     })
   }, [loadBlueprints])
@@ -249,6 +253,95 @@ export default function ChapterCardEditor() {
     addLog('info', t('chapterCard.workflowStarted'))
   }
 
+  const getBatchRunStatus = (runId: string) =>
+    useWorkflowStore.getState().history.find(run => run.id === runId)?.status
+
+  const handleBatchDrafts = async () => {
+    if (!currentProject || batchRunning) return
+    const targets: ChapterBlueprint[] = []
+    for (const blueprint of blueprints) {
+      const drafts = await ipc.invoke('db:draft-list', blueprint.chapterNumber)
+      if (drafts.some(d => d.status === 'finalized' || d.status === 'draft' || d.status === 'revised')) continue
+      targets.push(blueprint)
+    }
+    if (targets.length === 0) {
+      toast.info(t('chapterCard.batchNoDraftTargets'))
+      return
+    }
+    const ok = await confirm(t('chapterCard.batchConfirmDrafts', { count: targets.length }), {
+      title: t('chapterCard.batchDrafts'),
+      confirmText: t('chapterCard.continueGeneration'),
+    })
+    if (!ok) return
+
+    setBatchRunning(true)
+    let completed = 0
+    try {
+      for (const blueprint of targets) {
+        const runId = await startWorkflow(createChapterWorkflow({
+          chapterNumber: blueprint.chapterNumber,
+          title: blueprint.title,
+          role: blueprint.role,
+          purpose: blueprint.purpose,
+          characters: blueprint.characters,
+          keyEvents: blueprint.keyEvents,
+          suspenseHook: blueprint.suspenseHook,
+          userGuidance: blueprint.userGuidance,
+        }), false)
+        if (getBatchRunStatus(runId) === 'failed') break
+        completed += 1
+      }
+      toast.success(t('chapterCard.batchCompleted', { count: completed }))
+    } catch (error) {
+      toast.error(t('chapterCard.batchStopped', { error: String(error) }))
+    } finally {
+      setBatchRunning(false)
+    }
+  }
+
+  const handleBatchFinalize = async () => {
+    if (!currentProject || batchRunning) return
+    const targets: Array<{ blueprint: ChapterBlueprint; draft: { id: number; version: number; status: string; filePath: string } }> = []
+    for (const blueprint of blueprints) {
+      const drafts = await ipc.invoke('db:draft-list', blueprint.chapterNumber)
+      if (drafts.some(d => d.status === 'finalized')) continue
+      const draft = drafts
+        .filter(d => d.status === 'draft' || d.status === 'revised')
+        .sort((a, b) => b.version - a.version)[0]
+      if (draft) targets.push({ blueprint, draft: { ...draft, filePath: `luobi://draft/${draft.id}` } })
+    }
+    if (targets.length === 0) {
+      toast.info(t('chapterCard.batchNoFinalizeTargets'))
+      return
+    }
+    const ok = await confirm(t('chapterCard.batchConfirmFinalize', { count: targets.length }), {
+      title: t('chapterCard.batchFinalize'),
+      confirmText: t('chapterCard.finalizeBatch'),
+    })
+    if (!ok) return
+
+    setBatchRunning(true)
+    let completed = 0
+    try {
+      for (const { blueprint, draft } of targets) {
+        const content = await readDraftBody(draft.filePath)
+        const runId = await startWorkflow(createFinalizeWorkflow({
+          chapterNumber: blueprint.chapterNumber,
+          chapterTitle: blueprint.title,
+          draftPath: draft.filePath,
+          draftContent: content,
+        }), false)
+        if (getBatchRunStatus(runId) === 'failed') break
+        completed += 1
+      }
+      toast.success(t('chapterCard.batchCompleted', { count: completed }))
+    } catch (error) {
+      toast.error(t('chapterCard.batchStopped', { error: String(error) }))
+    } finally {
+      setBatchRunning(false)
+    }
+  }
+
   /**
    * 写作此章 — 将当前蓝图信息注入创作弹窗
    * 支持指定章节（默认为当前选中章）
@@ -305,7 +398,7 @@ export default function ChapterCardEditor() {
         <div className="flex items-center gap-1">
           {/* 写作入口 — 仅下一章可写时显示 */}
           {nextWriteChapter !== null && (
-            <Button
+           <Button
               variant="ai"
               size="sm"
               onClick={() => {
@@ -326,7 +419,13 @@ export default function ChapterCardEditor() {
           >
             <Sparkles size={12} />
             {t('chapterCard.aiGenerateBlueprint')}
-          </Button>
+           </Button>
+           <Button variant="outline" size="sm" onClick={handleBatchDrafts} disabled={batchRunning || blueprints.length === 0}>
+             <PenLine size={12} /> {batchRunning ? t('chapterCard.batchRunning') : t('chapterCard.batchDrafts')}
+           </Button>
+           <Button variant="outline" size="sm" onClick={handleBatchFinalize} disabled={batchRunning || blueprints.length === 0}>
+             <Save size={12} /> {t('chapterCard.batchFinalize')}
+           </Button>
           <Button variant="ghost" size="icon" onClick={() => loadBlueprints()} title={t('chapterCard.reload')} disabled={loading}>
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           </Button>
