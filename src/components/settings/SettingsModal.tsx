@@ -25,6 +25,7 @@ import { NativeSelect } from '../ui/NativeSelect'
 import { cn } from '../../lib/utils'
 import { ipc } from '../../services/ipc-client'
 import { Switch } from '../ui/Switch'
+import { confirm } from '../ui/Confirm'
 
 // ==================== 分类定义 ====================
 
@@ -309,6 +310,15 @@ function LLMSection({
 
   const isEmbeddingSection = purposes.includes('embedding')
 
+  /** 删除模型：先确认再删除，防止误删 */
+  const handleDelete = (id: string) => {
+    confirm(t('models.confirmRemove'), {
+      danger: true,
+      confirmText: t('delete', { ns: 'common' }),
+      cancelText: t('cancel', { ns: 'common' }),
+    }).then((ok) => { if (ok) deleteModel(id) })
+  }
+
   /** 保存模型；若是该分类第一个则自动设为默认 */
   const handleSave = async () => {
     if (!editingModel) return
@@ -383,7 +393,7 @@ function LLMSection({
                     ? setDefaultEmbeddingModel(model.id)
                     : setDefaultModel(model.id)}
                   onEdit={() => setEditingModel({ ...model })}
-                  onDelete={() => deleteModel(model.id)}
+                  onDelete={() => handleDelete(model.id)}
                 />
               ))}
             </div>
