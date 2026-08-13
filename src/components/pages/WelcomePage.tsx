@@ -62,6 +62,9 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
               padding="18px 22px"
               highlight
               onClick={onNewProject}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNewProject() } }}
             >
               <span>
                 <span className="welcome-action-label">新建作品</span>
@@ -79,6 +82,9 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
               cornerRadius={10}
               padding="18px 22px"
               onClick={onOpenProject}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProject() } }}
             >
               <FolderOpen size={18} strokeWidth={1.8} />
               <span><span className="welcome-action-label">打开项目</span><span className="welcome-action-desc">继续本地作品</span></span>
@@ -93,6 +99,9 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
               cornerRadius={10}
               padding="18px 22px"
               onClick={onImportNovel}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onImportNovel?.() } }}
             >
               <FileUp size={18} strokeWidth={1.8} />
               <span><span className="welcome-action-label">导入旧稿</span><span className="welcome-action-desc">把现有章节带入工作台</span></span>
@@ -125,6 +134,9 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
                     cornerRadius={8}
                     padding="10px 14px"
                     onClick={() => openProject(p.path)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProject(p.path) } }}
                   >
                     <div className="flex items-center gap-3">
                       <BookOpen size={14} style={{ color: 'var(--color-accent)', opacity: 0.6 }} />

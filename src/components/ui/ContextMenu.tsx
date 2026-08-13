@@ -72,6 +72,7 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
   return (
     <div
       ref={menuRef}
+      role="menu"
       className="fixed z-[9999] py-1 select-none"
       style={{
         left,
@@ -104,6 +105,7 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
         return (
           <button
             key={item.key}
+            role="menuitem"
             disabled={item.disabled}
             onClick={() => {
               if (item.disabled) return
