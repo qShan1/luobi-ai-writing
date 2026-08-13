@@ -207,7 +207,7 @@ export default function WorldBuildingEditor() {
       >
         <div className="flex items-center gap-1.5">
           <FolderTree size={14} style={{ color: 'var(--color-text-muted)' }} />
-          <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+          <span className="text-title-panel">
             {t('worldBuilding.storyArchitecture')}
           </span>
           <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
@@ -322,7 +322,7 @@ export default function WorldBuildingEditor() {
                   {isRunning ? (
                     <>
                       <span
-                        className="text-[0.7rem] px-1.5 py-0.5 rounded font-medium"
+                        className="text-2xs px-1.5 py-0.5 rounded font-medium"
                         style={{ backgroundColor: 'color-mix(in srgb, var(--color-accent) 12%, transparent)', color: 'var(--color-accent)' }}
                       >
                         {t('worldBuilding.generating')}
@@ -333,14 +333,14 @@ export default function WorldBuildingEditor() {
                     </>
                   ) : isFailed ? (
                     <span
-                      className="text-[0.7rem] px-1.5 py-0.5 rounded font-medium"
+                      className="text-2xs px-1.5 py-0.5 rounded font-medium"
                       style={{ backgroundColor: 'color-mix(in srgb, var(--color-error) 12%, transparent)', color: 'var(--color-error)' }}
                     >
                       {t('worldBuilding.failed')}
                     </span>
                   ) : generated ? (
                     <>
-                      <span className="text-[0.7rem] px-1.5 py-0.5 rounded font-medium bg-green-500/10 text-green-600 dark:text-green-400">
+                      <span className="text-2xs px-1.5 py-0.5 rounded font-medium bg-green-500/10 text-green-600 dark:text-green-400">
                         {t('worldBuilding.generated')}
                       </span>
                       <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
@@ -349,7 +349,7 @@ export default function WorldBuildingEditor() {
                     </>
                   ) : (
                     <span
-                      className="text-[0.7rem] px-1.5 py-0.5 rounded"
+                      className="text-2xs px-1.5 py-0.5 rounded"
                       style={{ backgroundColor: 'rgba(var(--color-accent-rgb,99 102 241),0.1)', color: 'var(--color-accent)' }}
                     >
                       {t('worldBuilding.pendingGeneration')}
@@ -376,7 +376,7 @@ export default function WorldBuildingEditor() {
                   )}
                   {/* 查看箭头提示 */}
                   {generated && !(isCharacters && !loading && characterCount === 0) && (
-                    <span className="text-[0.7rem] flex items-center gap-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                    <span className="text-2xs flex items-center gap-0.5" style={{ color: 'var(--color-text-muted)' }}>
                       <FileText size={10} /> {t('worldBuilding.clickToView')}
                     </span>
                   )}

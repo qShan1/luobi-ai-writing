@@ -90,7 +90,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           {/* 标题 */}
           <div className="flex items-center gap-2 px-4 mb-4">
             <Settings2 size={16} style={{ color: 'var(--color-accent)' }} />
-            <span className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+            <span className="text-title-panel" style={{ color: 'var(--color-text)' }}>
               {t('general.title')}
             </span>
           </div>
@@ -120,7 +120,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             style={{ borderBottom: '1px solid var(--color-border)' }}
           >
             <div>
-              <h2 className="text-base font-semibold" style={{ color: 'var(--color-text)' }}>
+              <h2 className="text-title-page" style={{ color: 'var(--color-text)' }}>
                 {t(`general.${section}`)}
               </h2>
               <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
@@ -170,7 +170,7 @@ function LanguageSection() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
+        <h3 className="text-title-section mb-3" style={{ color: 'var(--color-text)' }}>
           {t('language.label')}
         </h3>
         <div className="space-y-2">
@@ -385,7 +385,7 @@ function ModelCard({
             {model.name || model.modelName}
           </span>
           {isDefault && (
-            <span className="text-[0.7rem] px-1.5 py-0.5 rounded-full bg-[var(--color-accent)] text-white flex-shrink-0">
+            <span className="text-2xs px-1.5 py-0.5 rounded-full bg-[var(--color-accent)] text-white flex-shrink-0">
               {t('models.default')}
             </span>
           )}
@@ -522,7 +522,7 @@ function ModelForm({
       className="rounded-xl p-5 space-y-4"
       style={{ border: '1.5px solid var(--color-accent)', backgroundColor: 'var(--color-panel)' }}
     >
-      <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+      <h3 className="text-title-section" style={{ color: 'var(--color-text)' }}>
         {model.name ? t('models.editModelName', { name: model.name }) : t('models.newModelConfig')}
       </h3>
 
@@ -949,11 +949,11 @@ function FontSelect({
                   <span className="text-xs font-medium" style={{ color: 'var(--color-text)', fontFamily: opt.family }}>
                     {opt.label}
                   </span>
-                  <span className="text-[0.65rem]" style={{ color: 'var(--color-text-muted)' }}>
+                  <span className="text-2xs" style={{ color: 'var(--color-text-muted)' }}>
                     {opt.labelEn}
                   </span>
                 </div>
-                <p className="text-[0.65rem] truncate mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                <p className="text-caption truncate mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
                   {opt.desc}
                 </p>
               </div>
@@ -985,7 +985,7 @@ function EditorSection() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>{t('appearance.uiFont')}</p>
-            <p className="text-[0.68rem] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-caption mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
               {t('appearance.uiFontDesc')}
             </p>
           </div>
@@ -997,7 +997,7 @@ function EditorSection() {
       <div className="space-y-1.5">
         <div>
           <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>{t('appearance.writingFont')}</p>
-          <p className="text-[0.68rem] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+          <p className="text-caption mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
             {t('appearance.writingFontDesc')}
           </p>
         </div>
@@ -1035,7 +1035,7 @@ function EffectSlider({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>{label}</p>
-          <p className="text-[0.68rem] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
+          <p className="text-caption mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
         </div>
         <span
           className="text-xs font-mono px-1.5 py-0.5 rounded flex-shrink-0"
@@ -1184,7 +1184,7 @@ function WindowSection() {
         <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
           {windowT('closeBehaviorLabel')}
         </p>
-        <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+        <p className="text-caption" style={{ color: 'var(--color-text-muted)' }}>
           {windowT('closeBehaviorDesc')}
         </p>
       </div>
@@ -1231,7 +1231,7 @@ function WindowSection() {
         })}
       </div>
 
-      <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+      <p className="text-caption" style={{ color: 'var(--color-text-muted)' }}>
         {windowT('hint')}
       </p>
 
@@ -1242,7 +1242,7 @@ function WindowSection() {
             {windowT('autoLaunchLabel')}
           </p>
           <div className="flex items-center justify-between gap-4">
-            <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-caption" style={{ color: 'var(--color-text-muted)' }}>
               {windowT('autoLaunchDesc')}
             </p>
             <Switch
@@ -1259,7 +1259,7 @@ function WindowSection() {
             <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
               {windowT('uninstallLabel')}
             </p>
-            <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-caption" style={{ color: 'var(--color-text-muted)' }}>
               {windowT('uninstallDesc')}
             </p>
           </div>
@@ -1268,7 +1268,7 @@ function WindowSection() {
           </Button>
         </div>
         {uninstallHint && (
-          <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+          <p className="text-caption" style={{ color: 'var(--color-text-muted)' }}>
             {uninstallHint}
           </p>
         )}
@@ -1289,14 +1289,14 @@ function AboutSection() {
       </div>
 
       <div className="space-y-4 pt-2">
-        <h3 className="text-sm font-semibold pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>创作方式</h3>
+        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>创作方式</h3>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
           落笔将项目设定、章节蓝图、人物状态和草稿保存在本地。模型配置由你自己掌控；正文生成后先进入草稿，再由你决定是否定稿或导出。
         </p>
       </div>
 
       <div className="space-y-4 pt-4">
-        <h3 className="text-sm font-semibold pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>当前版本</h3>
+        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>当前版本</h3>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
           支持本地小说项目、章节草稿、模型配置、导出和发布前整理。平台登录、验证码与最终发布仍由你确认。
         </p>
@@ -1304,7 +1304,7 @@ function AboutSection() {
 
       {/* 支持与赞助 — 收款码 */}
       <div className="space-y-4 pt-4">
-        <h3 className="text-sm font-semibold pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>支持与赞助</h3>
+        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>支持与赞助</h3>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
           如果落笔对你有帮助，欢迎扫码支持作者。
         </p>

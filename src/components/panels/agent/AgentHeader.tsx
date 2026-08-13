@@ -52,7 +52,7 @@ export default function AgentHeader() {
       style={{
         height: 'var(--height-panel-header)',
         borderBottom: '1px solid var(--color-border)',
-        backgroundColor: 'var(--color-hover)',
+        backgroundColor: 'color-mix(in srgb, var(--color-hover) 45%, transparent)',
       }}
     >
       {/* 标题 */}
@@ -60,7 +60,7 @@ export default function AgentHeader() {
         className="flex min-w-0 items-center gap-1 rounded-md px-1.5 py-0.5"
         style={{
           color: 'var(--color-accent)',
-          fontSize: '0.7rem',
+          fontSize: 'var(--text-2xs)',
           fontWeight: 600,
           letterSpacing: '0.08em',
           backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
@@ -211,7 +211,7 @@ function SubViewBackButton({
     >
       <ChevronRight size={12} style={{ transform: 'rotate(180deg)' }} />
       <span className="font-medium">{label}</span>
-      <span className="ml-auto text-[0.68rem] opacity-50">{countText}</span>
+      <span className="ml-auto text-2xs opacity-50">{countText}</span>
     </button>
   )
 }
@@ -257,7 +257,7 @@ function MCPSubView({
       {servers.length === 0 ? (
         <div className="px-3 py-3 text-xs text-center" style={{ color: 'var(--color-text-muted)' }}>
           <div className="mb-1">{t('agent.noMcpServers')}</div>
-          <div className="text-[0.68rem] opacity-60">
+          <div className="text-2xs opacity-60">
             {t('agent.mcpConfigHint')}
           </div>
         </div>
@@ -286,12 +286,12 @@ function MCPSubView({
                 {server.name}
               </span>
               {server.status === 'connected' && server.toolCount > 0 && (
-                <span className="text-[0.65rem] opacity-50 flex-shrink-0">
+                <span className="text-2xs opacity-50 flex-shrink-0">
                   {server.toolCount} tools
                 </span>
               )}
               {server.status === 'error' && (
-                <span className="text-[0.65rem] text-red-400 truncate max-w-[80px]" title={server.error}>
+                <span className="text-2xs text-red-400 truncate max-w-[80px]" title={server.error}>
                   {t('agent.error')}
                 </span>
               )}
@@ -337,7 +337,7 @@ function MCPSubView({
       {toolCount > 0 && (
         <>
           <div style={{ height: 1, backgroundColor: 'var(--color-border)', margin: '2px 0' }} />
-          <div className="px-3 py-1.5 text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+          <div className="px-3 py-1.5 text-2xs" style={{ color: 'var(--color-text-muted)' }}>
             {t('agent.mcpToolsRegistered', { count: toolCount })}
           </div>
         </>
@@ -382,7 +382,7 @@ function SkillSubView({
       {skills.length === 0 ? (
         <div className="px-3 py-3 text-xs text-center" style={{ color: 'var(--color-text-muted)' }}>
           <div className="mb-1">{t('agent.noAvailableSkills')}</div>
-          <div className="text-[0.68rem] opacity-60">
+          <div className="text-2xs opacity-60">
             {t('agent.skillsDirHint')}
           </div>
         </div>
@@ -402,14 +402,14 @@ function SkillSubView({
                       {skill.metadata.displayName ?? skill.metadata.name}
                     </span>
                     <span
-                      className="text-[0.6rem] px-1 py-0 rounded flex-shrink-0"
+                      className="text-2xs px-1 py-0 rounded flex-shrink-0"
                       style={{ backgroundColor: badge.bg, color: badge.color }}
                     >
                       {badge.label}
                     </span>
                   </div>
                   <div
-                    className="text-[0.68rem] truncate mt-0.5"
+                    className="text-caption truncate mt-0.5"
                     style={{ color: 'var(--color-text-muted)' }}
                   >
                     {skill.metadata.description}
@@ -423,7 +423,7 @@ function SkillSubView({
 
       {/* 底部提示 */}
       <div style={{ height: 1, backgroundColor: 'var(--color-border)', margin: '2px 0' }} />
-      <div className="px-3 py-1.5 text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+      <div className="px-3 py-1.5 text-2xs" style={{ color: 'var(--color-text-muted)' }}>
         {t('agent.skillSlashHint')}
       </div>
     </>

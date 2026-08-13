@@ -45,6 +45,7 @@ export default function BottomPanel() {
       className="liquid-glass-panel w-full h-full flex flex-col overflow-hidden"
       style={{
         borderTop: '1px solid var(--color-border)',
+        borderImage: 'linear-gradient(to right, transparent 0px, var(--color-border) 16px, var(--color-border) calc(100% - 16px), transparent 100%) 1',
       }}
     >
       {/* 面板标题头 */}
@@ -55,7 +56,7 @@ export default function BottomPanel() {
         {/* 左侧：面板名称 + 可选状态点 */}
         <div className="flex items-center gap-2">
           <span
-            className="text-xs font-semibold uppercase tracking-widest"
+            className="text-title-panel"
             style={{ color: 'var(--color-text-muted)' }}
           >
             {label}
@@ -70,7 +71,7 @@ export default function BottomPanel() {
           {/* 活跃任务数徽章 */}
           {activeTab === 'tasks' && activeRuns.length > 0 && (
             <span
-              className="text-[0.68rem] font-mono px-1.5 rounded-full"
+              className="text-2xs font-mono px-1.5 rounded-full"
               style={{ backgroundColor: 'color-mix(in_srgb, var(--color-accent) 12%, transparent)', color: 'var(--color-accent)' }}
             >
               {activeRuns.length}
@@ -135,7 +136,7 @@ function TaskRunView() {
   }
 
   return (
-    <div className="h-full overflow-y-auto pb-4">
+    <div className="h-full overflow-y-auto pb-5">
       {/* 活跃任务列表（支持多个并行） */}
       {activeRuns.length > 0 && (
         <div className="flex-shrink-0" style={{ borderBottom: history.length > 0 ? '1px solid var(--color-border)' : undefined }}>
@@ -168,10 +169,10 @@ function TaskRunView() {
       {/* 历史记录（可展开详情 + 快捷操作） */}
       {history.length > 0 && (
         <div className="flex-shrink-0">
-          <div className="px-4 pt-3 pb-1 text-[0.68rem] font-semibold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
+          <div className="px-4 pt-3.5 pb-1.5 text-2xs font-semibold" style={{ color: 'var(--color-text-muted)' }}>
             {t('bottomPanel.historyTasks')}
           </div>
-          <div className="px-2 pb-2">
+          <div className="px-2.5 pb-3 space-y-0.5">
             <AnimatePresence initial={false}>
               {history.map((run) => (
                 <motion.div
@@ -265,7 +266,7 @@ function HistoryRunRow({ run }: { run: WorkflowRun }) {
   return (
     <div className="rounded" style={{ borderBottom: '1px solid var(--color-border)' }}>
       <div
-        className="group flex items-center gap-2.5 px-3 py-2.5 rounded cursor-pointer select-none transition-colors hover:bg-[var(--color-hover)]"
+        className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded cursor-pointer select-none transition-colors hover:bg-[var(--color-hover)]"
         onClick={() => setExpanded(v => !v)}
       >
         {failed
@@ -275,11 +276,11 @@ function HistoryRunRow({ run }: { run: WorkflowRun }) {
         <span className="flex-1 min-w-0 text-xs truncate" style={{ color: 'var(--color-text-secondary)' }}>
           {run.title}
         </span>
-        <span className="text-[0.68rem] font-mono flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="text-2xs font-mono flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
           {completedCount}/{run.steps.length}
         </span>
         <span
-          className="text-[0.68rem] flex-shrink-0 px-1.5 py-px rounded"
+          className="text-2xs flex-shrink-0 px-1.5 py-px rounded"
           style={{
             backgroundColor: `color-mix(in_srgb, ${failed ? 'var(--color-error)' : 'var(--color-success)'} 10%, transparent)`,
             color: failed ? 'var(--color-error)' : 'var(--color-success)',
@@ -287,7 +288,7 @@ function HistoryRunRow({ run }: { run: WorkflowRun }) {
         >
           {failed ? t('toolCall.failed') : t('toolCall.completed')}
         </span>
-        <span className="text-[0.68rem] flex-shrink-0 w-14 text-right" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="text-2xs flex-shrink-0 w-14 text-right" style={{ color: 'var(--color-text-muted)' }}>
           {new Date(run.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
         </span>
 
@@ -354,7 +355,7 @@ function HistoryRunDetail({ run }: { run: WorkflowRun }) {
   }
 
   return (
-    <div className="px-3 pb-2.5 pt-0.5 space-y-2">
+    <div className="px-3.5 pb-3 pt-1 space-y-2.5">
       {run.steps.map((step, i) => {
         const duration = step.startedAt && step.completedAt
           ? ((new Date(step.completedAt).getTime() - new Date(step.startedAt).getTime()) / 1000).toFixed(1)
@@ -371,24 +372,24 @@ function HistoryRunDetail({ run }: { run: WorkflowRun }) {
                   {i + 1}. {step.name}
                 </span>
                 <span
-                  className="text-[0.68rem] flex-shrink-0"
+                  className="text-2xs flex-shrink-0"
                   style={{ color: step.status === 'failed' ? 'var(--color-error)' : 'var(--color-text-muted)' }}
                 >
                   {statusLabel(step.status)}
                 </span>
                 {duration && (
-                  <span className="text-[0.68rem] font-mono flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
+                  <span className="text-2xs font-mono flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
                     {duration}s
                   </span>
                 )}
               </div>
               {preview && (
-                <p className="text-[0.7rem] leading-4 whitespace-pre-wrap break-words mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                <p className="text-caption leading-4 whitespace-pre-wrap break-words mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
                   {preview}
                 </p>
               )}
               {step.error && (
-                <p className="text-[0.7rem] leading-4 mt-0.5" style={{ color: 'var(--color-error)' }}>{step.error}</p>
+                <p className="text-caption leading-4 mt-0.5" style={{ color: 'var(--color-error)' }}>{step.error}</p>
               )}
             </div>
           </div>
@@ -457,7 +458,7 @@ function ActiveRunPanel({
             <p className="text-xs font-medium truncate" style={{ color: 'var(--color-text)' }}>
               {runningStep && isActive ? runningStep.name : run.title}
             </p>
-            <span className="text-[0.68rem] font-mono flex-shrink-0" style={{ color: 'var(--color-accent)' }}>
+            <span className="text-2xs font-mono flex-shrink-0" style={{ color: 'var(--color-accent)' }}>
               {progress}%
             </span>
           </div>
@@ -472,7 +473,7 @@ function ActiveRunPanel({
 
         {/* 右侧：步骤计数 + 折叠箭头 + 取消 */}
         <div className="flex items-center gap-1 flex-shrink-0">
-          <span className="text-[0.68rem] font-mono" style={{ color: 'var(--color-text-muted)' }}>
+          <span className="text-2xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
             {completedCount}/{totalCount}
           </span>
           {expanded
@@ -634,13 +635,13 @@ function WorkflowStepItem({
           </span>
           {/* 进度百分比 */}
           {step.progress !== undefined && step.status === 'running' && (
-            <span className="text-[0.68rem] font-mono flex-shrink-0" style={{ color: 'var(--color-accent)' }}>
+            <span className="text-2xs font-mono flex-shrink-0" style={{ color: 'var(--color-accent)' }}>
               {step.progress}%
             </span>
           )}
           {/* 完成耗时（若有时间戳）或简单标记 */}
           {step.status === 'skipped' && (
-            <span className="text-[0.68rem] flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>{t('bottomPanel.skipped')}</span>
+            <span className="text-2xs flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>{t('bottomPanel.skipped')}</span>
           )}
         </div>
 
@@ -655,7 +656,7 @@ function WorkflowStepItem({
           >
             {step.error && (
               <div
-                className="text-[0.7rem] px-2 py-1 rounded mb-1"
+                className="text-caption px-2 py-1 rounded mb-1"
                 style={{ backgroundColor: 'rgba(192,57,74,0.08)', color: 'var(--color-error)' }}
               >
                 {step.error}
@@ -664,7 +665,7 @@ function WorkflowStepItem({
             {step.logs.length > 0 && (
               <div className="max-h-16 overflow-y-auto space-y-0.5">
                 {step.logs.slice(-6).map((log, i) => (
-                  <div key={i} className="text-[0.68rem] font-mono leading-4" style={{ color: 'var(--color-text-muted)' }}>
+                  <div key={i} className="text-2xs font-mono leading-4" style={{ color: 'var(--color-text-muted)' }}>
                     {log}
                   </div>
                 ))}
@@ -820,16 +821,16 @@ function ModelsView() {
           className="flex items-center gap-4 px-4 py-2 flex-shrink-0"
           style={{ borderBottom: '1px solid var(--color-border)' }}
         >
-          <div className="text-[0.7rem] text-[var(--color-text-muted)]">
+          <div className="text-caption text-[var(--color-text-muted)]">
             <span className="font-bold text-sm text-[var(--color-text)]">{stats.totalCalls}</span> {t('common.calls')}
           </div>
-          <div className="text-[0.7rem] text-[var(--color-text-muted)]">
+          <div className="text-caption text-[var(--color-text-muted)]">
             <span className="font-bold text-sm text-[var(--color-text)]">{(stats.totalTokens / 1000).toFixed(1)}k</span> {t('common.tokens')}
           </div>
-          <div className="text-[0.7rem] text-[var(--color-text-muted)]">
+          <div className="text-caption text-[var(--color-text-muted)]">
             {t('common.input')} <span className="font-mono text-[var(--color-text-secondary)]">{(stats.totalPromptTokens / 1000).toFixed(1)}k</span>
           </div>
-          <div className="text-[0.7rem] text-[var(--color-text-muted)]">
+          <div className="text-caption text-[var(--color-text-muted)]">
             {t('common.output')} <span className="font-mono text-[var(--color-text-secondary)]">{(stats.totalCompletionTokens / 1000).toFixed(1)}k</span>
           </div>
         </div>
@@ -841,7 +842,7 @@ function ModelsView() {
           <table className="w-full">
             <thead>
               <tr
-                className="text-[0.7rem] text-[var(--color-text-muted)]"
+                className="text-caption text-[var(--color-text-muted)]"
                 style={{ borderBottom: '1px solid var(--color-border)' }}
               >
                 <th className="text-left px-4 py-1 font-medium">{t('common.time')}</th>

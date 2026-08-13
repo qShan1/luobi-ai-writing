@@ -50,7 +50,7 @@ function renderMarkdownContent(content: string, t: (key: string) => string): Rea
           {sec.title && (
             <div
               className={`assistant-section-title ${
-                sec.level === 1 ? 'text-sm font-bold' : sec.level === 2 ? 'text-[0.82rem] font-semibold' : 'text-xs font-medium'
+                sec.level === 1 ? 'text-title-section' : sec.level === 2 ? 'text-title-panel' : 'text-xs font-medium'
               }`}
             >
               {renderInline(sec.title)}
@@ -146,22 +146,19 @@ function renderLines(lines: string[], t: (key: string) => string): React.ReactNo
     // H1 ~ H3 标题
     if (line.startsWith('### ')) {
       elements.push(
-        <div key={i} className="font-semibold mt-2.5 mb-1 text-[0.8rem]"
-          style={{ color: 'var(--color-text)' }}>
+        <div key={i} className="text-title-panel mt-2.5 mb-1">
           {renderInline(line.slice(4))}
         </div>
       )
     } else if (line.startsWith('## ')) {
       elements.push(
-        <div key={i} className="font-semibold mt-3 mb-1.5 text-sm"
-          style={{ color: 'var(--color-text)' }}>
+        <div key={i} className="text-title-section mt-3 mb-1.5">
           {renderInline(line.slice(3))}
         </div>
       )
     } else if (line.startsWith('# ')) {
       elements.push(
-        <div key={i} className="font-bold mt-4 mb-2 text-base"
-          style={{ color: 'var(--color-text)' }}>
+        <div key={i} className="text-title-page mt-4 mb-2">
           {renderInline(line.slice(2))}
         </div>
       )
@@ -312,7 +309,7 @@ function CodeBlock({ lang, code, t }: { lang: string; code: string; t: (key: str
           borderBottom: '1px solid var(--color-border)',
         }}
       >
-        <span className="text-[0.7rem] font-mono" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="text-2xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
           {lang || 'text'}
         </span>
         <Button

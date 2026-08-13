@@ -22,6 +22,7 @@ export default function AIPanel() {
       className="liquid-glass-panel w-full h-full flex flex-col overflow-hidden"
       style={{
         borderLeft: '1px solid var(--color-border)',
+        borderImage: 'linear-gradient(to bottom, transparent 0px, var(--color-border) 16px, var(--color-border) calc(100% - 16px), transparent 100%) 1',
       }}
     >
       {/* 顶部工具栏 */}

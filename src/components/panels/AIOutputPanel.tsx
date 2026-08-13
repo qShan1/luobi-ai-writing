@@ -43,6 +43,7 @@ export default function AIOutputPanel() {
       className="liquid-glass-panel flex flex-col h-full overflow-hidden"
       style={{
         borderLeft: '1px solid var(--color-border)',
+        borderImage: 'linear-gradient(to bottom, transparent 0px, var(--color-border) 16px, var(--color-border) calc(100% - 16px), transparent 100%) 1',
       }}
     >
       {/* 面板头部 */}

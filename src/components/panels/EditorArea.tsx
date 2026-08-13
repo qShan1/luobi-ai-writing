@@ -430,7 +430,10 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
     return (
       <div
         className="w-full h-full flex flex-col overflow-hidden"
-        style={{ backgroundColor: 'var(--color-editor-bg)' }}
+        style={{
+          background:
+            'radial-gradient(120% 100% at 50% 0%, color-mix(in srgb, var(--color-panel) 14%, var(--color-editor-bg)) 0%, var(--color-editor-bg) 70%), var(--color-editor-bg)',
+        }}
       >
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center opacity-40">
@@ -459,7 +462,10 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
   return (
     <div
       className="w-full h-full flex flex-col overflow-hidden"
-      style={{ backgroundColor: 'var(--color-editor-bg)' }}
+      style={{
+        background:
+          'radial-gradient(120% 100% at 50% 0%, color-mix(in srgb, var(--color-panel) 14%, var(--color-editor-bg)) 0%, var(--color-editor-bg) 70%), var(--color-editor-bg)',
+      }}
     >
       {/* Tab 条：左右箭头 + 可横向滚动区域 + 三个点菜单 */}
       <div
@@ -651,7 +657,7 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
             onEscapeKeyDown={(e) => e.preventDefault()}
           >
             <DialogHeader className="px-4 py-0" style={{ height: 38, display: 'flex', alignItems: 'center' }}>
-              <DialogTitle className="flex items-center gap-2 text-[0.8rem]">
+              <DialogTitle className="flex items-center gap-2 text-title-section">
                 {t('editorArea.mergeTitle')} — {activeTab?.name ?? t('editorArea.diffView')}
               </DialogTitle>
             </DialogHeader>

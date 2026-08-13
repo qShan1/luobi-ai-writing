@@ -47,7 +47,7 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
         </div>
 
         <motion.div
-          className="flex flex-wrap gap-3 mb-10"
+          className="flex flex-wrap items-center gap-2.5 mb-10"
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.03 } } }}
@@ -56,17 +56,14 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             variants={enterCard}
           >
             <div
-              className="welcome-action-button welcome-action-primary group flex items-center justify-between gap-5 rounded-[var(--radius-lg)] px-5 py-3.5 min-w-[250px] cursor-pointer text-left bg-[var(--color-accent)] text-white border border-transparent shadow-[var(--shadow-sm)] transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-[var(--color-accent-hover)] hover:shadow-[0_8px_20px_-6px_rgba(var(--color-accent-rgb),0.45)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+              className="welcome-action-button welcome-action-primary group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-4 py-2 cursor-pointer bg-[var(--color-accent)] text-white border border-transparent shadow-[var(--shadow-sm)] transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-[var(--color-accent-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onNewProject}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNewProject() } }}
             >
-              <span>
-                <span className="welcome-action-label">新建作品</span>
-                <span className="welcome-action-desc">从题材、设定和章节蓝图开始</span>
-              </span>
-              <Plus size={20} strokeWidth={1.8} />
+              <span className="welcome-action-label">新建作品</span>
+              <Plus size={16} strokeWidth={1.8} />
             </div>
           </motion.div>
 
@@ -74,14 +71,14 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             variants={enterCard}
           >
             <div
-              className="welcome-action-button welcome-action-secondary group flex items-center gap-3 rounded-[var(--radius-lg)] px-4 py-3.5 min-w-[190px] cursor-pointer text-left bg-[var(--color-panel)] text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+              className="welcome-action-button welcome-action-secondary group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2 cursor-pointer bg-[var(--color-panel)] text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onOpenProject}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProject() } }}
             >
-              <FolderOpen size={18} strokeWidth={1.8} />
-              <span><span className="welcome-action-label">打开项目</span><span className="welcome-action-desc">继续本地作品</span></span>
+              <FolderOpen size={16} strokeWidth={1.8} />
+              <span className="welcome-action-label">打开项目</span>
             </div>
           </motion.div>
 
@@ -89,14 +86,14 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
             variants={enterCard}
           >
             <div
-              className="welcome-action-button welcome-action-secondary group flex items-center gap-3 rounded-[var(--radius-lg)] px-4 py-3.5 min-w-[190px] cursor-pointer text-left bg-[var(--color-panel)] text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+              className="welcome-action-button welcome-action-secondary group inline-flex items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2 cursor-pointer bg-[var(--color-panel)] text-[var(--color-text)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] hover:shadow-[var(--shadow-md)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               onClick={onImportNovel}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onImportNovel?.() } }}
             >
-              <FileUp size={18} strokeWidth={1.8} />
-              <span><span className="welcome-action-label">导入旧稿</span><span className="welcome-action-desc">把现有章节带入工作台</span></span>
+              <FileUp size={16} strokeWidth={1.8} />
+              <span className="welcome-action-label">导入旧稿</span>
             </div>
           </motion.div>
         </motion.div>
@@ -122,22 +119,20 @@ export default function WelcomePage({ onNewProject, onOpenProject, onImportNovel
                   variants={enterCard}
                 >
                   <div
-                    className="group flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-panel)] px-3.5 py-2.5 shadow-[var(--shadow-sm)] cursor-pointer transition-[transform,border-color,background-color] duration-150 hover:-translate-y-[1px] hover:border-[var(--color-accent)] hover:bg-[var(--color-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+                    className="group flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2 cursor-pointer transition-colors duration-150 hover:bg-[var(--color-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
                     onClick={() => openProject(p.path)}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProject(p.path) } }}
                   >
-                    <div className="flex items-center gap-3">
-                      <BookOpen size={14} style={{ color: 'var(--color-accent)', opacity: 0.6 }} />
-                      <div className="flex-1 min-w-0">
-                        <span className="text-sm block truncate" style={{ color: 'var(--color-text)' }}>
-                          {p.name}
-                        </span>
-                        <span className="text-xs block truncate" style={{ color: 'var(--color-text-muted)' }}>
-                          {p.path}
-                        </span>
-                      </div>
+                    <BookOpen size={14} style={{ color: 'var(--color-accent)', opacity: 0.6 }} />
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm block truncate" style={{ color: 'var(--color-text)' }}>
+                        {p.name}
+                      </span>
+                      <span className="text-xs block truncate" style={{ color: 'var(--color-text-muted)' }}>
+                        {p.path}
+                      </span>
                     </div>
                   </div>
                 </motion.div>

@@ -243,7 +243,7 @@ export default function ChapterCardEditor() {
       >
         <div className="flex items-center gap-1.5">
           <BookOpen size={13} style={{ color: 'var(--color-text-muted)' }} />
-          <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+          <span className="text-title-panel">
             {t('chapterCard.title')}
             {blueprints.length > 0 && (
               <span style={{ color: 'var(--color-text-muted)' }} className="ml-1 font-normal">
