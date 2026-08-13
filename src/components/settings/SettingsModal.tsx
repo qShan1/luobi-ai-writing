@@ -1021,57 +1021,13 @@ function EditorSection() {
 // ==================== 视觉效果设置 ====================
 
 /** 数值滑杆（带实时值显示） */
-function EffectSlider({
-  label, desc, min, max, step, value, onChange,
-}: {
-  label: string
-  desc: string
-  min: number
-  max: number
-  step: number
-  value: number
-  onChange: (v: number) => void
-}) {
-  return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>{label}</p>
-          <p className="text-caption mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
-        </div>
-        <span
-          className="text-xs font-mono px-1.5 py-0.5 rounded flex-shrink-0"
-          style={{ backgroundColor: 'var(--color-hover)', color: 'var(--color-text-secondary)' }}
-        >
-          {Math.round(value)}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className={cn(
-          'w-full mt-2 accent-[var(--color-accent)] transition-opacity duration-150 ease-out hover:opacity-100',
-          value !== min ? 'opacity-100' : 'opacity-[0.85]',
-        )}
-      />
-    </div>
-  )
-}
-
 function EffectsSection() {
   const { t } = useTranslation('settings')
-  const {
-    enabled, displacementScale, blurAmount, saturation, aberrationIntensity, elasticity, mode,
-    setGlass, toggle, reset,
-  } = useEffectsStore()
+  const enabled = useEffectsStore((s) => s.enabled)
+  const toggle = useEffectsStore((s) => s.toggle)
 
   return (
-    <div className="max-w-md space-y-6">
-      {/* 启用开关 */}
+    <div className="max-w-md space-y-4">
       <div
         className="flex items-center justify-between p-4 rounded-xl"
         style={{ border: '1px solid var(--color-border)', backgroundColor: 'var(--color-panel)' }}
@@ -1084,69 +1040,6 @@ function EffectsSection() {
         </div>
         <Switch checked={enabled} onCheckedChange={toggle} aria-label={t('glass.enabled')} />
       </div>
-
-      {enabled && (
-        <>
-          {/* 折射模式 */}
-          <div>
-            <p className="text-xs font-semibold mb-2" style={{ color: 'var(--color-text)' }}>{t('glass.mode')}</p>
-            <div className="grid grid-cols-3 gap-2">
-              {(['standard', 'polar', 'prominent'] as const).map((m) => (
-                <button
-                  key={m}
-                  onClick={() => setGlass({ mode: m })}
-                  className="active-press px-2 py-2 rounded-lg text-xs transition-[background-color,border-color,color,transform] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
-                  style={{
-                    border: mode === m ? '1px solid var(--color-accent)' : '1px solid var(--color-border)',
-                    color: mode === m ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                    backgroundColor: mode === m ? 'color-mix(in srgb, var(--color-accent) 8%, transparent)' : 'transparent',
-                  }}
-                >
-                  {t(`glass.mode_${m}`)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-5">
-            <EffectSlider
-              label={t('glass.displacement')}
-              desc={t('glass.displacementDesc')}
-              min={8} max={140} step={1} value={displacementScale}
-              onChange={(v) => setGlass({ displacementScale: v })}
-            />
-            <EffectSlider
-              label={t('glass.blur')}
-              desc={t('glass.blurDesc')}
-              min={0.02} max={0.2} step={0.005} value={blurAmount}
-              onChange={(v) => setGlass({ blurAmount: v })}
-            />
-            <EffectSlider
-              label={t('glass.saturation')}
-              desc={t('glass.saturationDesc')}
-              min={100} max={220} step={1} value={saturation}
-              onChange={(v) => setGlass({ saturation: v })}
-            />
-            <EffectSlider
-              label={t('glass.aberration')}
-              desc={t('glass.aberrationDesc')}
-              min={0} max={6} step={0.1} value={aberrationIntensity}
-              onChange={(v) => setGlass({ aberrationIntensity: v })}
-            />
-            <EffectSlider
-              label={t('glass.elasticity')}
-              desc={t('glass.elasticityDesc')}
-              min={0} max={0.4} step={0.01} value={elasticity}
-              onChange={(v) => setGlass({ elasticity: v })}
-            />
-          </div>
-
-          <Button variant="outline" size="sm" onClick={reset}>
-            <Settings2 size={13} />
-            {t('glass.reset')}
-          </Button>
-        </>
-      )}
     </div>
   )
 }

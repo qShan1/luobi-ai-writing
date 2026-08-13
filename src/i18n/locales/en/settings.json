@@ -16,7 +16,7 @@
     "embeddingDesc": "Configure Embedding models for knowledge base retrieval",
     "proxyDesc": "Configure HTTP / SOCKS5 proxy for restricted API access",
     "editorDesc": "Font size, auto-save and other editor preferences",
-    "effectsDesc": "Liquid glass texture, elasticity and refraction effects",
+    "effectsDesc": "High-transparency frosted glass for interface panels",
     "window": "Window & Tray",
     "windowDesc": "Behavior when closing the window and system tray",
     "promptsDesc": "Customize prompt templates for AI writing stages",
@@ -34,7 +34,7 @@
   },
   "glass": {
     "enabled": "Liquid Glass Effect",
-    "enabledDesc": "Apple-style liquid glass texture on buttons and cards",
+    "enabledDesc": "High-transparency frosted glass on sidebars and panels",
     "mode": "Refraction Mode",
     "mode_standard": "Standard",
     "mode_polar": "Polar",
