@@ -87,25 +87,15 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
 
     set({ loading: true })
     try {
-      const blueprints = await ipc.invoke('db:blueprint-get-all')
+      const list = await ipc.invoke('db:draft-list-all')
       const newDraftsByChapter: DraftsByChapter = {}
-
-      for (const bp of blueprints) {
-        const chNum = bp.chapterNumber
-        const list = await ipc.invoke('db:draft-list', chNum)
-        if (!list || list.length === 0) continue
-
-        const metas: DraftMeta[] = list.map((m) => ({
-          ...m,
-          status: m.status as DraftStatus,
-          source: m.source as DraftMeta['source'],
-          fileName: `draft_v${m.version}.md`,
-          filePath: `luobi://draft/${m.id}`
-        }))
-
-        metas.sort((a, b) => b.version - a.version)
+      for (const m of list) {
+        const chNum = m.chapterNumber
+        const metas = newDraftsByChapter[chNum] ?? []
+        metas.push({ ...m, status: m.status as DraftStatus, source: m.source as DraftMeta['source'], fileName: `draft_v${m.version}.md`, filePath: `luobi://draft/${m.id}` })
         newDraftsByChapter[chNum] = metas
       }
+      for (const metas of Object.values(newDraftsByChapter)) metas.sort((a, b) => b.version - a.version)
 
       set({ draftsByChapter: newDraftsByChapter })
     } finally {

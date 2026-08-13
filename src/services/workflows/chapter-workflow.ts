@@ -126,7 +126,19 @@ export function createChapterWorkflow(chapterInfo: ChapterInfo): WorkflowDefinit
         description: t('workflowDefs.chapterWriteStepDesc'),
         executor: async (step, context, callbacks) => {
           const { GenerateDraftCommand } = await import('./commands/generate-draft.command')
-          const cmd = new GenerateDraftCommand(chapterInfo)
+          const { ipc } = await import('../ipc-client')
+          const blueprint = await ipc.invoke('db:blueprint-get', chapterInfo.chapterNumber)
+          if (!blueprint) throw new Error(t('workflowDefs.chapterBlueprintMissing', { chapter: chapterInfo.chapterNumber }))
+          const cmd = new GenerateDraftCommand({
+            ...chapterInfo,
+            title: blueprint.title || chapterInfo.title,
+            role: blueprint.role || chapterInfo.role,
+            purpose: blueprint.purpose || chapterInfo.purpose,
+            characters: blueprint.characters.length > 0 ? blueprint.characters : chapterInfo.characters,
+            keyEvents: blueprint.keyEvents || chapterInfo.keyEvents,
+            suspenseHook: blueprint.suspenseHook || chapterInfo.suspenseHook,
+            userGuidance: blueprint.userGuidance || chapterInfo.userGuidance,
+          })
           return cmd.execute({ step, context, callbacks })
         },
       },

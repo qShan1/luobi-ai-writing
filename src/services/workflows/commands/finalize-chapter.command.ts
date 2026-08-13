@@ -331,6 +331,9 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
     const { parseDraftMeta } = await import('../chapter-workflow')
     const dbDraft = await parseDraftMeta(this.params.draftPath)
     if (!dbDraft) throw new Error(t('finalize.internalStateError'))
+    if (dbDraft.chapterNumber !== this.params.chapterNumber) throw new Error(t('finalize.internalStateError'))
+    const blueprint = await ipc.invoke('db:blueprint-get', this.params.chapterNumber)
+    const chapterTitle = blueprint?.title || this.params.chapterInfo.title
 
     // ==========================================
     // [Gate v2] 叙事一致性强制门禁 — 必须在任何定稿写入之前通过
@@ -396,18 +399,21 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
     }
 
     await ipc.invoke('db:draft-update-content', dbDraft.id, gatedContent, gatedContent.length)
-    await ipc.invoke('db:draft-update-status', dbDraft.id, 'finalized', gatedContent.length)
 
     // 【重要】：除了写入 DB，对于已定稿的章节需要实体化为物理文件放在根目录，供外部系统读取或备份
-    const safeTitle = this.params.chapterInfo.title ? ` ${this.params.chapterInfo.title.replace(/[/\\]/g, '_')}` : ''
+    const safeTitle = chapterTitle ? ` ${chapterTitle.replace(/[/\\]/g, '_')}` : ''
     const physicalPath = `${project.path}/第${this.params.chapterNumber}章${safeTitle}.txt`
     try {
-      const titleLine = this.params.chapterInfo.title ? `第${this.params.chapterNumber}章 ${this.params.chapterInfo.title}\n\n` : `第${this.params.chapterNumber}章\n\n`
+      const titleLine = chapterTitle ? `第${this.params.chapterNumber}章 ${chapterTitle}\n\n` : `第${this.params.chapterNumber}章\n\n`
       const contentToWrite = titleLine + gatedContent.replace(/^#+ .*\n*/, '')
-      await ipc.invoke('fs:write-file', physicalPath, contentToWrite)
+      const result = await ipc.invoke('fs:write-file', physicalPath, contentToWrite)
+      if (!result.success) throw new Error(result.error || t('finalize.fileWriteFailed', { error: '' }))
     } catch (e) {
       callbacks.log(t('finalize.fileWriteFailed', { error: String(e) }))
+      throw e
     }
+
+    await ipc.invoke('db:draft-update-status', dbDraft.id, 'finalized', gatedContent.length)
 
     callbacks.log(t('finalize.finalizedSaved', { chapter: this.params.chapterNumber, title: safeTitle }))
 
@@ -419,7 +425,7 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
     const steps = buildFinalizePostProcessSteps(
       project,
       this.params.chapterNumber,
-      this.params.chapterInfo.title,
+      chapterTitle,
       gatedContent,
     )
 

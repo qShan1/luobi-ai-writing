@@ -274,6 +274,7 @@ export interface DatabaseChannels {
   // 4. drafts
   'db:draft-create': { args: [params: { chapterNumber: number; version: number; source: 'write' | 'rewrite'; content: string; wordCount: number }]; return: { success: boolean; id?: number; error?: string } }
   'db:draft-list': { args: [chapterNumber: number]; return: DraftMeta[] }
+  'db:draft-list-all': { args: []; return: DraftMeta[] }
   'db:draft-get-meta': { args: [id: number]; return: DraftMeta | null }
   'db:draft-get-full': { args: [id: number]; return: DraftFull | null }
   'db:draft-get-latest': { args: [chapterNumber: number]; return: DraftMeta | null }

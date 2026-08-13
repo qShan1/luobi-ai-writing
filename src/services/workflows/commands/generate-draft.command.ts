@@ -210,7 +210,8 @@ export class GenerateDraftCommand extends BaseWorkflowCommand {
       wordCount: finalDraft.length,
     })
 
-    const pseudoPath = createResult.id ? `luobi://draft/${createResult.id}` : `luobi://draft/ch${this.chapterInfo.chapterNumber}/v${nextVersion}`
+    if (!createResult.success || !createResult.id) throw new Error(createResult.error || i18n.t('common.failed', { ns: 'commands' }))
+    const pseudoPath = `luobi://draft/${createResult.id}`
 
     context.data.draft = finalDraft
     context.data.draftContent = finalDraft
@@ -233,7 +234,7 @@ export class GenerateDraftCommand extends BaseWorkflowCommand {
         name: `${i18n.t('generateDraft.chapterNumberTitle', { ns: 'commands', chapter: this.chapterInfo.chapterNumber, title: this.chapterInfo.title })} v${nextVersion}`,
         type: 'chapter',
         filePath: pseudoPath,
-        content: cleanDraftText,
+        content: finalDraft,
       })
     } catch { /* 忽略 */ }
 

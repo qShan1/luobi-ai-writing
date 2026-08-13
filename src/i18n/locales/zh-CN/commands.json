@@ -284,6 +284,7 @@
     "dirReadingArch": "读取项目架构信息...",
     "dirCoreDataNotInit": "项目核心数据未初始化",
     "dirArchNotGenerated": "项目主要架构均未生成",
+    "chapterBlueprintMissing": "第 {{chapter}} 章蓝图不存在",
     "dirLoadedBlueprints": "已加载 {{count}} 章已有蓝图",
     "dirArchLoaded": "架构加载完成（{{count}} 段）",
     "dirStepGenerate": "生成蓝图",

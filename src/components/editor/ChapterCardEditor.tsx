@@ -138,12 +138,17 @@ export default function ChapterCardEditor() {
 
   // 监听工作流完成事件，如果蓝图生成完毕则自动刷新
   useEffect(() => {
-    return globalEventBus.on('WORKFLOW_COMPLETE', (payload) => {
+    const unsubscribeWorkflow = globalEventBus.on('WORKFLOW_COMPLETE', (payload) => {
       if (payload.type === 'directory') {
          const tab = useEditorStore.getState().tabs.find(tab => tab.type === 'chapter-card')
          if (!tab?.dirty) loadBlueprints(true)
       }
     })
+    const unsubscribeFinalize = globalEventBus.on('FINALIZE_COMPLETE', () => {
+      const tab = useEditorStore.getState().tabs.find(tab => tab.type === 'chapter-card')
+      if (!tab?.dirty) loadBlueprints(true)
+    })
+    return () => { unsubscribeWorkflow(); unsubscribeFinalize() }
   }, [loadBlueprints])
 
   const selected = blueprints[selectedIdx] ?? null

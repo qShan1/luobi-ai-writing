@@ -187,6 +187,10 @@ export function registerDatabaseController() {
     return DraftRepository.listByChapter(chapterNumber)
   })
 
+  ipcMain.handle('db:draft-list-all', async () => {
+    return DraftRepository.listAll()
+  })
+
   ipcMain.handle('db:draft-get-meta', async (_event, id: number) => {
     return DraftRepository.getMeta(id)
   })

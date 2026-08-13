@@ -284,6 +284,7 @@
     "dirReadingArch": "Reading project architecture...",
     "dirCoreDataNotInit": "Project core data not initialized",
     "dirArchNotGenerated": "All major project architecture not generated",
+    "chapterBlueprintMissing": "Blueprint for Chapter {{chapter}} does not exist",
     "dirLoadedBlueprints": "Loaded {{count}} existing chapter blueprints",
     "dirArchLoaded": "Architecture loaded ({{count}} segments)",
     "dirStepGenerate": "Generate blueprints",

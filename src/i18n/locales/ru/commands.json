@@ -284,6 +284,7 @@
     "dirReadingArch": "Чтение архитектуры проекта...",
     "dirCoreDataNotInit": "Основные данные проекта не инициализированы",
     "dirArchNotGenerated": "Основная архитектура проекта не сгенерирована",
+    "chapterBlueprintMissing": "План главы {{chapter}} не существует",
     "dirLoadedBlueprints": "Загружено {{count}} существующих черновиков глав",
     "dirArchLoaded": "Архитектура загружена ({{count}} сегментов)",
     "dirStepGenerate": "Генерация черновиков",

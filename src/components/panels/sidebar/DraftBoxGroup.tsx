@@ -31,7 +31,7 @@ export default function DraftBoxGroup({
 
   // 筛选出包含非保留（活跃）草稿的实际章节数
   const activeChapterCount = chapterNums.filter(n =>
-    (draftsByChapter[n] || []).some(d => d.status !== 'archived')
+    (draftsByChapter[n] || []).some(d => d.status !== 'archived' && d.status !== 'finalized')
   ).length
 
   const toggleSelected = (id: number) => {
@@ -139,7 +139,7 @@ function DraftChapterGroup({
   const [open, setOpen] = useState(true)
 
   // 将 archived 草稿折叠，只显示活跃草稿（非 archived）
-  const activeDrafts = drafts.filter(d => d.status !== 'archived')
+  const activeDrafts = drafts.filter(d => d.status !== 'archived' && d.status !== 'finalized')
   const archivedDrafts = drafts.filter(d => d.status === 'archived')
   const [showArchived, setShowArchived] = useState(false)
   const [bpTitle, setBpTitle] = useState<string>('')
