@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { ToolCallInfo } from '../../../services/agent/agent-engine'
+import { Button } from '../../ui/Button'
 
 interface Props {
   toolCall: ToolCallInfo
@@ -112,18 +113,14 @@ export default function ToolCallBlock({ toolCall }: Props) {
           {result && (
             <div className="tool-call-result" style={{ position: 'relative' }}>
               {result}
-              <button
+              <Button
+                variant="ghost" size="sm"
                 onClick={() => navigator.clipboard.writeText(result).catch(() => {})}
-                className="absolute top-1 right-1 text-[0.65rem] px-1.5 py-0.5 rounded transition-opacity opacity-0 hover:opacity-100"
-                style={{
-                  backgroundColor: 'var(--color-hover)',
-                  color: 'var(--color-text-secondary)',
-                  border: '1px solid var(--color-border)',
-                }}
+                className="absolute top-1 right-1 opacity-0 hover:opacity-100"
                 title={t('toolCall.copyResult')}
               >
                 {t('toolCall.copy')}
-              </button>
+              </Button>
             </div>
           )}
 

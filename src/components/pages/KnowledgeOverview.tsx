@@ -163,7 +163,7 @@ export default function KnowledgeOverview() {
             label={t('searchMode')}
             value={hasVectors ? t('ftsVector') : t('ftsOnly')}
             badge={hasVectors ? t('hybrid') : t('basic')}
-            badgeColor={hasVectors ? '#22c55e' : '#3b82f6'}
+            badgeColor={hasVectors ? 'var(--color-success)' : 'var(--color-accent)'}
           />
         </div>
 
@@ -266,12 +266,12 @@ export default function KnowledgeOverview() {
                 <span className="text-xs font-medium text-[var(--color-text-muted)]">
                   {t('searchResults', { count: searchResults.length })}
                 </span>
-                <button
-                  className="text-[0.7rem] text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                <Button
+                  variant="ghost" size="sm"
                   onClick={() => setSearchResults([])}
                 >
                   {t('clear')}
-                </button>
+                </Button>
               </div>
               <div className="max-h-[400px] overflow-y-auto">
                 {[...searchResults].reverse().map((r, i) => (

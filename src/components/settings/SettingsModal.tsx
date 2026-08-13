@@ -16,6 +16,7 @@ import type { ProviderPreset } from '../../shared/provider-presets'
 import { BUILTIN_PRESETS } from '../../shared/provider-presets'
 import { randomUUID } from '../../utils/id'
 import { Button } from '../ui/Button'
+import { IconBtn } from '../ui/IconBtn'
 import { Input } from '../ui/Input'
 import { Label } from '../ui/Label'
 import { NativeSelect } from '../ui/NativeSelect'
@@ -43,7 +44,7 @@ const SECTIONS: SectionItem[] = [
   { id: 'effects', label: 'Visual Effects', icon: <Sparkles size={16} />, descriptionKey: 'general.effectsDesc' },
   { id: 'prompts', label: 'Prompt Templates', icon: <MessageSquare size={16} />, descriptionKey: 'general.promptsDesc' },
   { id: 'window', label: 'Window & Tray', icon: <PanelBottomClose size={16} />, descriptionKey: 'general.windowDesc' },
-  { id: 'about', label: 'About & Support', icon: <span style={{ color: '#ff4d4f', fontSize: 14 }}>❤️</span>, descriptionKey: 'general.aboutDesc' },
+  { id: 'about', label: 'About & Support', icon: <span style={{ color: 'var(--color-error)', fontSize: 14 }}>❤️</span>, descriptionKey: 'general.aboutDesc' },
 ]
 
 // ==================== 主组件 ====================
@@ -94,7 +95,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
               key={s.id}
               onClick={() => setSection(s.id)}
               className={cn(
-                'flex items-center gap-2.5 mx-2 px-3 py-2.5 rounded-lg text-left text-sm transition-colors min-w-0',
+                'flex items-center gap-2.5 mx-2 px-3 py-2.5 rounded-lg text-left text-sm transition-colors min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
                 section === s.id
                   ? 'bg-[var(--color-accent)] text-white'
                   : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)]',
@@ -121,13 +122,9 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                 {t(SECTIONS.find((s) => s.id === section)?.descriptionKey ?? '')}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-[var(--color-hover)]"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <IconBtn title="Close" size={18} onClick={onClose}>
               <X size={16} />
-            </button>
+            </IconBtn>
           </div>
 
           {/* 区域内容 */}
@@ -177,7 +174,7 @@ function LanguageSection() {
               key={lang.code}
               onClick={() => handleLanguageChange(lang.code)}
               className={cn(
-                'flex items-center justify-between w-full px-4 py-3 rounded-lg text-left transition-colors',
+                'flex items-center justify-between w-full px-4 py-3 rounded-lg text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
                 currentLang === lang.code
                   ? 'bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30'
                   : 'border border-[var(--color-border)] hover:bg-[var(--color-hover)]',
@@ -399,7 +396,7 @@ function ModelCard({
           <button
             onClick={onSetDefault}
             title={t('models.setDefault')}
-            className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-[var(--color-hover)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+            className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-[var(--color-hover)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
           >
             <Check size={14} />
           </button>
@@ -407,14 +404,14 @@ function ModelCard({
         <button
           onClick={onEdit}
           title={t('models.editModel')}
-          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-[var(--color-hover)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-[var(--color-hover)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         >
           <Settings2 size={14} />
         </button>
         <button
           onClick={onDelete}
           title={t('models.removeModel')}
-          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-red-500/10 text-[var(--color-text-muted)] hover:text-red-400"
+          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-red-500/10 text-[var(--color-text-muted)] hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         >
           <Trash2 size={14} />
         </button>
@@ -581,7 +578,7 @@ function ModelForm({
                   up('modelName', '')
                 }
               }}
-              className="text-xs transition-colors"
+              className="text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
               style={{ color: 'var(--color-accent)' }}
             >
               {customModelName ? t('models.presetModelSelect') : t('models.customModelInput')}
@@ -638,13 +635,15 @@ function ModelForm({
             placeholder={model.provider === 'ollama' ? t('models.apiKeyOllamaPlaceholder') : t('models.apiKeyPlaceholder')}
             className="pr-9"
           />
-          <button
-            type="button"
-            onClick={() => setShowKey(!showKey)}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
-          >
-            {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
-          </button>
+          <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+            <IconBtn
+              title={showKey ? 'Hide API Key' : 'Show API Key'}
+              size={18}
+              onClick={() => setShowKey(!showKey)}
+            >
+              {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
+            </IconBtn>
+          </div>
         </div>
       </div>
 
@@ -858,7 +857,7 @@ function FontSelect({
       {/* 触发按鈕 */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 w-full px-3 h-9 rounded-lg transition-colors text-left"
+        className="flex items-center gap-2 w-full px-3 h-9 rounded-lg transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         style={{
           border: '1px solid var(--color-border)',
           backgroundColor: open ? 'var(--color-hover)' : 'var(--color-panel)',
@@ -919,7 +918,7 @@ function FontSelect({
             <button
               key={opt.id}
               onClick={() => { onChange(opt.id); setOpen(false) }}
-              className="w-full text-left px-3 py-2.5 flex items-center gap-3 transition-colors hover:bg-[var(--color-hover)]"
+              className="w-full text-left px-3 py-2.5 flex items-center gap-3 transition-colors hover:bg-[var(--color-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
               style={{
                 backgroundColor: value === opt.id
                   ? 'color-mix(in srgb, var(--color-accent) 8%, transparent)'
@@ -1089,7 +1088,7 @@ function EffectsSection() {
                 <button
                   key={m}
                   onClick={() => setGlass({ mode: m })}
-                  className="active-press px-2 py-2 rounded-lg text-xs transition-[background-color,border-color,color,transform] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                  className="active-press px-2 py-2 rounded-lg text-xs transition-[background-color,border-color,color,transform] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                   style={{
                     border: mode === m ? '1px solid var(--color-accent)' : '1px solid var(--color-border)',
                     color: mode === m ? 'var(--color-accent)' : 'var(--color-text-secondary)',
@@ -1183,7 +1182,7 @@ function WindowSection() {
               disabled={!loaded}
               onClick={() => setCloseBehavior(opt.value)}
               className={cn(
-                'flex items-start gap-3 w-full px-4 py-3 rounded-xl text-left transition-[background-color,border-color] duration-200 disabled:opacity-60',
+                'flex items-start gap-3 w-full px-4 py-3 rounded-xl text-left transition-[background-color,border-color] duration-200 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
                 active
                   ? 'border border-[var(--color-accent)]'
                   : 'border border-[var(--color-border)] hover:bg-[var(--color-hover)]',

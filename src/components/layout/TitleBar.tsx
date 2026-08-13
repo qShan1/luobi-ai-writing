@@ -5,6 +5,7 @@ import { useProjectStore } from '../../stores/project-store'
 import { useThemeStore, type Theme } from '../../stores/theme-store'
 import { useEditorStore } from '../../stores/editor-store'
 import { useLayoutStore } from '../../stores/layout-store'
+import { IconBtn } from '../ui/IconBtn'
 
 /** 检测是否为 macOS */
 const isMac = navigator.userAgent.includes('Mac')
@@ -143,19 +144,15 @@ export default function TitleBar() {
       >
         {/* ───── 缩放控制组 ───── */}
         {/* 缩小 */}
-        <button
-          onClick={zoomOut}
-          title={t(isMac ? 'titleBar.zoomOut' : 'titleBar.zoomOutCtrl')}
-          className="icon-btn"
-          style={{ width: 22, height: 22 }}
-        >
+        <IconBtn onClick={zoomOut} title={t(isMac ? 'titleBar.zoomOut' : 'titleBar.zoomOutCtrl')} size={22}>
           <ZoomOut size={12} strokeWidth={1.5} />
-        </button>
+        </IconBtn>
 
         {/* 缩放比例显示，点击可重置 */}
         <button
           onClick={zoomReset}
           title={t(isMac ? 'titleBar.resetZoom' : 'titleBar.resetZoomCtrl')}
+          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]"
           style={{
             fontSize: "0.7rem",
             fontFamily: 'var(--font-mono)',
@@ -175,14 +172,9 @@ export default function TitleBar() {
         </button>
 
         {/* 放大 */}
-        <button
-          onClick={zoomIn}
-          title={t(isMac ? 'titleBar.zoomIn' : 'titleBar.zoomInCtrl')}
-          className="icon-btn"
-          style={{ width: 22, height: 22 }}
-        >
+        <IconBtn onClick={zoomIn} title={t(isMac ? 'titleBar.zoomIn' : 'titleBar.zoomInCtrl')} size={22}>
           <ZoomIn size={12} strokeWidth={1.5} />
-        </button>
+        </IconBtn>
 
         {/* 分割线 */}
         <div
@@ -206,14 +198,9 @@ export default function TitleBar() {
         </button>
 
         {/* 设置 */}
-        <button
-          onClick={openSettings}
-          title={t('titleBar.settings')}
-          className="icon-btn"
-          style={{ width: 24, height: 22 }}
-        >
+        <IconBtn onClick={openSettings} title={t('titleBar.settings')} size={22}>
           <Settings size={13} strokeWidth={1.5} />
-        </button>
+        </IconBtn>
       </div>
     </div>
   )

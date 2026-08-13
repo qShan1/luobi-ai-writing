@@ -1,6 +1,7 @@
 import { Component, createContext } from 'react'
 import type { ReactNode, ErrorInfo, ContextType } from 'react'
 import i18n from '../i18n'
+import { Button } from './ui/Button'
 
 interface Props {
   children: ReactNode
@@ -70,22 +71,12 @@ export class ErrorBoundary extends Component<Props, State> {
             {'\n'}
             {this.state.componentStack}
           </pre>
-          <button
-            style={{
-              marginTop: 8,
-              padding: '6px 16px',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border)',
-              backgroundColor: 'var(--color-hover)',
-              color: 'var(--color-text)',
-              cursor: 'pointer',
-              fontSize: '0.8rem',
-              transition: 'background-color var(--transition-fast)',
-            }}
+          <Button
+            variant="outline"
             onClick={() => this.setState({ hasError: false, error: null, componentStack: '' })}
           >
             {i18n.t('retry', { ns: 'common' })}
-          </button>
+          </Button>
         </div>
       )
     }

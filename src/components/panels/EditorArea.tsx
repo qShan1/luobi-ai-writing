@@ -6,6 +6,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription,
 } from '../ui/Dialog'
 import { Button } from '../ui/Button'
+import { IconBtn } from '../ui/IconBtn'
 import CodeMirrorEditor from '../editor/CodeMirrorEditor'
 import NovelConfigEditor from '../editor/NovelConfigEditor'
 import CharacterEditor from '../editor/CharacterEditor'
@@ -85,15 +86,14 @@ function ProseEditorWrapper({
           )}
           {/* 保存按钮（有改动时显示） */}
           {tab.dirty && (
-            <button
-              className="icon-btn"
-              style={{ width: 24, height: 22 }}
+            <IconBtn
               onClick={() => handleSave(currentContentRef.current)}
               disabled={saving}
               title={t('editorArea.saveShortcut')}
+              size={18}
             >
               <Save size={13} strokeWidth={1.5} />
-            </button>
+            </IconBtn>
           )}
         </div>
       </div>
@@ -536,20 +536,20 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
           className="flex items-center flex-shrink-0 h-full"
           style={{ borderLeft: '1px solid var(--color-border)' }}
         >
-          <button
-            className="icon-btn flex-shrink-0"
+          <IconBtn
             onClick={() => switchTab('left')}
             title={t('editorArea.prevEditor')}
+            size={18}
           >
             <ChevronLeft size={14} />
-          </button>
-          <button
-            className="icon-btn flex-shrink-0"
+          </IconBtn>
+          <IconBtn
             onClick={() => switchTab('right')}
             title={t('editorArea.nextEditor')}
+            size={18}
           >
             <ChevronRight size={14} />
-          </button>
+          </IconBtn>
           <button
             ref={moreButtonRef}
             className="icon-btn flex-shrink-0"

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { Brain, ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Button } from './Button'
 
 interface MarkdownContentProps {
   content: string
@@ -229,13 +230,14 @@ function CodeBlock({ lang, code, t }: { lang: string; code: string; t: (key: str
         <span className="text-[0.7rem] font-mono" style={{ color: 'var(--color-text-muted)' }}>
           {lang || 'text'}
         </span>
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={handleCopy}
-          className="text-[0.7rem] px-2 py-0.5 rounded-[var(--radius-sm)] transition-[background-color,opacity,transform] duration-100 ease-out hover:opacity-100 hover:bg-[var(--color-hover)] opacity-60 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-hover)] focus-visible:ring-[var(--color-accent)] cursor-pointer"
           style={{ color: 'var(--color-text-secondary)' }}
         >
           {t('markdownContent.copy')}
-        </button>
+        </Button>
       </div>
       {/* 代码内容 */}
       <pre

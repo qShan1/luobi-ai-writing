@@ -22,6 +22,8 @@ import { createRoot } from 'react-dom/client'
 import { useEffect, useState, useCallback } from 'react'
 import { X, CheckCircle2, AlertTriangle, Info, Sparkles } from 'lucide-react'
 import i18n from '../../i18n'
+import { Button } from './Button'
+import { IconBtn } from './IconBtn'
 
 // ===== 类型定义 =====
 
@@ -191,29 +193,27 @@ function ActionToastCard({ item, onRemove }: { item: ActionToastItem; onRemove: 
         >
           {item.message}
         </span>
-        <button
+        <IconBtn
+          size={18}
           onClick={dismiss}
-          className="bg-transparent border-0 cursor-pointer p-0.5 flex-shrink-0 leading-none rounded-[var(--radius-sm)] text-[var(--color-text-muted)] transition-colors duration-150 hover:text-[var(--color-text)]"
+          title={i18n.t('common.close', '关闭')}
         >
           <X size={12} />
-        </button>
+        </IconBtn>
       </div>
 
       {/* 第二行：操作按钮 */}
       {item.actions && item.actions.length > 0 && (
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
           {item.actions.map((action, i) => (
-            <button
+            <Button
               key={i}
+              variant={action.variant === 'ghost' ? 'outline' : 'default'}
+              size="sm"
               onClick={() => handleAction(action)}
-              className={`px-3 py-1 rounded-[var(--radius-md)] text-[11px] font-medium cursor-pointer transition-[background-color,transform,filter] duration-150 ease-out active:scale-[0.96] ${
-                action.variant === 'ghost'
-                  ? 'border border-[var(--color-border)] bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)]'
-                  : 'border border-transparent bg-[var(--color-accent)] text-white hover:brightness-110'
-              }`}
             >
               {action.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}

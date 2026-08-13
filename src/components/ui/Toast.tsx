@@ -17,6 +17,7 @@
 import { createRoot } from 'react-dom/client'
 import { useEffect, useState } from 'react'
 import { X, CheckCircle2, AlertTriangle, Info } from 'lucide-react'
+import { IconBtn } from './IconBtn'
 
 // ===== 类型定义 =====
 
@@ -138,19 +139,9 @@ function ToastItemView({ item, onRemove }: { item: ToastItem; onRemove: (id: num
       >
         {item.message}
       </span>
-      <button
-        onClick={() => onRemove(item.id)}
-        className="flex-shrink-0 p-0.5 rounded transition-[background-color] duration-150 hover:bg-[var(--color-hover)]"
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          color: 'var(--color-text-muted)',
-          lineHeight: 1,
-        }}
-      >
+      <IconBtn size={18} onClick={() => onRemove(item.id)} title="关闭">
         <X size={13} />
-      </button>
+      </IconBtn>
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle, Info, Sparkles, HelpCircle, Quote } from 'l
 import { useTranslation } from 'react-i18next'
 import { cn } from '../../lib/utils'
 import { Button } from '../ui/Button'
+import { IconBtn } from '../ui/IconBtn'
 import {
   Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription,
 } from '../ui/Dialog'
@@ -275,14 +276,13 @@ export default function ReviewReport({ reportText, draftPath, chapterNumber, cha
               🟢 {passCount} {t('reviewReport.passed')}
             </span>
             {/* 图例帮助按钮 */}
-            <button
-              className="flex items-center justify-center rounded-full hover:bg-[var(--color-hover)] transition-colors"
-              style={{ width: 22, height: 22 }}
+            <IconBtn
+              size={22}
               onClick={() => setShowLegend(!showLegend)}
               title={t('reviewReport.colorLegend')}
             >
               <HelpCircle size={14} style={{ color: 'var(--color-text-muted)' }} />
-            </button>
+            </IconBtn>
           </div>
         </div>
 

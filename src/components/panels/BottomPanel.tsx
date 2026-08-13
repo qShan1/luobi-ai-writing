@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useLayoutStore } from '../../stores/layout-store'
 import { useWorkflowStore, type WorkflowStep, type WorkflowRun } from '../../stores/workflow-store'
 import { Button } from '../ui/Button'
+import { IconBtn } from '../ui/IconBtn'
 import { Skeleton } from '../ui/Skeleton'
 
 /** 下方工具窗口 */
@@ -72,9 +73,9 @@ export default function BottomPanel() {
         </div>
 
         {/* 右侧：关闭按钮 */}
-        <button onClick={toggleBottomPanel} title={t('common.closePanel')} className="icon-btn" style={{ width: 18, height: 18 }}>
+        <IconBtn onClick={toggleBottomPanel} title={t('common.closePanel')} size={18}>
           <X size={12} strokeWidth={1.5} />
-        </button>
+        </IconBtn>
       </div>
 
       {/* 内容区 */}
@@ -275,14 +276,15 @@ function ActiveRunPanel({
             : <ChevronRight size={11} style={{ color: 'var(--color-text-muted)' }} />
           }
           {/* 取消按钮——阻止冒泡到折叠点击 */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onCancel() }}
-            className="icon-btn"
-            style={{ width: 18, height: 18 }}
-            title={t('bottomPanel.cancelTask', '取消任务')}
-          >
-            <X size={11} />
-          </button>
+          <div onClick={(e) => e.stopPropagation()}>
+            <IconBtn
+              onClick={onCancel}
+              title={t('bottomPanel.cancelTask', '取消任务')}
+              size={18}
+            >
+              <X size={11} />
+            </IconBtn>
+          </div>
         </div>
       </div>
 
@@ -315,13 +317,9 @@ function ActiveRunPanel({
               <span className="text-xs flex-1 truncate" style={{ color: 'var(--color-text-secondary)' }}>
                 {t('bottomPanel.nextStep')}{nextStepName}
               </span>
-              <button
-                onClick={onConfirm}
-                className="flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium flex-shrink-0"
-                style={{ backgroundColor: 'var(--color-accent)', color: '#fff' }}
-              >
+              <Button variant="default" size="sm" onClick={onConfirm} className="flex-shrink-0">
                 <Play size={10} /> {t('bottomPanel.continue')}
-              </button>
+              </Button>
             </div>
           )}
         </motion.div>
@@ -340,13 +338,13 @@ function ActiveRunPanel({
           <span className="text-xs flex-1 truncate" style={{ color: 'var(--color-text-secondary)' }}>
             {t('bottomPanel.nextStep')}{nextStepName}
           </span>
-          <button
+          <Button
+            variant="default" size="sm"
             onClick={(e) => { e.stopPropagation(); onConfirm() }}
-            className="flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium flex-shrink-0"
-            style={{ backgroundColor: 'var(--color-accent)', color: '#fff' }}
+            className="flex-shrink-0"
           >
             <Play size={10} /> {t('bottomPanel.continue')}
-          </button>
+          </Button>
         </div>
       )}
     </div>

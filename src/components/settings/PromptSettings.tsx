@@ -32,8 +32,8 @@ function getVariableDesc(varName: string, fallback: string): string {
 
 const SOURCE_CONFIG = {
   builtin: { labelKey: 'prompts.builtin', color: 'var(--color-text-muted)', bg: 'var(--color-hover)' },
-  global: { labelKey: 'prompts.global', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
-  project: { labelKey: 'prompts.project', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+  global: { labelKey: 'prompts.global', color: 'var(--color-accent)', bg: 'color-mix(in srgb, var(--color-accent) 10%, transparent)' },
+  project: { labelKey: 'prompts.project', color: 'var(--color-warning)', bg: 'color-mix(in srgb, var(--color-warning) 10%, transparent)' },
 } as const
 
 // ==================== 主组件 ====================
@@ -215,7 +215,7 @@ function TemplateItem({
     >
       {/* 折叠头部 */}
       <button
-        className="w-full flex items-center gap-2.5 px-4 py-3 text-left transition-colors hover:bg-[var(--color-hover)] outline-none focus:outline-none"
+        className="w-full flex items-center gap-2.5 px-4 py-3 text-left transition-colors hover:bg-[var(--color-hover)] outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
         onClick={onToggle}
       >
         {isExpanded ? (
@@ -257,7 +257,7 @@ function TemplateItem({
                     key={varName}
                     onClick={() => insertVariable(varName)}
                     title={translatedDesc}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[0.68rem] transition-colors hover:bg-[var(--color-accent)] hover:text-white outline-none focus:outline-none"
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[0.68rem] transition-colors hover:bg-[var(--color-accent)] hover:text-white outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                     style={{
                       backgroundColor: 'var(--color-hover)',
                       color: 'var(--color-text-secondary)',
@@ -297,7 +297,7 @@ function TemplateItem({
           {missingVars.length > 0 && (
             <div
               className="flex items-start gap-2 px-3 py-2 rounded-lg text-xs"
-              style={{ backgroundColor: 'rgba(245, 158, 11, 0.08)', color: '#f59e0b' }}
+              style={{ backgroundColor: 'color-mix(in srgb, var(--color-warning) 8%, transparent)', color: 'var(--color-warning)' }}
             >
               <AlertTriangle size={13} className="flex-shrink-0 mt-0.5" />
               <span>

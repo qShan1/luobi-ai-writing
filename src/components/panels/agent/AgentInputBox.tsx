@@ -296,7 +296,7 @@ export default function AgentInputBox() {
                 setShowModelMenu(false)
                 setShowModeMenu(v => !v)
               }}
-              className="active-press flex items-center gap-0.5 py-1 pl-1 pr-1.5 rounded-md text-xs transition-colors hover:bg-[var(--color-hover)] hover:opacity-100"
+              className="active-press flex items-center gap-0.5 py-1 pl-1 pr-1.5 rounded-md text-xs transition-colors hover:bg-[var(--color-hover)] hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
               style={{
                 color: 'var(--color-text-secondary)',
                 opacity: 0.75,
@@ -346,7 +346,7 @@ export default function AgentInputBox() {
                 setShowModeMenu(false)
                 setShowModelMenu(v => !v)
               }}
-              className="active-press flex items-center gap-0.5 py-1 pl-0.5 pr-1.5 rounded-md text-xs min-w-0 transition-colors hover:bg-[var(--color-hover)] hover:opacity-100"
+              className="active-press flex items-center gap-0.5 py-1 pl-0.5 pr-1.5 rounded-md text-xs min-w-0 transition-colors hover:bg-[var(--color-hover)] hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
               style={{
                 color: 'var(--color-text-secondary)',
                 opacity: 0.75,

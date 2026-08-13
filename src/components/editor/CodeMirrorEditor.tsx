@@ -9,6 +9,7 @@ import { Sparkles, Bold } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../../lib/utils'
 import { Button } from '../ui/Button'
+import { IconBtn } from '../ui/IconBtn'
 
 /** 统计字数（简单字符数统计，包含空格换行等格式符） */
 function countWords(text: string): number {
@@ -407,8 +408,9 @@ export default function CodeMirrorEditor({
             <>
               {mode === 'document' && (
                 <>
-                  <button
-                    className="p-1 rounded-[var(--radius-sm)] text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                  <IconBtn
+                    title="加粗"
+                    size={18}
                     onClick={() => {
                       // document模式下的格式转换
                       if (selectionRange && editorRef.current?.view) {
@@ -419,7 +421,7 @@ export default function CodeMirrorEditor({
                         })
                       }
                     }}
-                  ><Bold size={14} /></button>
+                  ><Bold size={14} /></IconBtn>
                   <div className="w-[1px] h-3 mx-1" style={{ backgroundColor: 'var(--color-border)' }} />
                 </>
               )}
@@ -430,13 +432,15 @@ export default function CodeMirrorEditor({
                 <Sparkles size={11} />AI
               </div>
               {AI_ACTIONS.map(action => (
-                <button
+                <Button
                   key={action.key}
-                  className={cn('p-1.5 rounded-[var(--radius-sm)] flex items-center gap-1 transition-colors hover:bg-[var(--color-hover)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]', action.color)}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(action.color)}
                   onClick={() => handleAIAction(action.prompt, action.key)}
                 >
                   <span className="text-[10px] tracking-widest">{action.label}</span>
-                </button>
+                </Button>
               ))}
             </>
           )}

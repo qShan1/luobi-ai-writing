@@ -7,6 +7,7 @@ import { useLayoutStore } from '../../stores/layout-store'
 import { parseThink } from '../../lib/think'
 import MarkdownContent from '../ui/MarkdownContent'
 import { Button } from '../ui/Button'
+import { IconBtn } from '../ui/IconBtn'
 
 /**
  * 右侧面板「AI 输出」视图
@@ -59,14 +60,13 @@ export default function AIOutputPanel() {
         >
           {t('aiPanel.aiOutput')}
         </span>
-        <button
+        <IconBtn
           onClick={() => useLayoutStore.getState().setRightView('agent')}
           title={t('aiPanel.switchToAgent')}
-          className="icon-btn"
-          style={{ width: 20, height: 20 }}
+          size={18}
         >
           <X size={13} strokeWidth={1.5} />
-        </button>
+        </IconBtn>
       </div>
 
       {/* 内容区 */}
@@ -169,7 +169,7 @@ function ActiveRunView({
             <button
               key={r.id}
               onClick={() => onSwitchRun(r.id)}
-              className="text-[0.68rem] px-2 py-0.5 rounded transition-[background-color,color] flex-shrink-0"
+              className="text-[0.68rem] px-2 py-0.5 rounded transition-[background-color,color] flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
               style={{
                 backgroundColor: r.id === run.id ? 'var(--color-hover)' : 'transparent',
                 color: r.id === run.id ? 'var(--color-text)' : 'var(--color-text-muted)',

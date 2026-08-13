@@ -8,6 +8,7 @@ import { ShieldAlert } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { ToolCallInfo } from '../../../services/agent/agent-engine'
 import { useAgentStore } from '../../../stores/agent-store'
+import { Button } from '../../ui/Button'
 
 interface Props {
   toolCall: ToolCallInfo
@@ -54,18 +55,12 @@ export default function ConfirmCard({ toolCall }: Props) {
 
       {/* 操作按钮 */}
       <div className="confirm-card-actions">
-        <button
-          className="confirm-card-btn reject"
-          onClick={() => resolveToolConfirmation(id, false)}
-        >
+        <Button variant="outline" size="sm" onClick={() => resolveToolConfirmation(id, false)}>
           {t('agent.reject')}
-        </button>
-        <button
-          className="confirm-card-btn approve"
-          onClick={() => resolveToolConfirmation(id, true)}
-        >
+        </Button>
+        <Button variant="success" size="sm" onClick={() => resolveToolConfirmation(id, true)}>
           {t('agent.approveExecute')}
-        </button>
+        </Button>
       </div>
     </div>
   )

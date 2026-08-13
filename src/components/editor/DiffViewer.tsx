@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { ArrowLeftRight, Check, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Button } from '../ui/Button'
 
 interface DiffViewerProps {
   /** 原始文本 */
@@ -71,38 +72,23 @@ export default function DiffViewer({
         </div>
         <div className="flex items-center gap-2">
           {/* 视图切换 */}
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setMode(mode === 'side' ? 'inline' : 'side')}
-            className="px-2 py-0.5 rounded text-xs"
-            style={{
-              backgroundColor: 'var(--color-hover)',
-              color: 'var(--color-text-secondary)',
-              border: '1px solid var(--color-border)',
-            }}
           >
             {mode === 'side' ? t('diffViewer.sideBySide') : t('diffViewer.inline')}
-          </button>
+          </Button>
           {/* 操作按钮 */}
           {onReject && (
-            <button
-              onClick={onReject}
-              className="flex items-center gap-1 px-2 py-0.5 rounded text-xs"
-              style={{ color: 'var(--color-error)', border: '1px solid var(--color-border)' }}
-            >
+            <Button variant="destructive" size="sm" onClick={onReject}>
               <X size={12} /> {t('diffViewer.reject')}
-            </button>
+            </Button>
           )}
           {onAccept && (
-            <button
-              onClick={() => onAccept(modified)}
-              className="flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
-              style={{
-                backgroundColor: 'var(--color-accent)',
-                color: '#fff',
-              }}
-            >
+            <Button size="sm" onClick={() => onAccept(modified)}>
               <Check size={12} /> {t('diffViewer.acceptChanges')}
-            </button>
+            </Button>
           )}
         </div>
       </div>

@@ -13,6 +13,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { RefreshCw, CheckCircle2, XCircle, AlertTriangle, Clock, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/Button'
+import { IconBtn } from '../ui/IconBtn'
 import { useProjectStore } from '../../stores/project-store'
 import { readPostProcessStatus, type PostProcessStatus } from '../../services/workflows/workflow-utils'
 import { cn } from '../../lib/utils'
@@ -130,7 +131,7 @@ export function PostProcessStatusPanel({
       {/* 折叠头部 */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-3 py-2 text-left cursor-pointer hover:opacity-80 transition-opacity"
+        className="w-full flex items-center justify-between px-3 py-2 text-left cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-accent)]"
       >
         <div className="flex items-center gap-1.5">
           <AlertTriangle size={13} className={
@@ -186,13 +187,13 @@ export function PostProcessStatusPanel({
                       {step.error || t('failed')}
                     </span>
                     {onRetry && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); onRetry(key) }}
-                        className="p-0.5 rounded hover:bg-[var(--color-hover)] transition-colors cursor-pointer"
+                      <IconBtn
+                        size={18}
+                        onClick={() => onRetry(key)}
                         title={t('retry')}
                       >
                         <RefreshCw size={11} className="text-[var(--color-accent)]" />
-                      </button>
+                      </IconBtn>
                     )}
                   </>
                 )}

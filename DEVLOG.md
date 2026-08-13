@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-08-13: 统一面板/Agent/工具栏按钮
+
+**将面板/Agent/工具栏类手写 `<button>` 收敛到统一 `<Button>` / `<IconBtn>` 组件。**
+
+### 改动文件
+- `src/components/panels/EditorArea.tsx` — 保存/切Tab 图标按钮 → `IconBtn`(18)
+- `src/components/panels/AIOutputPanel.tsx` — 关闭 → `IconBtn`(18)；run 切换补 focus-visible
+- `src/components/panels/BottomPanel.tsx` — 关闭/取消 → `IconBtn`(18)；继续 ×2 → `Button default sm`
+- `src/components/panels/agent/AgentConversation.tsx` — 查看全部 → `Button ghost sm`；删除补 focus-visible
+- `src/components/panels/agent/AgentInputBox.tsx` — 模式/模型触发器补 focus-visible
+- `src/components/panels/agent/ConfirmCard.tsx` — 拒绝/批准 → `Button outline/success sm`
+- `src/components/panels/agent/ToolCallBlock.tsx` — 复制 → `Button ghost sm`
+- `src/components/panels/agent/SlashCommandMenu.tsx` / `MentionMenu.tsx` — 选项补 focus-visible
+- `src/components/panels/KnowledgePanel.tsx` — 删除补 focus-visible
+- `src/components/pages/KnowledgeOverview.tsx` — 清除 → `Button ghost sm`
+
+### 保留原样（特殊结构）
+- EditorArea 的 dirty/非 dirty Tab 关闭按钮（dot↔X 结构）、more 菜单按钮（需 ref 定位）
+- AgentConversation 的浮动 scrollToBottom、会话列表项、hover 删除按钮
+- AIOutputPanel 的折叠头/历史列表项
+- AgentHeader 的 SubViewBackButton、AgentInputBox 的发送按钮与菜单项
+
+### 验证
+- `pnpm exec tsc --noEmit`：仅剩 `TitleBar.tsx(192)` 既有错误（`cycleTheme` 需事件参数与 `IconBtn` 的 `() => void` 冲突，非本次改动引入）
+- `pnpm lint`：通过
+
+---
+
 ## 2026-08-12: Animation & Design Audit
 
 **基于 [emilkowalski/skills](https://github.com/emilkowalski/skills) 审查标准优化动画和交互**

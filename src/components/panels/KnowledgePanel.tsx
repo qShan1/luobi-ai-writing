@@ -171,7 +171,7 @@ export default function KnowledgePanel() {
                   <button
                     onClick={() => handleDeleteDocument(doc)}
                     title={t('knowledge.delete')}
-                    className="opacity-0 group-hover:opacity-100 flex items-center justify-center p-1 rounded transition-colors text-[var(--color-text-muted)] hover:text-red-400 hover:bg-[var(--color-hover)]"
+                    className="opacity-0 group-hover:opacity-100 flex items-center justify-center p-1 rounded transition-colors text-[var(--color-text-muted)] hover:text-red-400 hover:bg-[var(--color-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                   >
                     <Trash2 size={12} />
                   </button>
