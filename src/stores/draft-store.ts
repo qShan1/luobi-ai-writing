@@ -143,7 +143,6 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
       if (filePath.startsWith('luobi://draft/') || filePath.startsWith('luobi://manuscript/')) {
         const prefix = filePath.startsWith('luobi://draft/') ? 'luobi://draft/' : 'luobi://manuscript/'
         targetDraftId = parseInt(filePath.replace(prefix, ''))
-        await ipc.invoke('db:draft-update-content', targetDraftId, mergedText, mergedText.length)
       } else {
         // 从 filePath 解析 chapterNumber 和 version，查出 draftId 再更新
         const chMatch = filePath.match(/ch(\d+)/)
@@ -151,11 +150,17 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
         if (chNum !== undefined) {
           const drafts = await ipc.invoke('db:draft-list', chNum)
           const target = (drafts as unknown as Array<Record<string, unknown>>).find((d) => d.version === version)
-          if (target) {
-            targetDraftId = target.id as number
-            await ipc.invoke('db:draft-update-content', targetDraftId, mergedText, mergedText.length)
-          }
+          if (target) targetDraftId = target.id as number
         }
+      }
+
+      if (targetDraftId) {
+        // 已定稿的草稿不允许被修稿合并覆盖正文（正文文件与 DB 会分叉）
+        const currentMeta = await ipc.invoke('db:draft-get-meta', targetDraftId)
+        if (currentMeta?.status === 'finalized') {
+          return { success: false, error: '已定稿草稿不允许合并修稿，请先创建新版本' }
+        }
+        await ipc.invoke('db:draft-update-content', targetDraftId, mergedText, mergedText.length)
       }
 
       // 更新草稿状态为 revised（直接调用 DB，不走 legacy index）

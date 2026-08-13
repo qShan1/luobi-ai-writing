@@ -239,7 +239,12 @@ export class GenerateDraftCommand extends BaseWorkflowCommand {
     } catch { /* 忽略 */ }
 
     callbacks.log(i18n.t('generateDraft.draftSaved', { ns: 'commands', version: nextVersion, length: draftText.length }))
-    if (gateBlockedReason) throw new Error(gateBlockedReason)
+    if (gateBlockedReason) {
+      // 一致性门禁阻断：草稿已入库但内容不可用，归档该记录，
+      // 避免被当作可继续使用的普通草稿（否则批量/单章会误判"已有草稿"而跳过）。
+      await ipc.invoke('db:draft-update-status', createResult.id, 'archived')
+      throw new Error(gateBlockedReason)
+    }
     return draftText
   }
 

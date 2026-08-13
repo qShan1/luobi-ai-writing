@@ -398,7 +398,8 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
       throw new Error(t('finalize.gateExecutionFailed', { error: String(e) }))
     }
 
-    await ipc.invoke('db:draft-update-content', dbDraft.id, gatedContent, gatedContent.length)
+    const contentResult = await ipc.invoke('db:draft-update-content', dbDraft.id, gatedContent, gatedContent.length)
+    if (!contentResult?.success) throw new Error(contentResult?.error || t('finalize.fileWriteFailed', { error: '' }))
 
     // 【重要】：除了写入 DB，对于已定稿的章节需要实体化为物理文件放在根目录，供外部系统读取或备份
     const safeTitle = chapterTitle ? ` ${chapterTitle.replace(/[/\\]/g, '_')}` : ''
@@ -413,7 +414,8 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
       throw e
     }
 
-    await ipc.invoke('db:draft-update-status', dbDraft.id, 'finalized', gatedContent.length)
+    const statusResult = await ipc.invoke('db:draft-update-status', dbDraft.id, 'finalized', gatedContent.length)
+    if (!statusResult?.success) throw new Error(statusResult?.error || t('finalize.fileWriteFailed', { error: '' }))
 
     callbacks.log(t('finalize.finalizedSaved', { chapter: this.params.chapterNumber, title: safeTitle }))
 

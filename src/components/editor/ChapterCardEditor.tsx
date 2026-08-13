@@ -20,7 +20,7 @@ import {
   type DirectoryWorkflowParams,
 } from '../../services/workflows/directory-workflow'
 import { createChapterWorkflow, createFinalizeWorkflow } from '../../services/workflows/chapter-workflow'
-import { guardDirectoryGeneration } from '../../services/workflow-guards'
+import { guardDirectoryGeneration, guardChapterWriting } from '../../services/workflow-guards'
 import DirectoryConfigDialog from '../dialogs/DirectoryConfigDialog'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
@@ -279,19 +279,35 @@ export default function ChapterCardEditor() {
   const getBatchRunStatus = (runId: string) =>
     useWorkflowStore.getState().history.find(run => run.id === runId)?.status
 
+  const reportBatchResult = (completed: number, skipped: number, failed: number) => {
+    if (failed > 0) {
+      toast.warning(t('chapterCard.batchPartial', { completed, skipped, failed }))
+    } else if (skipped > 0) {
+      toast.success(t('chapterCard.batchSkipped', { completed, skipped }))
+    } else {
+      toast.success(t('chapterCard.batchCompleted', { count: completed }))
+    }
+  }
+
   const handleBatchDrafts = async () => {
     if (!currentProject || batchRunning) return
+    // 有勾选时只处理勾选章节；否则处理全部
+    const scope = selectedChapters.size > 0
+      ? blueprints.filter(b => selectedChapters.has(b.chapterNumber))
+      : blueprints
     const targets: ChapterBlueprint[] = []
-    for (const blueprint of blueprints) {
+    let skipped = 0
+    for (const blueprint of scope) {
       const drafts = await ipc.invoke('db:draft-list', blueprint.chapterNumber)
-      if (drafts.some(d => d.status === 'finalized' || d.status === 'draft' || d.status === 'revised')) continue
+      if (drafts.some(d => d.status === 'finalized' || d.status === 'draft' || d.status === 'revised')) { skipped += 1; continue }
       targets.push(blueprint)
     }
     if (targets.length === 0) {
       toast.info(t('chapterCard.batchNoDraftTargets'))
       return
     }
-    const ok = await confirm(t('chapterCard.batchConfirmDrafts', { count: targets.length }), {
+    const confirmKey = selectedChapters.size > 0 ? 'chapterCard.batchConfirmDraftsSelected' : 'chapterCard.batchConfirmDrafts'
+    const ok = await confirm(t(confirmKey, { count: targets.length }), {
       title: t('chapterCard.batchDrafts'),
       confirmText: t('chapterCard.continueGeneration'),
     })
@@ -299,6 +315,7 @@ export default function ChapterCardEditor() {
 
     setBatchRunning(true)
     let completed = 0
+    let failed = 0
     try {
       for (const blueprint of targets) {
         const runId = await startWorkflow(createChapterWorkflow({
@@ -311,33 +328,40 @@ export default function ChapterCardEditor() {
           suspenseHook: blueprint.suspenseHook,
           userGuidance: blueprint.userGuidance,
         }), false)
-        if (getBatchRunStatus(runId) === 'failed') break
-        completed += 1
+        if (getBatchRunStatus(runId) === 'failed') failed += 1
+        else completed += 1
       }
-      toast.success(t('chapterCard.batchCompleted', { count: completed }))
+      reportBatchResult(completed, skipped, failed)
     } catch (error) {
       toast.error(t('chapterCard.batchStopped', { error: String(error) }))
     } finally {
       setBatchRunning(false)
+      setSelectedChapters(new Set())
     }
   }
 
   const handleBatchFinalize = async () => {
     if (!currentProject || batchRunning) return
+    const scope = selectedChapters.size > 0
+      ? blueprints.filter(b => selectedChapters.has(b.chapterNumber))
+      : blueprints
     const targets: Array<{ blueprint: ChapterBlueprint; draft: { id: number; version: number; status: string; filePath: string } }> = []
-    for (const blueprint of blueprints) {
+    let skipped = 0
+    for (const blueprint of scope) {
       const drafts = await ipc.invoke('db:draft-list', blueprint.chapterNumber)
-      if (drafts.some(d => d.status === 'finalized')) continue
+      if (drafts.some(d => d.status === 'finalized')) { skipped += 1; continue }
       const draft = drafts
         .filter(d => d.status === 'draft' || d.status === 'revised')
         .sort((a, b) => b.version - a.version)[0]
       if (draft) targets.push({ blueprint, draft: { ...draft, filePath: `luobi://draft/${draft.id}` } })
+      else skipped += 1
     }
     if (targets.length === 0) {
       toast.info(t('chapterCard.batchNoFinalizeTargets'))
       return
     }
-    const ok = await confirm(t('chapterCard.batchConfirmFinalize', { count: targets.length }), {
+    const confirmKey = selectedChapters.size > 0 ? 'chapterCard.batchConfirmFinalizeSelected' : 'chapterCard.batchConfirmFinalize'
+    const ok = await confirm(t(confirmKey, { count: targets.length }), {
       title: t('chapterCard.batchFinalize'),
       confirmText: t('chapterCard.finalizeBatch'),
     })
@@ -345,6 +369,7 @@ export default function ChapterCardEditor() {
 
     setBatchRunning(true)
     let completed = 0
+    let failed = 0
     try {
       for (const { blueprint, draft } of targets) {
         const content = await readDraftBody(draft.filePath)
@@ -354,14 +379,15 @@ export default function ChapterCardEditor() {
           draftPath: draft.filePath,
           draftContent: content,
         }), false)
-        if (getBatchRunStatus(runId) === 'failed') break
-        completed += 1
+        if (getBatchRunStatus(runId) === 'failed') failed += 1
+        else completed += 1
       }
-      toast.success(t('chapterCard.batchCompleted', { count: completed }))
+      reportBatchResult(completed, skipped, failed)
     } catch (error) {
       toast.error(t('chapterCard.batchStopped', { error: String(error) }))
     } finally {
       setBatchRunning(false)
+      setSelectedChapters(new Set())
     }
   }
 
@@ -369,7 +395,13 @@ export default function ChapterCardEditor() {
    * 写作此章 — 将当前蓝图信息注入创作弹窗
    * 支持指定章节（默认为当前选中章）
    */
-  const handleWriteChapter = (bp: ChapterBlueprint) => {
+  const handleWriteChapter = async (bp: ChapterBlueprint) => {
+    // 前置校验：蓝图存在 + 前一章已定稿等约束
+    const guard = await guardChapterWriting(bp.chapterNumber)
+    if (!guard.ok) {
+      toast.warning(t('chapterCard.cannotWrite', { message: guard.message }))
+      return
+    }
     // 通过 layout-store openChapterCreation 传递预填参数，替代 window.dispatchEvent
     useLayoutStore.getState().openChapterCreation({
       chapterNumber: bp.chapterNumber,
@@ -571,17 +603,15 @@ export default function ChapterCardEditor() {
                   {t('chapterCard.chapterTitle', { chapter: selected.chapterNumber, title: selected.title || t('chapterCard.unnamed') })}
                 </h3>
                 <div className="flex items-center gap-1.5">
-                  {/* 仅下一章允许写作 */}
-                  {nextWriteChapter !== null && selected.chapterNumber === nextWriteChapter && (
-                    <Button
-                      variant="ai"
-                      size="sm"
-                      onClick={() => handleWriteChapter(selected)}
-                      title={t('chapterCard.writeThisChapterTooltip')}
-                    >
-                      <PenLine size={12} /> {t('chapterCard.writeThisChapter')}
-                    </Button>
-                  )}
+                  {/* 任意选中章节都可发起写作；已存在草稿/定稿时作为“重新生成新版本” */}
+                  <Button
+                    variant={selected.chapterNumber === nextWriteChapter ? 'ai' : 'outline'}
+                    size="sm"
+                    onClick={() => handleWriteChapter(selected)}
+                    title={t('chapterCard.writeThisChapterTooltip')}
+                  >
+                    <PenLine size={12} /> {selected.chapterNumber === nextWriteChapter ? t('chapterCard.writeThisChapter') : t('chapterCard.rewriteChapter')}
+                  </Button>
                   <Button variant="ghost" size="icon" onClick={handleDeleteChapter} title={t('chapterCard.deleteThisChapter')}>
                     <Trash2 size={13} style={{ color: 'var(--color-text-muted)' }} />
                   </Button>
