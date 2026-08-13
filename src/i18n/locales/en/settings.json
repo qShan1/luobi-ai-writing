@@ -146,7 +146,15 @@
     "sponsorship": "Sponsorship & Support",
     "sponsorDescription": "Luobi is developed by an independent team. Your sponsorship helps fund continued maintenance and development. ❤️",
     "businessInquiries": "Business & Technical Collaboration",
-    "businessDescription": "If you're interested in commercial deployment (SaaS licensing), technical implementation details, or AI product direction, feel free to reach out:"
+    "businessDescription": "If you're interested in commercial deployment (SaaS licensing), technical implementation details, or AI product direction, feel free to reach out:",
+    "tagline": "Local-first AI novel writing workbench",
+    "creationMethod": "How Creation Works",
+    "creationMethodDesc": "Luobi keeps project settings, chapter blueprints, character states, and drafts on your local disk. You control the model configuration; generated prose first lands in the draft box, and you decide whether to finalize or export it.",
+    "currentVersion": "Current Version",
+    "currentVersionDesc": "Supports local novel projects, chapter drafts, model configuration, export, and pre-publish organization. Platform login, captcha, and final publishing still require your confirmation.",
+    "sponsorDesc": "If Luobi helps you write, feel free to scan the QR code and support the author.",
+    "alipay": "Alipay",
+    "wechat": "WeChat Pay"
   },
   "promptTemplates": {
     "generate_global_config": { "name": "Global Config Generation", "description": "Generate a complete novel configuration JSON from a one-line user idea" },
@@ -240,7 +248,9 @@
   },
   "settingsFont": {
     "searchPlaceholder": "Search fonts…",
-    "noMatch": "No matching fonts"
+    "noMatch": "No matching fonts",
+    "detected": "Installed on this computer",
+    "detectedEn": "Local font"
   },
   "modelsProviders": {
     "ollama": "Ollama (Local)",

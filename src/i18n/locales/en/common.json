@@ -72,5 +72,7 @@
   "openAndView": "Open & View",
   "ignore": "Ignore",
   "comingSoon": "Coming Soon",
-  "lastAttempt": "Last attempt"
+  "lastAttempt": "Last attempt",
+  "criticalFailed": "Critical failed",
+  "workflowCompleted": "✅ \"{{title}}\" completed"
 }

@@ -76,9 +76,9 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
           activeTabId: tab.id,
         }))
       } else {
-        // 其他类型 Tab：已打开，更新名称并直接激活
+        // 其他类型 Tab：已打开，同步最新内容后直接激活（不覆盖 dirty 标记）
         set((s) => ({
-          tabs: s.tabs.map((t) => t.id === existing.id ? { ...t, name: tab.name } : t),
+          tabs: s.tabs.map((t) => t.id === existing.id ? { ...t, name: tab.name, content: tab.content ?? t.content } : t),
           activeTabId: existing.id,
         }))
       }

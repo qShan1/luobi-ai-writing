@@ -44,6 +44,33 @@ interface ContextMenuProps {
 export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null)
 
+  /** 打开时聚焦第一个可用菜单项 */
+  useEffect(() => {
+    const items = menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not([disabled])')
+    items?.[0]?.focus()
+  }, [])
+
+  /** 箭头键导航 */
+  const handleMenuKeyDown = (e: React.KeyboardEvent) => {
+    const all = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? [])
+    const enabled = all.filter(i => !i.disabled)
+    if (enabled.length === 0) return
+    const idx = enabled.indexOf(document.activeElement as HTMLButtonElement)
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      enabled[(idx + 1) % enabled.length]?.focus()
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      enabled[(idx - 1 + enabled.length) % enabled.length]?.focus()
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      enabled[0]?.focus()
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      enabled[enabled.length - 1]?.focus()
+    }
+  }
+
   /** 点击外部关闭 */
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
@@ -74,7 +101,8 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
     <div
       ref={menuRef}
       role="menu"
-      className="liquid-glass-menu fixed z-[9999] py-1 select-none"
+      tabIndex={-1}
+      className="liquid-glass-menu fixed z-[var(--z-popover)] py-1 select-none"
       style={{
         left,
         top,
@@ -84,6 +112,7 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
         boxShadow: 'var(--shadow-popover)',
       }}
       onContextMenu={e => e.preventDefault()}
+      onKeyDown={handleMenuKeyDown}
     >
       {items.map(entry => {
         /* 分割线 */

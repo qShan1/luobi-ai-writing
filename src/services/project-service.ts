@@ -163,9 +163,14 @@ async function syncEditorTabsForChapter(chapterNumber: number): Promise<void> {
     const { useEditorStore } = await import('../stores/editor-store')
     const tabs = useEditorStore.getState().tabs
 
-    // 找到与该章节相关的已打开 Tab（草稿文件路径包含 ch{N}）
-    const chapterPattern = new RegExp(`/ch${chapterNumber}/`)
-    const relatedTabs = tabs.filter(t => t.filePath && chapterPattern.test(t.filePath))
+    // 找到与该章节相关的已打开 Tab（现行路径是 luobi://draft/{id}，按章节号关联；兼容旧 /ch{N}/ 路径）
+    const drafts = useDraftStore.getState().draftsByChapter[chapterNumber] ?? []
+    const relatedPaths = new Set(drafts.map(d => d.filePath))
+    const legacyPattern = new RegExp(`/ch${chapterNumber}/`)
+    const relatedTabs = tabs.filter(t =>
+      t.chapterNumber === chapterNumber ||
+      (t.filePath && (relatedPaths.has(t.filePath) || legacyPattern.test(t.filePath)))
+    )
 
     for (const tab of relatedTabs) {
       if (!tab.filePath) continue

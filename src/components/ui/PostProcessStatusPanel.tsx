@@ -172,7 +172,7 @@ export function PostProcessStatusPanel({
                 </span>
                 {step.critical && !step.ok && (
                   <span className="shrink-0 px-1 py-0.5 rounded text-[9px] bg-[color-mix(in_srgb,var(--color-error)_15%,transparent)] text-[var(--color-error)]">
-                    {t('completed')}
+                    {t('criticalFailed')}
                   </span>
                 )}
               </div>

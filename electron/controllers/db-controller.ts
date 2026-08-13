@@ -22,6 +22,11 @@ import {
   validateCanonCharacterStateSnapshot,
   validateCanonChapterSummary,
   validateCanonWritebackPayload,
+  validateDraftCreateInput,
+  validateRevisionCreateInput,
+  validateDraftStatusUpdate,
+  validateBlueprintInput,
+  validateCharacterInput,
 } from '../ipc-validation'
 import type {
   TimelineEvent,
@@ -66,8 +71,10 @@ export function registerDatabaseController() {
   })
 
   ipcMain.handle('db:blueprint-upsert', async (_event, data: BlueprintData) => {
+    const v = safeValidate(validateBlueprintInput, data)
+    if (!v.ok) return { success: false, error: v.error }
     try {
-      BlueprintRepository.upsert(data)
+      BlueprintRepository.upsert(v.data)
       return { success: true }
     } catch (err) {
       return { success: false, error: String(err) }
@@ -100,8 +107,10 @@ export function registerDatabaseController() {
   })
 
   ipcMain.handle('db:character-upsert', async (_event, data: CharacterData) => {
+    const v = safeValidate(validateCharacterInput, data)
+    if (!v.ok) return { success: false, error: v.error }
     try {
-      CharacterRepository.upsert(data)
+      CharacterRepository.upsert(v.data)
       return { success: true }
     } catch (err) {
       return { success: false, error: String(err) }
@@ -145,8 +154,10 @@ export function registerDatabaseController() {
     content: string
     wordCount: number
   }) => {
+    const v = safeValidate(validateDraftCreateInput, params)
+    if (!v.ok) return { success: false, error: v.error }
     try {
-      const id = DraftRepository.create(params)
+      const id = DraftRepository.create(v.data)
       return { success: true, id }
     } catch (err) {
       return { success: false, error: String(err) }
@@ -181,8 +192,10 @@ export function registerDatabaseController() {
   })
 
   ipcMain.handle('db:draft-update-status', async (_event, id: number, status: string, wordCount?: number) => {
+    const v = safeValidate(validateDraftStatusUpdate, { id, status, wordCount })
+    if (!v.ok) return { success: false, error: v.error }
     try {
-      DraftRepository.updateStatus(id, status, wordCount)
+      DraftRepository.updateStatus(v.data.id, v.data.status, v.data.wordCount)
       return { success: true }
     } catch (err) {
       return { success: false, error: String(err) }
@@ -210,8 +223,10 @@ ipcMain.handle('db:revision-create', async (_event, params: {
     content: string
     wordCount: number
   }) => {
+    const v = safeValidate(validateRevisionCreateInput, params)
+    if (!v.ok) return { success: false, error: v.error }
     try {
-      const id = RevisionRepository.create(params)
+      const id = RevisionRepository.create(v.data)
       return { success: true, id }
     } catch (err) {
       return { success: false, error: String(err) }

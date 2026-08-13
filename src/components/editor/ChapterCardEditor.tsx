@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useProjectStore } from '../../stores/project-store'
+import { useEditorStore } from '../../stores/editor-store'
 import { useWorkflowStore } from '../../stores/workflow-store'
 import { useLayoutStore } from '../../stores/layout-store'
 import { ipc } from '../../services/ipc-client'
@@ -78,13 +79,43 @@ export default function ChapterCardEditor() {
   // 蓝图生成弹窗（替代原 inline 批量面板）
   const [showBlueprintDialog, setShowBlueprintDialog] = useState(false)
 
+  /** 写回 editor-store 当前 chapter-card Tab，避免切 Tab 丢编辑 */
+  const syncToTab = (list: ChapterBlueprint[], sel: number, markDirty: boolean) => {
+    const store = useEditorStore.getState()
+    const tab = store.tabs.find(t => t.type === 'chapter-card')
+    if (!tab) return
+    const payload = JSON.stringify({ blueprints: list, selectedIdx: sel })
+    if (markDirty) store.updateTabContent(tab.id, payload)
+    else store.syncTabContent(tab.id, payload)
+  }
+
+  const markTabSaved = () => {
+    const tab = useEditorStore.getState().tabs.find(t => t.type === 'chapter-card')
+    if (tab) useEditorStore.getState().markTabSaved(tab.id)
+  }
+
   const loadBlueprints = useCallback(async () => {
     if (!currentProject) return
     setLoading(true)
     try {
-      const data = await loadDirectoryBlueprints()
+      const tab = useEditorStore.getState().tabs.find(t => t.type === 'chapter-card')
+      let parsed: { blueprints: ChapterBlueprint[]; selectedIdx?: number } | null = null
+      if (tab?.content) {
+        try { parsed = JSON.parse(tab.content) } catch { parsed = null }
+      }
+      let data: ChapterBlueprint[]
+      let sel: number | undefined
+      if (Array.isArray(parsed?.blueprints)) {
+        data = parsed!.blueprints
+        sel = parsed!.selectedIdx
+      } else {
+        data = await loadDirectoryBlueprints()
+      }
       setBlueprints(data)
-      if (data.length > 0) setSelectedIdx(0)
+      // 仅当选中章已不存在时才重置为第一项，避免打断当前编辑
+      const selIdx = sel != null && sel >= 0 && sel < data.length ? sel : 0
+      setSelectedIdx(selIdx)
+      syncToTab(data, selIdx, false)
       // 获取下一个待写章节号
       const maxFinalized = await ipc.invoke('db:draft-get-max-finalized-chapter')
       setNextWriteChapter(maxFinalized !== null ? maxFinalized + 1 : 1)
@@ -114,9 +145,11 @@ export default function ChapterCardEditor() {
 
   /** 更新选中章节蓝图的字段 */
   const updateField = <K extends keyof ChapterBlueprint>(key: K, value: ChapterBlueprint[K]) => {
-    setBlueprints(prev =>
-      prev.map((b, i) => (i === selectedIdx ? { ...b, [key]: value } : b))
-    )
+    setBlueprints(prev => {
+      const next = prev.map((b, i) => (i === selectedIdx ? { ...b, [key]: value } : b))
+      syncToTab(next, selectedIdx, true)
+      return next
+    })
     setDirty(true)
   }
 
@@ -124,20 +157,32 @@ export default function ChapterCardEditor() {
   const handleSaveOne = async () => {
     if (!currentProject || !selected) return
     setSaving(true)
-    await saveChapterBlueprint(selected)
-    setSaving(false)
-    setDirty(false)
-    addLog('info', t('chapterCard.blueprintSaved', { chapter: selected.chapterNumber }))
+    try {
+      await saveChapterBlueprint(selected)
+      setDirty(false)
+      markTabSaved()
+      addLog('info', t('chapterCard.blueprintSaved', { chapter: selected.chapterNumber }))
+    } catch (e) {
+      addLog('error', String(e))
+    } finally {
+      setSaving(false)
+    }
   }
 
   /** 全量保存（每章写入独立 JSON 文件） */
   const handleSaveAll = async () => {
     if (!currentProject) return
     setSaving(true)
-    await saveAllBlueprints(blueprints)
-    setSaving(false)
-    setDirty(false)
-    addLog('info', t('chapterCard.allBlueprintsSaved', { count: blueprints.length }))
+    try {
+      await saveAllBlueprints(blueprints)
+      setDirty(false)
+      markTabSaved()
+      addLog('info', t('chapterCard.allBlueprintsSaved', { count: blueprints.length }))
+    } catch (e) {
+      addLog('error', String(e))
+    } finally {
+      setSaving(false)
+    }
   }
 
   /** 新建空章节 */
@@ -155,8 +200,10 @@ export default function ChapterCardEditor() {
       notes: '',
       notesUpdatedAt: '',
     }
-    setBlueprints(prev => [...prev, newBlueprint])
-    setSelectedIdx(blueprints.length)
+    const next = [...blueprints, newBlueprint]
+    setBlueprints(next)
+    setSelectedIdx(next.length - 1)
+    syncToTab(next, next.length - 1, true)
     setDirty(true)
   }
 
@@ -171,7 +218,9 @@ export default function ChapterCardEditor() {
     if (!ok) return
     const newList = blueprints.filter((_, i) => i !== selectedIdx)
     setBlueprints(newList)
-    setSelectedIdx(Math.max(0, selectedIdx - 1))
+    const nextIdx = Math.max(0, selectedIdx - 1)
+    setSelectedIdx(nextIdx)
+    syncToTab(newList, nextIdx, true)
     setDirty(true)
   }
 
@@ -325,11 +374,12 @@ export default function ChapterCardEditor() {
                     ? 'bg-[var(--color-active)] text-[var(--color-text)]'
                     : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)]'
                 )}
-                onClick={() => setSelectedIdx(idx)}
+                onClick={() => { setSelectedIdx(idx); syncToTab(blueprints, idx, false) }}
                 onKeyDown={e => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
                     setSelectedIdx(idx)
+                    syncToTab(blueprints, idx, false)
                   }
                 }}
               >

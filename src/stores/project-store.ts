@@ -115,6 +115,14 @@ export const useProjectStore = create<ProjectState>()((set, get) => ({
   openProject: async (projectPath) => {
     set({ loading: true })
     try {
+      const { useEditorStore } = await import('./editor-store')
+      const dirtyTabs = useEditorStore.getState().tabs.filter(t => t.dirty)
+      if (dirtyTabs.length > 0) {
+        const { confirm } = await import('../components/ui/Confirm')
+        const ok = await confirm(i18n.t('layout.closeProjectConfirm', { ns: 'layout', names: dirtyTabs.map(t => t.name).join('\n') }))
+        if (!ok) return false
+        useEditorStore.getState().clearTabs()
+      }
       const result = await ipc.invoke('project:open', projectPath)
       if (result.success && result.project) {
         set({ currentProject: result.project })

@@ -4,6 +4,27 @@
 
 ---
 
+## 2026-08-13: 四线并行修复 — 数据丢失 / AI 工作流 / 后端持久化 / UI-i18n
+
+**经四路 Agent 审查后按文件域隔离并行修复，全部问题落地，tsc / i18n 测试 / build 通过。**
+
+### A. 前端写作路径（数据丢失）
+- 修稿/审稿/定稿改用编辑器当前内容，不再读取磁盘旧稿；正文章节保存改走 draft-update 并只读；章节蓝图写回 tab.content 标 dirty 并容错；打开项目/退出前对 dirty Tab 确认；定稿后 Tab 按 draftId 刷新；重复点击侧栏同步最新内容；diff Tab 携带真实 draftId/revisionPath；合并前确认未保存修改；config Tab 标 dirty；只读草稿 ⌘S 不保存；三栏合并改用 textContent；删除死代码 DiffViewer。
+
+### B. AI / Agent / 工作流
+- 工具启动工作流不再等待完整循环（消除 30s 超时误判）；定稿 BLOCK 改 throw、写稿 BLOCK 保留全文；确认卡片加 60s 超时 + 切会话自动取消、生成改为 per-conversation；对话改流式并显示推理轮次；工具结果上限提到 12000、修复 @file/@chapter 预取；会话裁剪加摘要前缀 + 每轮消息预算裁剪；仅可重试错误重试；看门狗对齐主进程 30min 且触发时 cancel；等 skill 加载完成再初始化工具；错误信息截断、未知命令提示。
+
+### C. Electron 后端 / 持久化
+- 向量维度改为动态获取（修复默认 embedding 模型导入）；repository 跳过 undefined 防 NULL 覆盖；代理 env 每次请求前重建；迁移索引失败醒目提示且去重不依赖索引；IPC 校验扩展到 draft/revision/blueprint/character/config/llm/fs；API Key 用 safeStorage 加密并兼容旧明文；统计标注当前项目；新增 project:set-current；向量回填改增量不丢库；draft 状态加枚举校验；大文件异步读取；fs 写失败清理 tmp、list-dir 加深度上限；损坏 DB 明确报错；导出文件名净化；无模型时用 BUILTIN_PRESETS 填充默认。
+
+### D. UI / i18n / 清理
+- 修复 LeftToolWindowBar raw key、document.title 乱码、critical 失败徽章文案；删除 Tooltip/Badge/Icon/GlassSurface 等死代码与一批死 CSS 类；Confirm/ContextMenu/Toast/IconBtn a11y 补缺；浮层玻璃统一走 .glass-overlay-panel 门控与降级；--font-sans 双源与重复动效 keyframes 合并；About 区与 FontSelect 硬编码 i18n 化；z-index 统一 token；gold/tab-indicator token 对齐。
+
+### 验证
+- `pnpm exec tsc --noEmit` 通过；`vitest run src/i18n/__tests__/i18n.test.ts` 68/68 通过；`pnpm build` 通过。
+
+---
+
 ## 2026-08-13: 小说配置持久化、Agent 尺寸与设置字体修复
 
 **根据实际运行截图修复四个用户路径问题，不更换架构、不新增依赖。**

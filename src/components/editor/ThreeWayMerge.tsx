@@ -295,7 +295,7 @@ function EditableCell({ text, onChange }: { text: string; onChange: (t: string) 
   return (
     <div ref={ref} className="twm-editable" contentEditable
       suppressContentEditableWarning
-      onInput={e => onChange((e.target as HTMLDivElement).innerText)} />
+      onInput={e => onChange((e.target as HTMLDivElement).textContent ?? '')} />
   )
 }
 

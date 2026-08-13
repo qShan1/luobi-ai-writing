@@ -68,7 +68,7 @@ function migrateProjectDatabase(db: BetterSqlite3.Database): void {
         `)
         db.exec(`CREATE UNIQUE INDEX idx_canon_timeline_unique ON canon_timeline_events(chapter_number, sequence)`)
       } catch (e) {
-        console.warn('[Luobi DB] 添加 canon_timeline unique 约束失败（可能存在冲突数据）:', e)
+        console.error('[Luobi DB] ⚠️ 创建 canon_timeline unique 索引失败，去重将回退到应用层查重（可能存在冲突数据）:', e)
       }
     }
     const factsUnique = db.prepare(
@@ -86,7 +86,7 @@ function migrateProjectDatabase(db: BetterSqlite3.Database): void {
         `)
         db.exec(`CREATE UNIQUE INDEX idx_canon_facts_unique ON canon_facts(statement COLLATE NOCASE)`)
       } catch (e) {
-        console.warn('[Luobi DB] 添加 canon_facts unique 约束失败:', e)
+        console.error('[Luobi DB] ⚠️ 创建 canon_facts unique 索引失败，去重将回退到应用层查重:', e)
       }
     }
     const plotUnique = db.prepare(
@@ -103,7 +103,7 @@ function migrateProjectDatabase(db: BetterSqlite3.Database): void {
         `)
         db.exec(`CREATE UNIQUE INDEX idx_canon_plot_unique ON canon_plot_lines(name COLLATE NOCASE)`)
       } catch (e) {
-        console.warn('[Luobi DB] 添加 canon_plot unique 约束失败:', e)
+        console.error('[Luobi DB] ⚠️ 创建 canon_plot unique 索引失败，去重将回退到应用层查重:', e)
       }
     }
   }

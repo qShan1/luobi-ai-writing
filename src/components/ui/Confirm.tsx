@@ -12,7 +12,7 @@
  */
 
 import { createRoot } from 'react-dom/client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useId } from 'react'
 import { Button } from './Button'
 import i18n from '../../i18n'
 
@@ -40,6 +40,8 @@ function ConfirmDialog({
 }: ConfirmDialogProps) {
   const [isExiting, setIsExiting] = useState(false)
   const confirmBtnRef = useRef<HTMLButtonElement>(null)
+  const titleId = useId()
+  const messageId = useId()
 
   const handleConfirm = () => {
     setIsExiting(true)
@@ -71,12 +73,11 @@ function ConfirmDialog({
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 9998,
+        zIndex: 'var(--z-overlay)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'var(--color-backdrop)',
-        backdropFilter: 'blur(8px)',
         pointerEvents: 'auto',
         /* 为遮罩层的进场同样加入 both 属性防闪烁 */
         animation: isExiting
@@ -89,31 +90,33 @@ function ConfirmDialog({
       <div
         role="dialog"
         aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={messageId}
+        className="glass-overlay-panel"
         style={{
           backgroundColor: 'color-mix(in srgb, var(--color-panel) 70%, transparent)',
           border: '1px solid var(--color-border)',
           borderRadius: 'var(--radius-2xl)',
           boxShadow:
             'inset 0 1px 0 0 rgba(255,255,255,0.35), 0 25px 50px -12px rgba(0,0,0,0.25), var(--shadow-popover)',
-          backdropFilter: 'blur(24px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(160%)',
           padding: '20px 24px',
           minWidth: 380,
           maxWidth: 460,
           /* CSS 动画，使用 both 从而提前应用 0% 关键帧，彻底杜绝闪烁现象 */
           animation: isExiting
             ? 'dialog-exit 0.15s ease-out both'
-            : 'dialog-enter 0.25s var(--transition-spring) both',
+            : 'dialog-enter 0.25s var(--ease-out) both',
         }}
         onClick={e => e.stopPropagation()}
       >
         {/* 标题 */}
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', marginBottom: 10 }}>
+        <div id={titleId} style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', marginBottom: 10 }}>
           {title}
         </div>
 
         {/* 消息体 */}
         <div
+          id={messageId}
           style={{
             fontSize: 12,
             color: 'var(--color-text-secondary)',

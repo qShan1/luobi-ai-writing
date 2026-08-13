@@ -25,10 +25,21 @@ export const readFileTool = buildAgentTool({
   },
   requiresConfirmation: false,
   execute: async (args) => {
-    const filePath = args.file_path as string
+    let filePath = (args.file_path as string) ?? ''
     const project = useProjectStore.getState().currentProject
     if (!project) {
       return { success: false, content: '', error: t('agent.tools.noProject') }
+    }
+
+    // @file 预取未传路径时：回退到当前编辑器打开的文件
+    if (!filePath) {
+      const { useEditorStore } = await import('../../../stores/editor-store')
+      const editor = useEditorStore.getState()
+      const active = editor.tabs.find(t => t.id === editor.activeTabId)
+      if (active?.content) {
+        return { success: true, content: active.content }
+      }
+      filePath = active?.filePath ?? ''
     }
 
     // 路径安全校验

@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
+import { safeStorage } from 'electron'
 import { GlobalConfig } from '../../src/shared/ipc-channels'
 
 export const LUOBI_HOME = path.join(os.homedir(), '.luobi')
@@ -51,6 +52,24 @@ export function readJsonArray<T>(filePath: string): T[] {
 export function writeJsonFile(filePath: string, data: unknown) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true })
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8')
+}
+
+/** 用系统级 safeStorage 加密敏感字符串，失败时返回空串（不阻断保存） */
+export function encryptSecret(plain: string): string {
+  try {
+    if (!plain) return ''
+    if (!safeStorage.isEncryptionAvailable()) return ''
+    return safeStorage.encryptString(plain).toString('base64')
+  } catch { return '' }
+}
+
+/** 解密 safeStorage 密文；密文为空或解密失败返回空串 */
+export function decryptSecret(enc: string): string {
+  try {
+    if (!enc) return ''
+    if (!safeStorage.isEncryptionAvailable()) return ''
+    return safeStorage.decryptString(Buffer.from(enc, 'base64'))
+  } catch { return '' }
 }
 
 export const GLOBAL_CONFIG_PATH = path.join(LUOBI_HOME, 'config.json')

@@ -3,6 +3,10 @@ import fs from 'node:fs'
 import fsPromises from 'node:fs/promises'
 import path from 'node:path'
 import { FileNode } from '../../src/shared/ipc-channels'
+import { checkStringLength } from '../ipc-validation'
+
+/** list-dir 的最大递归深度，防止深目录无限展开拖垮主进程 */
+const MAX_LIST_DEPTH = 6
 
 // 全局文件操作锁（按文件绝对路径分配 Mutex 队列）
 const fileMutexMap = new Map<string, Promise<void>>()
@@ -50,12 +54,20 @@ export function registerFSController() {
   // 跨平台绝对安全异步写入（防踩空）
   ipcMain.handle('fs:write-file', async (_event, filePath: string, content: string) => {
     try {
+      checkStringLength(filePath, 'fs:write-file.filePath', { min: 1, max: 4096 })
+      checkStringLength(content, 'fs:write-file.content', { max: 50_000_000 })
       return await withFileMutex(filePath, async () => {
         await fsPromises.mkdir(path.dirname(filePath), { recursive: true })
         // 先写到临时文件再原位替换，绝对防止 0KB 碎屑踩空现象
         const tempPath = `${filePath}.${Date.now()}.tmp`
-        await fsPromises.writeFile(tempPath, content, 'utf-8')
-        await fsPromises.rename(tempPath, filePath)
+        try {
+          await fsPromises.writeFile(tempPath, content, 'utf-8')
+          await fsPromises.rename(tempPath, filePath)
+        } catch (error) {
+          // rename 失败时清理残留的 .tmp，避免堆积
+          try { await fsPromises.unlink(tempPath) } catch { /* 忽略清理失败 */ }
+          throw error
+        }
         return { success: true }
       })
     } catch (error) {
@@ -64,11 +76,7 @@ export function registerFSController() {
   })
 
   ipcMain.handle('fs:list-dir', async (_event, dirPath: string): Promise<FileNode[]> => {
-    try {
-      return readDirRecursive(dirPath)
-    } catch {
-      return []
-    }
+    return readDirRecursive(dirPath)
   })
 
   ipcMain.handle('fs:mkdir', async (_event, dirPath: string) => {
@@ -100,8 +108,14 @@ export function registerFSController() {
       return await withFileMutex(filePath, async () => {
         await fsPromises.mkdir(path.dirname(filePath), { recursive: true })
         const tempPath = `${filePath}.${Date.now()}.tmp`
-        await fsPromises.writeFile(tempPath, JSON.stringify(data, null, 2), 'utf-8')
-        await fsPromises.rename(tempPath, filePath)
+        try {
+          await fsPromises.writeFile(tempPath, JSON.stringify(data, null, 2), 'utf-8')
+          await fsPromises.rename(tempPath, filePath)
+        } catch (error) {
+          // rename 失败时清理残留的 .tmp，避免堆积
+          try { await fsPromises.unlink(tempPath) } catch { /* 忽略清理失败 */ }
+          throw error
+        }
         return { success: true }
       })
     } catch (error) {
@@ -110,8 +124,15 @@ export function registerFSController() {
   })
 }
 
-function readDirRecursive(dirPath: string): FileNode[] {
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true })
+function readDirRecursive(dirPath: string, depth = 0): FileNode[] {
+  if (depth > MAX_LIST_DEPTH) return []
+  let entries
+  try {
+    entries = fs.readdirSync(dirPath, { withFileTypes: true })
+  } catch {
+    // 单节点读取失败时跳过该节点，不整体返回空
+    return []
+  }
   return entries
     .filter((e) => !e.name.startsWith('.'))
     .sort((a, b) => {
@@ -121,7 +142,7 @@ function readDirRecursive(dirPath: string): FileNode[] {
     .map((entry) => {
       const fullPath = path.join(dirPath, entry.name)
       if (entry.isDirectory()) {
-        return { name: entry.name, path: fullPath, isDir: true, children: readDirRecursive(fullPath) }
+        return { name: entry.name, path: fullPath, isDir: true, children: readDirRecursive(fullPath, depth + 1) }
       }
       return { name: entry.name, path: fullPath, isDir: false }
     })

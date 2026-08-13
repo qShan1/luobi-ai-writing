@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { Save, Sparkles, Info, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useProjectStore } from '../../stores/project-store'
+import { useEditorStore } from '../../stores/editor-store'
 import { useLLMStore } from '../../stores/llm-store'
 import { useWorkflowStore } from '../../stores/workflow-store'
 import type { NovelConfig } from '../../shared/ipc-channels'
@@ -63,8 +64,14 @@ export default function NovelConfigEditor() {
   )
 
   // 直接写 Store — 消除双向同步风险
+  const markConfigDirty = () => {
+    const store = useEditorStore.getState()
+    const tab = store.tabs.find(t => t.type === 'config')
+    if (tab) store.updateTabContent(tab.id, JSON.stringify(useProjectStore.getState().currentProject?.novelConfig ?? {}))
+  }
   const update = <K extends keyof NovelConfig>(key: K, value: NovelConfig[K]) => {
     updateNovelConfig({ [key]: value })
+    markConfigDirty()
   }
 
   /** 保存配置 — Store 已是最新数据，仅需持久化到磁盘 */
@@ -73,6 +80,9 @@ export default function NovelConfigEditor() {
     setSaving(true)
     try {
       await saveProject()
+      const store = useEditorStore.getState()
+      const tab = store.tabs.find(t => t.type === 'config')
+      if (tab) store.markTabSaved(tab.id)
       addLog('info', `📝 ${t('novelConfig.messages.configSaved')}`)
     } catch (error) {
       console.error('[NovelConfigEditor] Save failed:', error)
@@ -322,6 +332,7 @@ export default function NovelConfigEditor() {
         onGenerated={(parsed) => {
           // 直接写 Store，组件自动重新渲染
           updateNovelConfig(parsed)
+          markConfigDirty()
         }}
       />
     </div>

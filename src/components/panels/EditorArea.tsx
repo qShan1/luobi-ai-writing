@@ -104,6 +104,7 @@ function ProseEditorWrapper({
           mode="prose"
           content={tab.content ?? ''}
           filePath={tab.filePath}
+          editable={false}
           hideStatusBar
           onCharCountChange={setWordCount}
           onChange={(text) => {
@@ -597,7 +598,13 @@ export default function EditorArea({ onNewProject }: EditorAreaProps) {
             tab={activeTab}
             onSave={async (text) => {
               if (!activeTab.filePath) return
-              await ipc.invoke('fs:write-file', activeTab.filePath, text)
+              if (activeTab.filePath.startsWith('luobi://')) {
+                const prefix = activeTab.filePath.startsWith('luobi://draft/') ? 'luobi://draft/' : 'luobi://manuscript/'
+                const draftId = parseInt(activeTab.filePath.replace(prefix, ''))
+                await ipc.invoke('db:draft-update-content', draftId, text, text.length)
+              } else {
+                await ipc.invoke('fs:write-file', activeTab.filePath, text)
+              }
               // 清除 dirty 标记 + 同步内容 + 刷新章节名缓存
               useEditorStore.getState().markTabSaved(activeTab.id)
               useEditorStore.getState().syncTabContent(activeTab.id, text)

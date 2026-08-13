@@ -58,7 +58,7 @@ export const startWorkflowTool = buildAgentTool({
       if (workflow === 'generate_blueprint') {
         const { createDirectoryWorkflow } = await import('../../workflows/directory-workflow')
         definition = createDirectoryWorkflow({ mode: 'full' }) as unknown as ReturnType<typeof createChapterWorkflow>
-        await useWorkflowStore.getState().startWorkflow(definition as never)
+        void useWorkflowStore.getState().startWorkflow(definition as never)
         return {
           success: true,
           content: t('agent.tools.startWorkflow.started', { name: t('agent.tools.startWorkflow.generateBlueprint') }),
@@ -68,7 +68,7 @@ export const startWorkflowTool = buildAgentTool({
 
       if (workflow === 'generate_architecture') {
         const { createArchitectureWorkflow } = await import('../../workflows/architecture-workflow')
-        await useWorkflowStore.getState().startWorkflow(createArchitectureWorkflow() as never)
+        void useWorkflowStore.getState().startWorkflow(createArchitectureWorkflow() as never)
         return {
           success: true,
           content: t('agent.tools.startWorkflow.started', { name: t('agent.tools.startWorkflow.generateArchitecture') }),
@@ -93,7 +93,7 @@ export const startWorkflowTool = buildAgentTool({
 
       if (workflow === 'generate_draft') {
         definition = createChapterWorkflow(base) as ReturnType<typeof createChapterWorkflow>
-        await useWorkflowStore.getState().startWorkflow(definition as never)
+        void useWorkflowStore.getState().startWorkflow(definition as never)
         return {
           success: true,
           content: t('agent.tools.startWorkflow.started', { name: t('agent.tools.startWorkflow.writeDraft', { chapter }) }),
@@ -114,7 +114,7 @@ export const startWorkflowTool = buildAgentTool({
           draftPath,
           draftContent,
         }) as ReturnType<typeof createChapterWorkflow>
-        await useWorkflowStore.getState().startWorkflow(definition as never)
+        void useWorkflowStore.getState().startWorkflow(definition as never)
         return {
           success: true,
           content: t('agent.tools.startWorkflow.started', { name: t('agent.tools.startWorkflow.review', { chapter }) }),
@@ -129,7 +129,7 @@ export const startWorkflowTool = buildAgentTool({
           draftPath,
           draftContent,
         }) as ReturnType<typeof createChapterWorkflow>
-        await useWorkflowStore.getState().startWorkflow(definition as never)
+        void useWorkflowStore.getState().startWorkflow(definition as never)
         return {
           success: true,
           content: t('agent.tools.startWorkflow.started', { name: t('agent.tools.startWorkflow.refine', { chapter }) }),
@@ -144,7 +144,7 @@ export const startWorkflowTool = buildAgentTool({
           draftPath,
           draftContent,
         }) as ReturnType<typeof createChapterWorkflow>
-        await useWorkflowStore.getState().startWorkflow(definition as never)
+        void useWorkflowStore.getState().startWorkflow(definition as never)
         return {
           success: true,
           content: t('agent.tools.startWorkflow.started', { name: t('agent.tools.startWorkflow.finalize', { chapter }) }),

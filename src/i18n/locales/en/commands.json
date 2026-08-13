@@ -358,6 +358,7 @@
     "reviewFixGateError": "  ❌ [Canon] Review fix Gate exception: {{error}}",
     "finalizeGateVerdict": "  [Gate] {{verdict}}: {{report}}",
     "finalizeGateBlocked": "  [Gate] BLOCKED - HIGH conflicts. Please refine and retry.",
+    "finalizeGateBlockedReport": "Narrative consistency gate blocked finalization: {{report}}",
     "finalizeGateRepaired": "  [Gate] REPAIRED ({{attempts}} attempts)",
     "finalizeGateError": "  [Gate] error: {{error}}",
     "reviewResultFormat": "Review report: Ch.{{chapter}}",

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Brain, ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from './Button'
@@ -340,12 +340,13 @@ function CodeBlock({ lang, code, t }: { lang: string; code: string; t: (key: str
 
 /** 流式生成时末尾显示的闪烁光标 */
 export function StreamingCursor() {
+  const reduce = useReducedMotion()
   return (
     <motion.span
       className="inline-block w-[3px] h-3 ml-0.5 rounded-sm align-middle"
       style={{ backgroundColor: 'var(--color-accent)' }}
-      animate={{ opacity: [0.25, 1, 0.25], scale: [1, 1.15, 1] }}
-      transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+      animate={reduce ? { opacity: 0.6 } : { opacity: [0.25, 1, 0.25], scale: [1, 1.15, 1] }}
+      transition={reduce ? undefined : { duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
     />
   )
 }

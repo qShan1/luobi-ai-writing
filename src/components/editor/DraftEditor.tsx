@@ -140,7 +140,7 @@ export default function DraftEditor({ filePath, content }: Props) {
       const { useWorkflowStore } = await import('../../stores/workflow-store')
       const { createRefineOnlyWorkflow } = await import('../../services/workflows/chapter-workflow')
 
-      const body = await readDraftBody(filePath)
+      const body = currentBodyRef.current
 
       useWorkflowStore.getState().startWorkflow(createRefineOnlyWorkflow({
         chapterNumber: meta.chapterNumber,
@@ -161,7 +161,7 @@ export default function DraftEditor({ filePath, content }: Props) {
       const { useWorkflowStore } = await import('../../stores/workflow-store')
       const { createReviewOnlyWorkflow } = await import('../../services/workflows/chapter-workflow')
 
-      const body = await readDraftBody(filePath)
+      const body = currentBodyRef.current
 
       useWorkflowStore.getState().startWorkflow(createReviewOnlyWorkflow({
         chapterNumber: meta.chapterNumber,
@@ -190,7 +190,7 @@ export default function DraftEditor({ filePath, content }: Props) {
       const { useWorkflowStore } = await import('../../stores/workflow-store')
       const { createFinalizeWorkflow } = await import('../../services/workflows/chapter-workflow')
 
-      const body = await readDraftBody(filePath)
+      const body = currentBodyRef.current
 
       useWorkflowStore.getState().startWorkflow(createFinalizeWorkflow({
         chapterNumber: meta.chapterNumber,
@@ -477,7 +477,7 @@ export default function DraftEditor({ filePath, content }: Props) {
             currentBodyRef.current = text
             useEditorStore.getState().updateTabContent(filePath, text)
           }}
-          onSave={(text) => doSave(text)}
+          onSave={isReadonly ? undefined : (text) => doSave(text)}
         />
 
 

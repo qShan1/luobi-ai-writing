@@ -33,21 +33,20 @@ type SettingsSection = 'language' | 'llm' | 'embedding' | 'proxy' | 'editor' | '
 
 interface SectionItem {
   id: SettingsSection
-  label: string
   icon: React.ReactNode
   descriptionKey: string
 }
 
 const SECTIONS: SectionItem[] = [
-  { id: 'language', label: 'Language', icon: <Languages size={16} />, descriptionKey: 'general.languageDesc' },
-  { id: 'llm', label: 'AI Models', icon: <Cpu size={16} />, descriptionKey: 'general.llmDesc' },
-  { id: 'embedding', label: 'Embedding Models', icon: <Database size={16} />, descriptionKey: 'general.embeddingDesc' },
-  { id: 'proxy', label: 'Network Proxy', icon: <Globe size={16} />, descriptionKey: 'general.proxyDesc' },
-  { id: 'editor', label: 'Editor', icon: <Type size={16} />, descriptionKey: 'general.editorDesc' },
-  { id: 'effects', label: 'Visual Effects', icon: <Sparkles size={16} />, descriptionKey: 'general.effectsDesc' },
-  { id: 'prompts', label: 'Prompt Templates', icon: <MessageSquare size={16} />, descriptionKey: 'general.promptsDesc' },
-  { id: 'window', label: 'Window & Tray', icon: <PanelBottomClose size={16} />, descriptionKey: 'general.windowDesc' },
-  { id: 'about', label: 'About & Support', icon: <span style={{ color: 'var(--color-error)', fontSize: 14 }}>❤️</span>, descriptionKey: 'general.aboutDesc' },
+  { id: 'language', icon: <Languages size={16} />, descriptionKey: 'general.languageDesc' },
+  { id: 'llm', icon: <Cpu size={16} />, descriptionKey: 'general.llmDesc' },
+  { id: 'embedding', icon: <Database size={16} />, descriptionKey: 'general.embeddingDesc' },
+  { id: 'proxy', icon: <Globe size={16} />, descriptionKey: 'general.proxyDesc' },
+  { id: 'editor', icon: <Type size={16} />, descriptionKey: 'general.editorDesc' },
+  { id: 'effects', icon: <Sparkles size={16} />, descriptionKey: 'general.effectsDesc' },
+  { id: 'prompts', icon: <MessageSquare size={16} />, descriptionKey: 'general.promptsDesc' },
+  { id: 'window', icon: <PanelBottomClose size={16} />, descriptionKey: 'general.windowDesc' },
+  { id: 'about', icon: <span style={{ color: 'var(--color-error)', fontSize: 14 }}>❤️</span>, descriptionKey: 'general.aboutDesc' },
 ]
 
 const MemoPromptSettings = memo(PromptSettings)
@@ -101,8 +100,8 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-       style={{ backgroundColor: 'rgba(0,0,0,0.42)', backdropFilter: 'blur(12px)' }}
+      className="glass-overlay-panel fixed inset-0 z-[var(--z-modal)] flex items-center justify-center"
+      style={{ backgroundColor: 'rgba(0,0,0,0.42)' }}
       initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -908,7 +907,7 @@ function FontSelect({
     ipc.invoke('config:list-system-fonts').then((fonts) => {
       const known = new Set(FONT_OPTIONS.map((item) => item.label.toLowerCase()))
       const detected = fonts.filter((name) => !known.has(name.toLowerCase())).map((name) => ({
-        id: `system:${name}`, label: name, labelEn: 'Local font', desc: '当前电脑已安装',
+        id: `system:${name}`, label: name, labelEn: t('settingsFont.detectedEn'), desc: t('settingsFont.detected'),
         family: `'${name.replace(/'/g, "\\'")}', sans-serif`, preview: '中文小说 Aa 123',
       }))
       setOptions([...FONT_OPTIONS, ...detected])
@@ -1245,50 +1244,51 @@ function WindowSection() {
 // ==================== 关于与支持区 ====================
 
 function AboutSection() {
+  const { t } = useTranslation('settings')
   return (
     <div className="space-y-6 max-w-[600px] p-2">
       <div className="liquid-glass-panel flex flex-col items-center justify-center py-8 rounded-xl space-y-2" style={{ border: '1px solid var(--color-border)' }}>
         <h1 className="text-2xl font-bold brand-gradient tracking-wider">落笔</h1>
         <p className="text-sm opacity-80" style={{ color: 'var(--color-text)' }}>v{__APP_VERSION__}</p>
-        <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>本地优先的 AI 小说创作工作台</p>
+        <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>{t('about.tagline')}</p>
       </div>
 
       <div className="space-y-4 pt-2">
-        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>创作方式</h3>
+        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>{t('about.creationMethod')}</h3>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-          落笔将项目设定、章节蓝图、人物状态和草稿保存在本地。模型配置由你自己掌控；正文生成后先进入草稿，再由你决定是否定稿或导出。
+          {t('about.creationMethodDesc')}
         </p>
       </div>
 
       <div className="space-y-4 pt-4">
-        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>当前版本</h3>
+        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>{t('about.currentVersion')}</h3>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-          支持本地小说项目、章节草稿、模型配置、导出和发布前整理。平台登录、验证码与最终发布仍由你确认。
+          {t('about.currentVersionDesc')}
         </p>
       </div>
 
       {/* 支持与赞助 — 收款码 */}
       <div className="space-y-4 pt-4">
-        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>支持与赞助</h3>
+        <h3 className="text-title-section pb-2" style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text)' }}>{t('about.sponsorship')}</h3>
         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-          如果落笔对你有帮助，欢迎扫码支持作者。
+          {t('about.sponsorDesc')}
         </p>
         <div className="flex items-start gap-6 pt-2">
           <div className="flex flex-col items-center gap-2">
             <img
               src="./buyme/alipay.jpg"
-              alt="支付宝收款码"
+              alt={t('about.alipay')}
               style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--color-border)' }}
             />
-            <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>支付宝</span>
+            <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{t('about.alipay')}</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <img
               src="./buyme/wepay.jpg"
-              alt="微信收款码"
+              alt={t('about.wechat')}
               style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--color-border)' }}
             />
-            <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>微信支付</span>
+            <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{t('about.wechat')}</span>
           </div>
         </div>
       </div>

@@ -179,8 +179,18 @@ export const useDraftStore = create<DraftState>()((set, get) => ({
       const editorState = useEditorStore.getState()
       const targetTab = editorState.tabs.find(t => t.filePath === filePath)
       if (targetTab) {
-        editorState.syncTabContent(targetTab.id, mergedText)
-        editorState.markTabSaved(targetTab.id)
+        if (!targetTab.dirty) {
+          editorState.syncTabContent(targetTab.id, mergedText)
+          editorState.markTabSaved(targetTab.id)
+        } else {
+          const { confirm } = await import('../components/ui/Confirm')
+          const i18n = (await import('../i18n')).default
+          const ok = await confirm(i18n.t('layout.closeProjectConfirm', { ns: 'layout', names: targetTab.name }))
+          if (ok) {
+            editorState.syncTabContent(targetTab.id, mergedText)
+            editorState.markTabSaved(targetTab.id)
+          }
+        }
       }
 
       if (chapterNumber !== undefined) {

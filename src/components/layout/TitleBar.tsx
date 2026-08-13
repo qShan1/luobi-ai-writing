@@ -191,14 +191,13 @@ export default function TitleBar() {
         />
 
         {/* 主题切换 */}
-        <button
+        <IconBtn
           onClick={cycleTheme}
           title={t('titleBar.themeLabel', { theme: t(`titleBar.theme${theme.charAt(0).toUpperCase() + theme.slice(1)}`) })}
-          className="icon-btn"
-          style={{ width: 24, height: 22 }}
+          size={22}
         >
           <ThemeIcon size={13} strokeWidth={1.5} />
-        </button>
+        </IconBtn>
 
         {/* 设置 */}
         <IconBtn onClick={() => openSettings()} title={t('titleBar.settings')} size={22}>

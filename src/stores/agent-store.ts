@@ -7,7 +7,6 @@ import { skillRegistry } from '../services/agent/skill-registry'
 import { parseSlashCommand, parseMentions, mentionsToToolCalls } from '../services/agent/intent-router'
 import { toolRegistry } from '../services/agent/tool-registry'
 import type { ToolArtifact } from '../services/agent/tool-registry'
-import { ipc } from '../services/ipc-client'
 import i18n from '../i18n'
 
 // ===== 类型定义 =====
@@ -56,6 +55,8 @@ interface AgentState {
   defaultMode: AgentMode
   /** 当前是否正在生成（用于 UI 状态） */
   generating: boolean
+  /** 正在生成的会话 ID 集合（per-conversation，互不锁死） */
+  generatingConversationIds: string[]
   /** 当前流式请求 ID（用于取消） */
   activeRequestId: string | null
   /** Tool 系统是否已初始化 */
@@ -67,7 +68,7 @@ interface AgentState {
 
   // ===== Actions =====
   /** 初始化 Tool 系统 */
-  initializeTools: () => void
+  initializeTools: () => Promise<void>
   /** 新建会话并激活 */
   createConversation: () => AgentConversation
   /** 激活指定会话 */
@@ -96,6 +97,16 @@ interface AgentState {
 
 /** 生成唯一 ID */
 const genId = () => crypto.randomUUID()
+
+/** 截断过长的错误信息（UI 直接渲染用） */
+const truncateError = (err: unknown, max = 300): string => {
+  const s = typeof err === 'string' ? err : String(err)
+  return s.length > max ? s.slice(0, max) + '…' : s
+}
+
+/** 活跃会话是否正在生成 */
+const isConvGenerating = (ids: string[], activeId: string | null): boolean =>
+  activeId !== null && ids.includes(activeId)
 
 /** 从消息内容生成会话标题 */
 const generateTitle = (content: string): string => {
@@ -136,7 +147,17 @@ const generateHelpText = (): string => {
 /** 存储待确认的 Tool 回调 */
 const pendingConfirmations = new Map<string, {
   resolve: (confirmed: boolean) => void
+  timer: ReturnType<typeof setTimeout>
 }>()
+
+/** 拒绝/接受所有待确认回调（切换会话、新建会话、取消时调用） */
+const resolveAllPendingConfirmations = (confirmed: boolean) => {
+  for (const [, pending] of pendingConfirmations) {
+    clearTimeout(pending.timer)
+    pending.resolve(confirmed)
+  }
+  pendingConfirmations.clear()
+}
 
 /** 当前活跃的 AbortController（用于取消 ReAct 循环） */
 let activeAbortController: AbortController | null = null
@@ -149,6 +170,7 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
   showHistory: false,
   defaultMode: 'planning',
   generating: false,
+  generatingConversationIds: [],
   activeRequestId: null,
   toolsInitialized: false,
 
@@ -157,17 +179,23 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
     return conversations.find(c => c.id === activeConversationId) ?? null
   },
 
-  initializeTools: () => {
+  initializeTools: async () => {
     if (get().toolsInitialized) return
     registerBuiltinTools()
-    // 加载 Skill（内置 + 用户 + 项目级）
-    skillRegistry.loadAll().catch(e => console.warn('[Agent] Skill 加载失败:', e))
+    // 加载 Skill（内置 + 用户 + 项目级）——必须等加载完成再置标志，否则首轮会漏 Skill 工具
+    try {
+      await skillRegistry.loadAll()
+    } catch (e) {
+      console.warn('[Agent] Skill 加载失败:', e)
+    }
     set({ toolsInitialized: true })
   },
 
   createConversation: () => {
     // 确保 Tool 已初始化
-    get().initializeTools()
+    void get().initializeTools()
+    // 新建会话：自动拒绝所有待确认回调
+    resolveAllPendingConfirmations(false)
 
     const llmStore = useLLMStore.getState()
     const newConv: AgentConversation = {
@@ -183,12 +211,15 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
       conversations: [newConv, ...state.conversations],
       activeConversationId: newConv.id,
       showHistory: false,
+      generating: false,
     }))
     return newConv
   },
 
   selectConversation: (id) => {
-    set({ activeConversationId: id, showHistory: false })
+    // 切换会话：自动拒绝所有待确认回调
+    resolveAllPendingConfirmations(false)
+    set({ activeConversationId: id, showHistory: false, generating: isConvGenerating(get().generatingConversationIds, id) })
   },
 
   deleteConversation: (id) => {
@@ -239,15 +270,33 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
   },
 
   sendMessage: async (content) => {
-    if (!content.trim() || get().generating) return
+    if (!content.trim()) return
+    // per-conversation 生成锁：仅当前会话正在生成时阻止
+    if (isConvGenerating(get().generatingConversationIds, get().activeConversationId)) return
 
     // 确保 Tool 已初始化
-    get().initializeTools()
+    await get().initializeTools()
 
     // ===== P0-4: / 命令拦截 =====
     const trimmedContent = content.trim()
     if (trimmedContent.startsWith('/')) {
       const { command, args } = parseSlashCommand(trimmedContent)
+      if (!command) {
+        // 未知命令：直接提示，不发给模型
+        const unknownConv = get().getActiveConversation() ?? get().createConversation()
+        const unknownMsg: AgentMessage = {
+          id: genId(),
+          role: 'assistant',
+          content: i18n.t('agent.unknownCommand', { ns: 'stores', cmd: trimmedContent.split(' ')[0] }),
+          createdAt: Date.now(),
+        }
+        set(state => ({
+          conversations: state.conversations.map(c =>
+            c.id === unknownConv.id ? { ...c, messages: [...c.messages, unknownMsg] } : c
+          ),
+        }))
+        return
+      }
       if (command) {
         switch (command.name) {
           case 'clear': {
@@ -330,6 +379,7 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
     // 把用户消息 + 空助手消息写入会话
     set(state => ({
       generating: true,
+      generatingConversationIds: [...state.generatingConversationIds.filter(id => id !== convId), convId],
       conversations: state.conversations.map(c =>
         c.id === convId
           ? {
@@ -367,7 +417,10 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
         updateAssistantMsg(m => ({
           ...m, content: i18n.t('agent.needModel', { ns: 'stores' }), streaming: false,
         }))
-        set({ generating: false })
+        set(state => ({
+          generating: false,
+          generatingConversationIds: state.generatingConversationIds.filter(id => id !== convId),
+        }))
         return
       }
 
@@ -398,41 +451,58 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
         }
       }
 
-      // 构造历史消息（取最近 16 条非流式消息）
-      const historyMessages: LLMMessage[] = currentConv.messages
+      // 构造历史消息：超窗部分压成一段 system 摘要前缀，保留最近 16 条
+      const allHistory = currentConv.messages
         .filter(m => !m.streaming && m.role !== 'system')
-        .slice(-16)
-        .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
-
-      // LLM 生成函数（封装为非流式调用，Agent 专用参数；支持 requestId 取消）
-      let agentRequestId: string | null = null
-      const generateFn = async (messages: LLMMessage[], mid: string): Promise<string> => {
-        // 每次调用生成独立 requestId，注册到主进程 activeStreams，供 llm:cancel 中断
-        agentRequestId = crypto.randomUUID()
-        set({ activeRequestId: agentRequestId })
-        const request = {
-          requestId: agentRequestId,
-          modelId: mid,
-          messages: messages.map(m => ({ role: m.role, content: m.content })),
-          maxTokens: 4096,     // Agent 需要足够 Token 空间来输出推理 + tool_call
-          temperature: 0.7,    // 创作场景适度随机
-        }
-        try {
-          const response = await ipc.invoke('llm:generate', request)
-          const res = response as { success: boolean; content: string; error?: string }
-          if (!res.success) {
-            throw new Error(res.error ?? 'LLM 生成失败')
-          }
-          return res.content
-        } finally {
-          agentRequestId = null
-        }
+      const droppedCount = Math.max(0, allHistory.length - 16)
+      const historyMessages: LLMMessage[] = []
+      if (droppedCount > 0) {
+        const droppedText = allHistory.slice(0, droppedCount)
+          .map(m => (m.role === 'user' ? '用户' : '助手') + ': ' + m.content.slice(0, 200))
+          .join('\n')
+        historyMessages.push({
+          role: 'system',
+          content: i18n.t('agent.historySummary', { ns: 'stores', count: droppedCount }) + '\n' + droppedText.slice(0, 3000),
+        })
       }
+      historyMessages.push(...allHistory.slice(-16).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })))
 
       // AbortController 用于取消（P1-7: 提升到模块级变量以便 cancelGeneration 访问）
       const abortController = new AbortController()
       activeAbortController = abortController
       set({ activeRequestId: assistantMsg.id })
+
+      // LLM 生成函数：复用 llm-store 流式入口（逐 chunk 有中间反馈），支持 requestId 取消
+      const sendStartedAt = Date.now()
+      let roundCount = 0
+      const generateFn = async (messages: LLMMessage[], mid: string): Promise<string> => {
+        const requestId = crypto.randomUUID()
+        set({ activeRequestId: requestId })
+        roundCount++
+        if (roundCount > 1) {
+          updateAssistantMsg(m => ({
+            ...m,
+            content: m.content + '\n\n_' + i18n.t('agent.thinkingRound', { ns: 'stores', round: roundCount, elapsed: Math.round((Date.now() - sendStartedAt) / 1000) }) + '_',
+          }))
+        }
+        try {
+          return await new Promise<string>((resolve, reject) => {
+            useLLMStore.getState().generateStream(
+              messages.map(m => ({ role: m.role, content: m.content })),
+              {
+                onDone: (text) => resolve(text),
+                onError: (err) => reject(new Error(err)),
+              },
+              mid,
+              { maxTokens: 4096 },   // Agent 需要足够 Token 空间来输出推理 + tool_call
+            ).catch(reject)
+          })
+        } catch (error) {
+          // 用户主动取消：静默返回，让 ReAct 循环在 abort 检查处优雅收尾
+          if (abortController.signal.aborted) return ''
+          throw error
+        }
+      }
 
       // 启动 ReAct 循环（使用预取增强后的用户消息）
       await runAgentLoop(
@@ -478,9 +548,16 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
               ),
             }))
 
-            // 返回 Promise，等待用户通过 resolveToolConfirmation 响应
+            // 返回 Promise，等待用户通过 resolveToolConfirmation 响应；60s 无响应自动拒绝
             return new Promise<boolean>((resolve) => {
-              pendingConfirmations.set(toolCall.id, { resolve })
+              const timer = setTimeout(() => {
+                const pending = pendingConfirmations.get(toolCall.id)
+                if (pending) {
+                  pendingConfirmations.delete(toolCall.id)
+                  pending.resolve(false)
+                }
+              }, 60_000)
+              pendingConfirmations.set(toolCall.id, { resolve, timer })
             })
           },
           onDone: (fullText, toolCalls, artifacts) => {
@@ -499,21 +576,32 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
               toolCalls,
               artifacts: artifacts.length > 0 ? artifacts : undefined,
             }))
-            set(state => ({
-              generating: false,
-              activeRequestId: null,
-              conversations: state.conversations.map(c =>
-                c.id === convId ? { ...c, updatedAt: Date.now() } : c
-              ),
-            }))
+            set(state => {
+              const ids = state.generatingConversationIds.filter(id => id !== convId)
+              return {
+                generating: isConvGenerating(ids, state.activeConversationId),
+                generatingConversationIds: ids,
+                activeRequestId: null,
+                conversations: state.conversations.map(c =>
+                  c.id === convId ? { ...c, updatedAt: Date.now() } : c
+                ),
+              }
+            })
           },
           onError: (error) => {
             updateAssistantMsg(m => ({
               ...m,
-              content: i18n.t('agent.generationFailed', { ns: 'stores', error }),
+              content: i18n.t('agent.generationFailed', { ns: 'stores', error: truncateError(error) }),
               streaming: false,
             }))
-            set({ generating: false, activeRequestId: null })
+            set(state => {
+              const ids = state.generatingConversationIds.filter(id => id !== convId)
+              return {
+                generating: isConvGenerating(ids, state.activeConversationId),
+                generatingConversationIds: ids,
+                activeRequestId: null,
+              }
+            })
           },
         },
         abortController.signal,
@@ -521,10 +609,17 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
     } catch (error) {
       updateAssistantMsg(m => ({
         ...m,
-        content: i18n.t('agent.generationError', { ns: 'stores', error: String(error) }),
+        content: i18n.t('agent.generationError', { ns: 'stores', error: truncateError(error) }),
         streaming: false,
       }))
-      set({ generating: false, activeRequestId: null })
+      set(state => {
+        const ids = state.generatingConversationIds.filter(id => id !== convId)
+        return {
+          generating: isConvGenerating(ids, state.activeConversationId),
+          generatingConversationIds: ids,
+          activeRequestId: null,
+        }
+      })
     }
   },
 
@@ -537,32 +632,38 @@ export const useAgentStore = create<AgentState>()((set, get) => ({
       activeAbortController = null
     }
 
+    // 直接对 in-flight requestId 发 llm:cancel，中断主进程流式请求
     if (activeRequestId) {
       await useLLMStore.getState().cancelGeneration(activeRequestId)
     }
 
     // P1-8: 清理所有等待确认的 Promise，防止内存泄漏
-    for (const [, pending] of pendingConfirmations) {
-      pending.resolve(false) // 取消时默认拒绝
-    }
-    pendingConfirmations.clear()
+    resolveAllPendingConfirmations(false)
 
-    // 找到正在 streaming 的消息，关闭其状态
-    set(state => ({
-      generating: false,
-      activeRequestId: null,
-      conversations: state.conversations.map(c => ({
-        ...c,
-        messages: c.messages.map(m =>
-          m.streaming ? { ...m, streaming: false, content: m.content + '\n\n_' + i18n.t('agent.generationStopped', { ns: 'stores' }) + '_' } : m
-        ),
-      })),
-    }))
+    // 仅关闭当前活跃会话的生成状态与 streaming 消息（per-conversation）
+    set(state => {
+      const activeId = state.activeConversationId
+      return {
+        generating: false,
+        generatingConversationIds: state.generatingConversationIds.filter(id => id !== activeId),
+        activeRequestId: null,
+        conversations: state.conversations.map(c => {
+          if (c.id !== activeId) return c
+          return {
+            ...c,
+            messages: c.messages.map(m =>
+              m.streaming ? { ...m, streaming: false, content: m.content + '\n\n_' + i18n.t('agent.generationStopped', { ns: 'stores' }) + '_' } : m
+            ),
+          }
+        }),
+      }
+    })
   },
 
   resolveToolConfirmation: (toolCallId, confirmed) => {
     const pending = pendingConfirmations.get(toolCallId)
     if (pending) {
+      clearTimeout(pending.timer)
       pending.resolve(confirmed)
       pendingConfirmations.delete(toolCallId)
     }

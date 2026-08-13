@@ -131,16 +131,20 @@ export async function addChunks(
 
     // 写入 chunks 表
     const tableNames = await db.tableNames()
-    const VECTOR_DIM = 2048
-    const vectorField = new Field('vector', new ArrowFixedSizeList(VECTOR_DIM, new Field('item', new Float32())), true)
-    const targetSchema = new ArrowSchema([
+    // 向量维度取实际向量的长度（不同 embedding 模型维度不同，禁止硬编码）
+    const vectorDim = (rows: Array<Record<string, unknown>>): number =>
+      rows.reduce((max, r) => {
+        const v = r.vector as number[] | undefined
+        return v && v.length > max ? v.length : max
+      }, 0)
+    const makeSchema = (dim: number) => new ArrowSchema([
       new Field('id', new Utf8()),
       new Field('docId', new Utf8()),
       new Field('fileName', new Utf8()),
       new Field('chapterNumber', new Int32(), true),
       new Field('chapterTitle', new Utf8(), true),
       new Field('text', new Utf8()),
-      vectorField,
+      new Field('vector', new ArrowFixedSizeList(dim, new Field('item', new Float32())), true),
       new Field('chunkIndex', new Int32()),
       new Field('totalChunks', new Int32()),
       new Field('importedAt', new Utf8()),
@@ -174,11 +178,11 @@ export async function addChunks(
           return cleaned
         })
         await db.dropTable(TABLE_NAME)
-        await db.createTable(TABLE_NAME, [...cleanRows, ...records], { schema: targetSchema })
+        await db.createTable(TABLE_NAME, [...cleanRows, ...records], { schema: makeSchema(vectorDim([...cleanRows, ...records])) })
       }
     } else {
       // 首次创建时使用显式 Schema，确保 vector 列正确识别为 FixedSizeList
-      await db.createTable(TABLE_NAME, records, { schema: targetSchema })
+      await db.createTable(TABLE_NAME, records, { schema: makeSchema(vectorDim(records)) })
     }
 
     // 写入/更新 documents 表
@@ -391,7 +395,8 @@ export async function getStats(projectPath: string): Promise<KBStats> {
       const vectorField = schema.fields.find(f => f.name === 'vector')
       if (vectorField) {
         hasVectors = true
-        vectorDimension = 2048 // 向量维度（需与 Embedding 模型输出匹配）
+        const t = vectorField.type as { listSize?: number }
+        vectorDimension = t.listSize ?? 0
       }
     } catch { /* 忽略 */ }
 
@@ -524,7 +529,7 @@ export async function updateChunkVectors(
       })
 
       // 使用显式 Schema 确保 vector 列正确持久化
-      const VECTOR_DIM = 2048
+      const VECTOR_DIM = updates[0]?.vector.length ?? 0
       const vectorField = new Field('vector', new ArrowFixedSizeList(VECTOR_DIM, new Field('item', new Float32())), true)
       const schema = new ArrowSchema([
         new Field('id', new Utf8()),

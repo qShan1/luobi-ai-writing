@@ -288,6 +288,132 @@ export function validateCanonWritebackPayload(v: unknown, path = 'payload') {
   }
 }
 
+// ============================================================
+// 领域校验（DB / 配置 / 模型 / 文件系统）
+// ============================================================
+
+export const VALID_DRAFT_STATUSES = ['draft', 'revised', 'finalized', 'archived'] as const
+export const VALID_DRAFT_SOURCES = ['write', 'rewrite'] as const
+export const VALID_REVISION_TYPES = ['refine', 'review-fix'] as const
+export const VALID_CHARACTER_ROLES = ['protagonist', 'antagonist', 'supporting', 'minor'] as const
+export const VALID_MODEL_PROVIDERS = ['openai', 'gemini', 'deepseek', 'ollama', 'bigmodel', 'custom'] as const
+export const VALID_MODEL_PROTOCOLS = ['openai', 'gemini'] as const
+export const VALID_MODEL_PURPOSES = ['generation', 'refinement', 'summary', 'embedding'] as const
+
+export function validateDraftCreateInput(v: unknown, path = 'params') {
+  if (!isObject(v)) throw new ValidationError(path, 'expected object')
+  return {
+    chapterNumber: checkNumberRange(v.chapterNumber, `${path}.chapterNumber`, { min: 1, max: 1e9, integer: true }),
+    version: checkNumberRange(v.version, `${path}.version`, { min: 1, max: 1e9, integer: true }),
+    source: checkEnum(v.source, `${path}.source`, VALID_DRAFT_SOURCES),
+    content: checkStringLength(v.content, `${path}.content`, { min: 0, max: 10_000_000 }),
+    wordCount: checkNumberRange(v.wordCount, `${path}.wordCount`, { min: 0, max: 1e9, integer: true }),
+  }
+}
+
+export function validateRevisionCreateInput(v: unknown, path = 'params') {
+  if (!isObject(v)) throw new ValidationError(path, 'expected object')
+  return {
+    baseDraftId: checkNumberRange(v.baseDraftId, `${path}.baseDraftId`, { min: 1, max: 1e9, integer: true }),
+    revisionIndex: checkNumberRange(v.revisionIndex, `${path}.revisionIndex`, { min: 1, max: 1e9, integer: true }),
+    revisionType: checkEnum(v.revisionType, `${path}.revisionType`, VALID_REVISION_TYPES),
+    userPrompt: checkOptional(v.userPrompt, `${path}.userPrompt`, (s, p) => checkStringLength(s, p, { max: 20_000 })),
+    reviewSourceId: checkOptional(v.reviewSourceId, `${path}.reviewSourceId`, (n, p) => checkNumberRange(n, p, { min: 1, max: 1e9, integer: true })),
+    content: checkStringLength(v.content, `${path}.content`, { min: 0, max: 10_000_000 }),
+    wordCount: checkNumberRange(v.wordCount, `${path}.wordCount`, { min: 0, max: 1e9, integer: true }),
+  }
+}
+
+export function validateDraftStatusUpdate(v: unknown, path = 'params') {
+  if (!isObject(v)) throw new ValidationError(path, 'expected object')
+  return {
+    id: checkNumberRange(v.id, `${path}.id`, { min: 1, max: 1e9, integer: true }),
+    status: checkEnum(v.status, `${path}.status`, VALID_DRAFT_STATUSES),
+    wordCount: checkOptional(v.wordCount, `${path}.wordCount`, (n, p) => checkNumberRange(n, p, { min: 0, max: 1e9, integer: true })),
+  }
+}
+
+export function validateBlueprintInput(v: unknown, path = 'blueprint') {
+  if (!isObject(v)) throw new ValidationError(path, 'expected object')
+  return {
+    chapterNumber: checkNumberRange(v.chapterNumber, `${path}.chapterNumber`, { min: 1, max: 1e9, integer: true }),
+    title: checkStringLength(v.title ?? '', `${path}.title`, { max: 500 }),
+    role: checkStringLength(v.role ?? '', `${path}.role`, { max: 200 }),
+    purpose: checkStringLength(v.purpose ?? '', `${path}.purpose`, { max: 2000 }),
+    keyEvents: checkStringLength(v.keyEvents ?? '', `${path}.keyEvents`, { max: 5000 }),
+    characters: checkArray(v.characters ?? [], `${path}.characters`, (c, p) => checkStringLength(c, p, { max: 100 }), { maxLength: MAX_LIST_SIZE }),
+    suspenseHook: checkStringLength(v.suspenseHook ?? '', `${path}.suspenseHook`, { max: 1000 }),
+    userGuidance: checkStringLength(v.userGuidance ?? '', `${path}.userGuidance`, { max: 5000 }),
+    notes: checkStringLength(v.notes ?? '', `${path}.notes`, { max: 10_000 }),
+    notesUpdatedAt: checkStringLength(v.notesUpdatedAt ?? '', `${path}.notesUpdatedAt`, { max: 100 }),
+  }
+}
+
+export function validateCharacterInput(v: unknown, path = 'character') {
+  if (!isObject(v)) throw new ValidationError(path, 'expected object')
+  return {
+    name: checkStringLength(v.name, `${path}.name`, { min: 1, max: 100 }),
+    role: checkEnum(v.role ?? 'supporting', `${path}.role`, VALID_CHARACTER_ROLES),
+    gender: checkStringLength(v.gender ?? '', `${path}.gender`, { max: 50 }),
+    age: checkStringLength(v.age ?? '', `${path}.age`, { max: 50 }),
+    appearance: checkStringLength(v.appearance ?? '', `${path}.appearance`, { max: 2000 }),
+    personality: checkStringLength(v.personality ?? '', `${path}.personality`, { max: 2000 }),
+    background: checkStringLength(v.background ?? '', `${path}.background`, { max: 5000 }),
+    abilities: checkStringLength(v.abilities ?? '', `${path}.abilities`, { max: 2000 }),
+    motivation: checkStringLength(v.motivation ?? '', `${path}.motivation`, { max: 2000 }),
+    relationships: checkStringLength(v.relationships ?? '', `${path}.relationships`, { max: 5000 }),
+    arc: checkStringLength(v.arc ?? '', `${path}.arc`, { max: 2000 }),
+    notes: checkStringLength(v.notes ?? '', `${path}.notes`, { max: 5000 }),
+    currentState: checkOptional(v.currentState, `${path}.currentState`, (s, p) => {
+      if (!isObject(s)) throw new ValidationError(p, 'expected object')
+      return {
+        location: checkStringLength(s.location ?? '', `${p}.location`, { max: 500 }),
+        powerLevel: checkStringLength(s.powerLevel ?? '', `${p}.powerLevel`, { max: 500 }),
+        physicalState: checkStringLength(s.physicalState ?? '', `${p}.physicalState`, { max: 500 }),
+        mentalState: checkStringLength(s.mentalState ?? '', `${p}.mentalState`, { max: 500 }),
+        keyItems: checkStringLength(s.keyItems ?? '', `${p}.keyItems`, { max: 500 }),
+        recentEvents: checkStringLength(s.recentEvents ?? '', `${p}.recentEvents`, { max: 2000 }),
+        updatedAtChapter: checkNumberRange(s.updatedAtChapter ?? 0, `${p}.updatedAtChapter`, { min: 0, max: 1e9, integer: true }),
+      }
+    }),
+  }
+}
+
+export function validateGlobalConfigInput(v: unknown, path = 'config') {
+  if (!isObject(v)) throw new ValidationError(path, 'expected object')
+  const result: Record<string, unknown> = { ...v }
+  if (v.theme !== undefined) checkStringLength(v.theme, `${path}.theme`, { max: 20 })
+  if (v.editorFontFamily !== undefined) checkStringLength(v.editorFontFamily, `${path}.editorFontFamily`, { max: 100 })
+  if (v.editorFontSize !== undefined) checkNumberRange(v.editorFontSize, `${path}.editorFontSize`, { min: 8, max: 72, integer: true })
+  if (v.autoSaveInterval !== undefined) checkNumberRange(v.autoSaveInterval, `${path}.autoSaveInterval`, { min: 5, max: 3600, integer: true })
+  if (v.defaultModelId !== undefined && v.defaultModelId !== null) checkStringLength(v.defaultModelId, `${path}.defaultModelId`, { max: 200 })
+  if (v.closeBehavior !== undefined) checkEnum(v.closeBehavior, `${path}.closeBehavior`, ['ask', 'minimize', 'quit'])
+  if (v.proxy !== undefined) {
+    if (!isObject(v.proxy)) throw new ValidationError(`${path}.proxy`, 'expected object')
+    if (v.proxy.type !== undefined) checkEnum(v.proxy.type, `${path}.proxy.type`, ['http', 'socks5'])
+    if (v.proxy.host !== undefined) checkStringLength(v.proxy.host, `${path}.proxy.host`, { max: 300 })
+    if (v.proxy.port !== undefined) checkNumberRange(v.proxy.port, `${path}.proxy.port`, { min: 0, max: 65535, integer: true })
+    if (v.proxy.enabled !== undefined && !isBoolean(v.proxy.enabled)) throw new ValidationError(`${path}.proxy.enabled`, 'expected boolean')
+  }
+  return result
+}
+
+export function validateModelProfile(v: unknown, path = 'model') {
+  if (!isObject(v)) throw new ValidationError(path, 'expected object')
+  return {
+    id: checkStringLength(v.id, `${path}.id`, { min: 1, max: 200 }),
+    name: checkStringLength(v.name ?? '', `${path}.name`, { max: 100 }),
+    provider: checkEnum(v.provider, `${path}.provider`, VALID_MODEL_PROVIDERS),
+    protocol: checkEnum(v.protocol, `${path}.protocol`, VALID_MODEL_PROTOCOLS),
+    modelName: checkStringLength(v.modelName, `${path}.modelName`, { min: 1, max: 200 }),
+    apiKey: checkStringLength(v.apiKey ?? '', `${path}.apiKey`, { max: 500 }),
+    baseUrl: checkStringLength(v.baseUrl ?? '', `${path}.baseUrl`, { max: 500 }),
+    temperature: checkNumberRange(v.temperature ?? 0.7, `${path}.temperature`, { min: 0, max: 2 }),
+    maxTokens: checkNumberRange(v.maxTokens ?? 4096, `${path}.maxTokens`, { min: 0, max: 1e9, integer: true }),
+    purposes: checkArray(v.purposes ?? ['generation'], `${path}.purposes`, (p, pp) => checkEnum(p, pp, VALID_MODEL_PURPOSES), { maxLength: 10 }),
+  }
+}
+
 /**
  * 安全调用 validator 包装器：捕获 ValidationError 并返回 { success, error }
  * 用于 ipcMain.handle 内部

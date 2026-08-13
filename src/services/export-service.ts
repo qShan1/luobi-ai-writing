@@ -80,14 +80,14 @@ export async function exportNovel(options: ExportOptions): Promise<{ success: bo
           content += ch.content + '\n\n---\n\n'
         }
 
-        outputPath = `${options.outputDir}/${project.name}.md`
+        outputPath = `${options.outputDir}/${sanitizeFileName(project.name)}.md`
         await ipc.invoke('fs:write-file', outputPath, content)
         break
       }
 
       case 'split-md': {
         // 每章一个 Markdown
-        const splitDir = `${options.outputDir}/${project.name}`
+        const splitDir = `${options.outputDir}/${sanitizeFileName(project.name)}`
         await ipc.invoke('fs:mkdir', splitDir)
 
         for (const ch of chapterContents) {
@@ -115,7 +115,7 @@ export async function exportNovel(options: ExportOptions): Promise<{ success: bo
           content += plainText + '\n\n'
         }
 
-        outputPath = `${options.outputDir}/${project.name}.txt`
+        outputPath = `${options.outputDir}/${sanitizeFileName(project.name)}.txt`
         await ipc.invoke('fs:write-file', outputPath, content)
         break
       }
@@ -136,4 +136,12 @@ function formatLabel(format: ExportFormat): string {
     'txt': t('export.formatTxt'),
   }
   return labels[format]
+}
+
+/** 净化文件/目录名，去掉 Windows/Unix 非法字符与尾随点 */
+function sanitizeFileName(name: string): string {
+  return name
+    .replace(/[<>:"/\\|?*\u0000-\u001F]/g, '_')
+    .replace(/[.\s]+$/g, '')
+    .trim() || 'novel'
 }

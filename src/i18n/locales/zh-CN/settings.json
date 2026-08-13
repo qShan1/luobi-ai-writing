@@ -146,7 +146,15 @@
     "sponsorship": "赞助与支持",
     "sponsorDescription": "落笔由开发团队持续维护，如果这个工具提升了您的写作效率，欢迎通过赞赏支持后续开发。您的支持是我们持续迭代的动力 ❤️",
     "businessInquiries": "商业合作与技术交流",
-    "businessDescription": "如果您对本项目的商业化落地（SaaS 授权）、技术实现细节或 AI 产品方向感兴趣，欢迎随时交流："
+    "businessDescription": "如果您对本项目的商业化落地（SaaS 授权）、技术实现细节或 AI 产品方向感兴趣，欢迎随时交流：",
+    "tagline": "本地优先的 AI 小说创作工作台",
+    "creationMethod": "创作方式",
+    "creationMethodDesc": "落笔将项目设定、章节蓝图、人物状态和草稿保存在本地。模型配置由你自己掌控；正文生成后先进入草稿，再由你决定是否定稿或导出。",
+    "currentVersion": "当前版本",
+    "currentVersionDesc": "支持本地小说项目、章节草稿、模型配置、导出和发布前整理。平台登录、验证码与最终发布仍由你确认。",
+    "sponsorDesc": "如果落笔对你有帮助，欢迎扫码支持作者。",
+    "alipay": "支付宝",
+    "wechat": "微信支付"
   },
   "promptTemplates": {
     "generate_global_config": { "name": "全文配置生成", "description": "根据用户一句话灵感，生成完整的小说配置 JSON" },
@@ -240,7 +248,9 @@
   },
   "settingsFont": {
     "searchPlaceholder": "搜索字体…",
-    "noMatch": "没有匹配的字体"
+    "noMatch": "没有匹配的字体",
+    "detected": "当前电脑已安装",
+    "detectedEn": "本地字体"
   },
   "modelsProviders": {
     "ollama": "Ollama（本地）",

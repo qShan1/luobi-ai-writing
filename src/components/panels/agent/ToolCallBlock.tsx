@@ -128,7 +128,7 @@ export default function ToolCallBlock({ toolCall }: Props) {
           {/* 错误 */}
           {error && (
             <div className="tool-call-result" style={{ color: 'var(--color-error)' }}>
-              ❌ {error}
+              ❌ {error.length > 500 ? error.slice(0, 500) + '…' : error}
             </div>
           )}
         </div>

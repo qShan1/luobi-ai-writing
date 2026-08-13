@@ -3,8 +3,6 @@
  * 渲染进程与主进程共同使用，持久化在 ~/.luobi/provider-presets.json
  */
 
-import i18n from '../i18n'
-
 /** 单个模型的预设 — name + 该模型的输出 token 上限 */
 export interface ModelPreset {
   name: string
@@ -99,7 +97,7 @@ export const BUILTIN_PRESETS: ProviderPreset[] = [
   },
   {
     provider: 'custom',
-    displayName: i18n.language === 'en' ? 'Custom' : '自定义',
+    displayName: 'Custom / 自定义',
     baseUrl: '',
     protocol: 'openai',
     models: [],

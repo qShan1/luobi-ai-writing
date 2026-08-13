@@ -30,6 +30,11 @@
     "streamFailed": "流式生成失败",
     "noModel": "未配置默认 AI 模型"
   },
+  "agent": {
+    "thinkingRound": "第 {{round}} 轮推理中…（已耗时 {{elapsed}}s）",
+    "historySummary": "（以下为较早对话的简要摘要，共 {{count}} 条消息）",
+    "unknownCommand": "未知命令 {{cmd}}。输入 /help 查看可用命令。"
+  },
   "guard": {
     "openProjectFirst": "请先打开或新建一个项目。",
     "fillNovelConfig": "请先填写「小说配置」中的核心大纲或主角人设，AI 才能据此生成故事架构。\n\n当前类型：{{genre}}",

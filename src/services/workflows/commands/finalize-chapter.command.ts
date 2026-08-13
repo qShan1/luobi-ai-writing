@@ -384,7 +384,7 @@ export class FinalizeChapterCommand extends BaseWorkflowCommand<void> {
       callbacks.log(t('canon.finalizeGateVerdict', { verdict: gateResult.verdict, report: gateResult.report }))
       if (gateResult.verdict === 'BLOCK') {
         callbacks.log(t('canon.finalizeGateBlocked'))
-        return
+        throw new Error(t('canon.finalizeGateBlockedReport', { report: gateResult.report }))
       }
       if (gateResult.verdict === 'REPAIR' && gateResult.repairedContent) {
         gatedContent = gateResult.repairedContent

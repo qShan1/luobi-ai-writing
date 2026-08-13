@@ -26,15 +26,16 @@ export class LLMHistoryRepository {
     )
   }
 
-  /** 获取调用统计 */
+  /** 获取调用统计（标注统计归属：当前打开的项目） */
   static getStats(): {
     totalCalls: number
     totalTokens: number
     totalPromptTokens: number
     totalCompletionTokens: number
+    projectOpen: boolean
   } {
     const db = getProjectDb()
-    if (!db) return { totalCalls: 0, totalTokens: 0, totalPromptTokens: 0, totalCompletionTokens: 0 }
+    if (!db) return { totalCalls: 0, totalTokens: 0, totalPromptTokens: 0, totalCompletionTokens: 0, projectOpen: false }
 
     const row = db.prepare(`
       SELECT
@@ -45,7 +46,7 @@ export class LLMHistoryRepository {
       FROM llm_calls WHERE success = 1
     `).get() as { totalCalls: number; totalTokens: number; totalPromptTokens: number; totalCompletionTokens: number }
 
-    return row
+    return { ...row, projectOpen: true }
   }
 
   /** 获取最近 LLM 调用记录 */

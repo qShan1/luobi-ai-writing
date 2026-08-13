@@ -19,6 +19,7 @@ import {
 } from '../../services/prompt-templates'
 import { useProjectStore } from '../../stores/project-store'
 import { Button } from '../ui/Button'
+import { Textarea } from '../ui/Textarea'
 import { cn } from '../../lib/utils'
 
 /** Получить переведённое описание переменной */
@@ -274,22 +275,17 @@ function TemplateItem({
 
           {/* 编辑 textarea */}
           <div>
-            <textarea
+            <Textarea
               ref={textareaRef}
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full rounded-lg px-3 py-2.5 text-xs font-mono resize-y outline-none focus:outline-none"
+              className="font-mono"
               style={{
                 backgroundColor: 'var(--color-editor-bg)',
-                color: 'var(--color-text)',
-                border: '1px solid var(--color-border)',
                 minHeight: '200px',
                 maxHeight: '500px',
                 lineHeight: 1.6,
-                transition: 'border-color 0.15s ease',
               }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-accent)' }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)' }}
               spellCheck={false}
             />
           </div>

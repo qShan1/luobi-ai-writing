@@ -113,7 +113,7 @@ export default function App() {
       if (!latest) return
       const shortTitle = latest.title.replace(/^[^\s]+\s/, '')
       actionToast.workflowComplete(
-        `✅ 「${shortTitle}」${t('completed')}`,
+        t('workflowCompleted', { title: shortTitle }),
         () => useLayoutStore.getState().openRightPanel('ai-output')
       )
     })

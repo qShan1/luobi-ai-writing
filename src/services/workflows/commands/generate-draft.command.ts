@@ -167,6 +167,7 @@ export class GenerateDraftCommand extends BaseWorkflowCommand {
     // [Canon] 生成后一致性 Gate + 自动修复
     // ==========================================
     let finalDraft = cleanDraftText
+    let gateBlockedReason = ''
     if (canonForValidation) {
       try {
         const gateResult = await runConsistencyGate({
@@ -176,7 +177,7 @@ export class GenerateDraftCommand extends BaseWorkflowCommand {
         })
         callbacks.log(`  🛡️ [Gate] ${gateResult.verdict}: ${gateResult.report}`)
         if (gateResult.verdict === 'BLOCK') {
-          throw new Error(i18n.t('generateDraft.gateBlocked', { ns: 'commands', reasons: gateResult.blockingReasons.join('；') }))
+          gateBlockedReason = i18n.t('generateDraft.gateBlocked', { ns: 'commands', reasons: gateResult.blockingReasons.join('；') })
         }
         if (gateResult.verdict === 'REPAIR' && gateResult.repairedContent) {
           finalDraft = gateResult.repairedContent
@@ -237,6 +238,7 @@ export class GenerateDraftCommand extends BaseWorkflowCommand {
     } catch { /* 忽略 */ }
 
     callbacks.log(i18n.t('generateDraft.draftSaved', { ns: 'commands', version: nextVersion, length: draftText.length }))
+    if (gateBlockedReason) throw new Error(gateBlockedReason)
     return draftText
   }
 

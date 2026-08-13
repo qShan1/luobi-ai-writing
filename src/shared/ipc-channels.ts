@@ -65,6 +65,14 @@ export interface ProjectChannels {
     args: []
     return: Array<{ name: string; path: string; updatedAt: string }>
   }
+  'project:set-current': {
+    args: [projectPath: string | null]
+    return: { success: boolean }
+  }
+  'project:get-current': {
+    args: []
+    return: { path: string | null }
+  }
   'dialog:select-folder': {
     args: []
     return: string | null
@@ -297,7 +305,7 @@ export interface DatabaseChannels {
 
   // 沿用旧表
   'db:log-llm-call': { args: [call: Record<string, unknown>]; return: { success: boolean } }
-  'db:get-llm-stats': { args: []; return: { totalCalls: number; totalTokens: number; totalPromptTokens: number; totalCompletionTokens: number } }
+  'db:get-llm-stats': { args: []; return: { totalCalls: number; totalTokens: number; totalPromptTokens: number; totalCompletionTokens: number; projectOpen: boolean } }
   'db:get-llm-history': { args: [limit?: number]; return: unknown[] }
   'db:save-summary-snapshot': { args: [chapterNumber: number, characterStates: string]; return: { success: boolean } }
   'db:get-latest-summary': { args: []; return: { characterStates: string; chapterNumber: number } | null }

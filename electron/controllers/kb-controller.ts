@@ -1,11 +1,11 @@
 import { ipcMain, dialog } from 'electron'
-import fs from 'node:fs'
 import {
   importDocument, importFolder, importText, searchKnowledge, searchKnowledgeFTS,
   listDocuments, removeDocument, getKnowledgeStats,
   getVectorlessCount, backfillVectors,
 } from '../knowledge-base'
-import { readJsonFile, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG, MODELS_CONFIG_PATH, RECENT_PROJECTS_PATH } from '../utils/config-utils'
+import { readJsonFile, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG, MODELS_CONFIG_PATH, decryptSecret } from '../utils/config-utils'
+import { getCurrentProjectPath } from './project-controller'
 import { GlobalConfig, ModelProfile } from '../../src/shared/ipc-channels'
 
 function getEmbeddingConfig(): { protocol: 'openai' | 'gemini'; model: { baseUrl: string; apiKey: string; modelName: string } } | null {
@@ -13,20 +13,17 @@ function getEmbeddingConfig(): { protocol: 'openai' | 'gemini'; model: { baseUrl
   const targetModelId = config.defaultEmbeddingModelId || config.defaultModelId
   if (!targetModelId) return null
 
-  const models = readJsonFile<ModelProfile[]>(MODELS_CONFIG_PATH, [])
+  const models = readJsonFile<Array<ModelProfile & { apiKeyEnc?: string }>>(MODELS_CONFIG_PATH, [])
   const model = models.find((m) => m.id === targetModelId)
   if (!model) return null
   return {
     protocol: model.protocol as 'openai' | 'gemini',
-    model: { baseUrl: model.baseUrl, apiKey: model.apiKey, modelName: model.modelName },
+    model: {
+      baseUrl: model.baseUrl,
+      apiKey: model.apiKeyEnc ? decryptSecret(model.apiKeyEnc) : model.apiKey,
+      modelName: model.modelName,
+    },
   }
-}
-
-function getCurrentProjectPath(): string | null {
-  try {
-    const recent = JSON.parse(fs.readFileSync(RECENT_PROJECTS_PATH, 'utf-8')) as Array<{ path: string }>
-    return recent[0]?.path ?? null
-  } catch { return null }
 }
 
 export function registerKBController() {

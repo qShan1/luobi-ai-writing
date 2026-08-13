@@ -197,9 +197,14 @@ class SkillRegistryImpl {
           }
           content = content.replace(/\$\{SKILL_DIR\}/g, skill.baseDir)
 
+          // 结果只保留前部内容，避免完整 SKILL.md 与系统提示中的 Skill 描述重复膨胀
+          const truncated = content.length > 2000
+            ? content.slice(0, 2000) + '\n…（内容已截断，如需完整指令请直接说明）'
+            : content
+
           return {
             success: true,
-            content: `[Skill: ${skill.metadata.displayName ?? skill.metadata.name}]\n\n${content}`,
+            content: `[Skill: ${skill.metadata.displayName ?? skill.metadata.name}]\n\n${truncated}`,
           }
         },
       }

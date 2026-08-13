@@ -72,5 +72,7 @@
   "openAndView": "Открыть и просмотреть",
   "ignore": "Игнорировать",
   "comingSoon": "Скоро",
-  "lastAttempt": "Последняя попытка"
+  "lastAttempt": "Последняя попытка",
+  "criticalFailed": "Критичная ошибка",
+  "workflowCompleted": "✅ «{{title}}» завершено"
 }

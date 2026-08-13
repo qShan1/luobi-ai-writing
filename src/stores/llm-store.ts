@@ -138,16 +138,18 @@ export const useLLMStore = create<LLMState>()((set, get) => ({
 
     const requestId = crypto.randomUUID()
 
-    // 渲染端看门狗：防止主进程侧异常导致事件永不回传而挂起。
-    // 正常流式生成通常很快产出首个 chunk；60s 内无任何事件即视为失败。
+    // 渲染端看门狗：与主进程 http-utils 对齐（首块 60s，整体 30min）。
+    // 触发时主动 llm:cancel 中断主进程 HTTP，避免挂到主进程超时才释放。
     let settled = false
     let receivedChunk = false
-    let watchdog = setTimeout(() => {
+    const fireWatchdog = () => {
       if (settled) return
       settled = true
       cleanup()
+      ipc.invoke('llm:cancel', requestId).catch(() => {})
       callbacks.onError?.(i18n.t('llm.streamWatchdogTimeout', { ns: 'stores' }))
-    }, 60_000)
+    }
+    let watchdog = setTimeout(fireWatchdog, 60_000)
 
     // 注册流式事件监听
     const unsubChunk = ipc.on('llm:stream-chunk', (data) => {
@@ -155,12 +157,7 @@ export const useLLMStore = create<LLMState>()((set, get) => ({
       if (!receivedChunk) {
         receivedChunk = true
         clearTimeout(watchdog)
-        watchdog = setTimeout(() => {
-          if (settled) return
-          settled = true
-          cleanup()
-          callbacks.onError?.(i18n.t('llm.streamWatchdogTimeout', { ns: 'stores' }))
-        }, 10 * 60_000)
+        watchdog = setTimeout(fireWatchdog, 30 * 60_000)
       }
       callbacks.onChunk?.(data.chunk)
     })

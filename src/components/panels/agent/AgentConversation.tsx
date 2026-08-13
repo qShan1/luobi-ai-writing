@@ -37,9 +37,10 @@ export default function AgentConversation() {
 function EmptyState() {
   const { t } = useTranslation('panels')
   const { conversations, selectConversation } = useAgentStore()
-  // 取最近 3 条历史会话（不包含当前空会话）
+  // 取最近 3 条历史会话（不包含当前空会话、不含仅 system 消息的会话）
+  const hasRealContent = (c: { messages: Array<{ role: string }> }) => c && c.messages.some(m => m.role !== 'system')
   const recentConvs = conversations
-    .filter(c => c && c.messages.length > 0)
+    .filter(hasRealContent)
     .slice(0, 3)
 
 
@@ -78,7 +79,7 @@ function EmptyState() {
                 />
               ))}
             </div>
-            {conversations.filter(c => c.messages.length > 0).length > 3 && (
+            {conversations.filter(hasRealContent).length > 3 && (
               <Button
                 variant="ghost" size="sm"
                 onClick={() => useAgentStore.getState().setShowHistory(true)}

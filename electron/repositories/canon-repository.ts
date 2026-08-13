@@ -188,16 +188,29 @@ export class CanonRepository {
   static appendTimelineEvent(event: Omit<TimelineEvent, 'id' | 'createdAt'>): number {
     const db = getProjectDb()
     if (!db) throw new Error('[CanonRepository] 数据库未连接')
+    // 先查重再插入/更新（不依赖迁移时创建的 UNIQUE 索引，索引失败时去重依然正确）
+    const existing = db.prepare(
+      `SELECT id FROM canon_timeline_events WHERE chapter_number = ? AND sequence = ?`
+    ).get(event.chapterNumber, event.sequence) as { id: number } | undefined
+    if (existing) {
+      db.prepare(`
+        UPDATE canon_timeline_events SET
+          characters = ?, location = ?, time_flow = ?, summary = ?, impact = ?
+        WHERE id = ?
+      `).run(
+        JSON.stringify(event.characters || []),
+        event.location || '',
+        event.timeFlow || 'sequential',
+        event.summary || '',
+        event.impact || '',
+        existing.id,
+      )
+      return existing.id
+    }
     db.prepare(`
       INSERT INTO canon_timeline_events
         (chapter_number, sequence, characters, location, time_flow, summary, impact)
       VALUES (?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(chapter_number, sequence) DO UPDATE SET
-        characters = excluded.characters,
-        location = excluded.location,
-        time_flow = excluded.time_flow,
-        summary = excluded.summary,
-        impact = excluded.impact
     `).run(
       event.chapterNumber,
       event.sequence,
@@ -412,9 +425,13 @@ export class CanonRepository {
     if (!db) throw new Error('[CanonRepository] 数据库未连接')
     const normalizedStatement = this.normalizeForDedup(fact.statement)
     if (!normalizedStatement) throw new Error('[CanonRepository] addFact: statement 不能为空')
-    // 用 UNIQUE 索引 + INSERT OR IGNORE 处理重复（依赖 migration 添加的 idx_canon_facts_unique）
+    // 先查重再插入（不依赖迁移时创建的 UNIQUE 索引，索引失败时去重依然正确）
+    const existing = db.prepare(
+      `SELECT id FROM canon_facts WHERE statement = ? COLLATE NOCASE`
+    ).get(normalizedStatement) as { id: number } | undefined
+    if (existing) return existing.id
     const r = db.prepare(`
-      INSERT OR IGNORE INTO canon_facts (category, statement, introduced_at, characters, evidence)
+      INSERT INTO canon_facts (category, statement, introduced_at, characters, evidence)
       VALUES (?, ?, ?, ?, ?)
     `).run(
       fact.category,
@@ -423,13 +440,7 @@ export class CanonRepository {
       JSON.stringify(fact.characters || []),
       (fact.evidence || '').slice(0, 500),  // 截断 evidence
     )
-    if (r.changes > 0) return Number(r.lastInsertRowid)
-    // 重复：返回已存在行的 id
-    const row = db.prepare(
-      `SELECT id FROM canon_facts WHERE statement = ? COLLATE NOCASE`
-    ).get(normalizedStatement) as { id: number } | undefined
-    if (!row) throw new Error('[CanonRepository] addFact: INSERT OR IGNORE 失败')
-    return row.id
+    return Number(r.lastInsertRowid)
   }
 
   /** 删除某章引入的全部事实（用于重写） */

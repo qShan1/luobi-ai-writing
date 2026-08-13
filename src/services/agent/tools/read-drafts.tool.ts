@@ -35,10 +35,24 @@ export const readDraftsTool = buildAgentTool({
       return { success: false, content: '', error: t('agent.tools.noProject') }
     }
 
-    const chapterNum = args.chapter_number as number
+    let chapterNum = args.chapter_number as number | undefined
     const draftType = (args.draft_type as string) ?? 'latest'
 
     try {
+      // 缺省未指定章节号：自动解析最新章节（@chapter 预取场景）
+      if (chapterNum === undefined) {
+        const blueprints = await ipc.invoke('db:blueprint-get-all')
+        const bpNums = (Array.isArray(blueprints) ? blueprints : [])
+          .map((b: unknown) => (b as { chapterNumber?: number }).chapterNumber)
+          .filter((n): n is number => n !== undefined)
+        const { useDraftStore } = await import('../../../stores/draft-store')
+        const draftNums = Object.keys(useDraftStore.getState().draftsByChapter).map(k => parseInt(k, 10))
+        chapterNum = Math.max(0, ...bpNums, ...draftNums)
+        if (chapterNum === 0) {
+          return { success: true, content: t('agent.tools.readDrafts.noDrafts', { chapter: 0 }) }
+        }
+      }
+
       // 从数据库获取章节的草稿列表
       const draftsResult = await ipc.invoke('db:draft-list', chapterNum)
       const drafts = (Array.isArray(draftsResult) ? draftsResult : []) as unknown as Array<Record<string, unknown>>

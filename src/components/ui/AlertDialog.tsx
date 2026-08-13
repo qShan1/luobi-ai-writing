@@ -68,12 +68,11 @@ function AlertDialog({
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 10000,
+        zIndex: 'var(--z-max)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'var(--color-backdrop)',
-        backdropFilter: 'blur(8px)',
         pointerEvents: 'auto',
         /* 使用 both 填充模式，让 0% 关键帧在动画前就应用，杜绝闪烁 */
         animation: isExiting
@@ -88,6 +87,7 @@ function AlertDialog({
         aria-modal="true"
         aria-labelledby="alert-title"
         aria-describedby="alert-message"
+        className="glass-overlay-panel"
         style={{
           /* 基础样式 */
           backgroundColor: 'color-mix(in srgb, var(--color-panel) 70%, transparent)',
@@ -95,15 +95,13 @@ function AlertDialog({
           borderRadius: 'var(--radius-2xl)',
           boxShadow:
             'inset 0 1px 0 0 rgba(255,255,255,0.35), 0 25px 50px -12px rgba(0,0,0,0.25), var(--shadow-popover)',
-          backdropFilter: 'blur(24px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(160%)',
           minWidth: 360,
           maxWidth: 460,
           width: '90vw',
           /* CSS 动画，使用 both 从而提前应用 0% 关键帧，彻底杜绝闪烁现象 */
           animation: isExiting
             ? 'dialog-exit 0.15s ease-out both'
-            : 'dialog-enter 0.3s var(--transition-spring) both',
+            : 'dialog-enter 0.3s var(--ease-out) both',
         }}
         onClick={e => e.stopPropagation()}
       >

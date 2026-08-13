@@ -25,7 +25,10 @@ const MAX_TOOL_ROUNDS = 8
 const TOOL_TIMEOUT_MS = 30_000
 
 /** Tool 返回内容最大长度（字符） */
-const TOOL_RESULT_MAX_CHARS = 3000
+const TOOL_RESULT_MAX_CHARS = 12000
+
+/** 输入消息字符预算：超出时每轮前裁剪中间消息（保留 system + 最新 user/observation） */
+const MAX_INPUT_CHARS = 60000
 
 // ===== 类型 =====
 
@@ -115,7 +118,7 @@ export async function runAgentLoop(
     // 调用 LLM
     let llmResponse: string
     try {
-      llmResponse = await generateFn(messages, modelId)
+      llmResponse = await generateFn(trimMessagesForBudget(messages), modelId)
     } catch (error) {
       callbacks.onError(t('agent.engine.llmFailed', { error: String(error) }))
       return
@@ -342,4 +345,26 @@ async function executeToolWithTimeout(
 function truncateResult(content: string, maxChars: number): string {
   if (content.length <= maxChars) return content
   return content.slice(0, maxChars) + '\n\n' + t('agent.engine.resultTruncated', { count: content.length })
+}
+
+/**
+ * 每轮 LLM 调用前做字符预算裁剪：总长超限时保留首条 system 与最新消息，
+ * 中间消息从后往前截断，保证上下文窗口不被无限撑爆。
+ */
+function trimMessagesForBudget(messages: LLMMessage[]): LLMMessage[] {
+  let total = 0
+  for (const m of messages) total += m.content.length
+  if (total <= MAX_INPUT_CHARS || messages.length <= 2) return messages
+
+  const first = messages[0]
+  const last = messages[messages.length - 1]
+  let budget = Math.max(0, MAX_INPUT_CHARS - first.content.length - last.content.length)
+  const middle: LLMMessage[] = []
+  for (let i = 1; i < messages.length - 1 && budget > 0; i++) {
+    const m = messages[i]
+    const keep = Math.min(m.content.length, budget)
+    middle.push({ role: m.role, content: m.content.slice(0, keep) })
+    budget -= keep
+  }
+  return [first, ...middle, last]
 }

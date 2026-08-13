@@ -203,9 +203,21 @@ export async function streamToFullText(
   } catch (error) {
     if (options?.cancelled?.()) throw error
     const message = error instanceof Error ? error.message : String(error)
-    if (message === t('base.workflowCancelled') || message === '已取消生成') throw error
+    if (!isRetryableStreamError(message)) throw error
     return await attempt()
   }
+}
+
+/** 仅对可重试错误（网络/超时/限流/5xx）重试；取消、鉴权、解析、max_tokens 截断等不重试 */
+function isRetryableStreamError(message: string): boolean {
+  if (message === '已取消生成' || message === t('base.workflowCancelled')) return false
+  if (message.includes('max_tokens')) return false
+  const httpMatch = message.match(/\(HTTP (\d+)\)/)
+  if (httpMatch) {
+    const status = parseInt(httpMatch[1], 10)
+    return status === 429 || status >= 500
+  }
+  return /timeout|超时|network|网络|fetch|connection|connect|ECONN|ENOTFOUND|EAI_AGAIN|无法建立连接|socket/i.test(message)
 }
 
 // ===== 通用重试包装器 =====

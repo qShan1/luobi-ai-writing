@@ -26,7 +26,28 @@ function addRecentProject(project: RecentProject) {
   writeJsonFile(RECENT_PROJECTS_PATH, trimmed)
 }
 
+/** 主进程持有的当前打开项目路径（不再从 recent-projects[0] 推断） */
+let currentProjectPath: string | null = null
+
+export function setCurrentProjectPath(projectPath: string | null): void {
+  currentProjectPath = projectPath
+}
+
+export function getCurrentProjectPath(): string | null {
+  return currentProjectPath
+}
+
 export function registerProjectController() {
+  // 主进程当前项目路径的读写（供 knowledge-base / vector-store 等使用）
+  ipcMain.handle('project:set-current', async (_event, projectPath: string | null) => {
+    setCurrentProjectPath(projectPath)
+    return { success: true }
+  })
+
+  ipcMain.handle('project:get-current', async () => {
+    return { path: currentProjectPath }
+  })
+
   // 创建新项目
   ipcMain.handle('project:create', async (_event, config: {
     name: string; path: string; genre: string; targetAudience: string
@@ -75,6 +96,7 @@ export function registerProjectController() {
 
       // 添加到最近项目列表
       addRecentProject({ name: config.name, path: projectDir, updatedAt: projectData.updatedAt })
+      setCurrentProjectPath(projectDir)
 
       return { success: true, projectId, projectPath: projectDir }
     } catch (error) {
@@ -91,7 +113,13 @@ export function registerProjectController() {
 
       // TODO: 这里可以加入一个检测旧版项目的逻辑（如果有 旧的 01_novel_config.json 等），提示不支持旧格式。
       // 因为新架构不兼容旧项目，这里我们只要初始化 DB 即可
-      initProjectDatabase(projectPath)
+      // 打开损坏的 DB 会抛错：旧库已被关闭，此处捕获并返回明确错误，避免后续静默返回空
+      try {
+        initProjectDatabase(projectPath)
+      } catch (error) {
+        setCurrentProjectPath(null)
+        return { success: false, project: null, error: `无法打开项目数据库（可能已损坏或缺少必要文件）: ${String(error)}` }
+      }
 
       // 从 DB 读取配置
       const coreData = ProjectCoreRepository.get()
@@ -129,6 +157,7 @@ export function registerProjectController() {
       }
 
       addRecentProject({ name: projectData.name, path: projectPath, updatedAt: projectData.updatedAt })
+      setCurrentProjectPath(projectPath)
 
       return { success: true, project: projectData }
     } catch (error) {

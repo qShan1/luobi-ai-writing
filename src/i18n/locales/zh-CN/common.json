@@ -72,5 +72,7 @@
   "openAndView": "打开查看",
   "ignore": "忽略",
   "comingSoon": "即将推出",
-  "lastAttempt": "上次尝试"
+  "lastAttempt": "上次尝试",
+  "criticalFailed": "关键失败",
+  "workflowCompleted": "✅ 「{{title}}」完成"
 }

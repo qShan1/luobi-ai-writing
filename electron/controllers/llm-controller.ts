@@ -1,18 +1,62 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { readJsonFile, writeJsonFile, MODELS_CONFIG_PATH, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG } from '../utils/config-utils'
+import { readJsonFile, writeJsonFile, MODELS_CONFIG_PATH, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG, encryptSecret, decryptSecret } from '../utils/config-utils'
 import { ModelProfile, GlobalConfig } from '../../src/shared/ipc-channels'
+import { BUILTIN_PRESETS } from '../../src/shared/provider-presets'
+import { safeValidate, validateModelProfile } from '../ipc-validation'
 import { LLMFactory } from '../llm/llm-factory'
 
 const activeStreams = new Map<string, AbortController>()
 
-let proxyApplied = false
+/** 持久化在 models.json 中的模型，可能携带加密的 apiKey */
+interface StoredModel extends ModelProfile {
+  apiKeyEnc?: string
+}
 
 function loadModelConfigs(): ModelProfile[] {
-  return readJsonFile<ModelProfile[]>(MODELS_CONFIG_PATH, [])
+  return readJsonFile<StoredModel[]>(MODELS_CONFIG_PATH, []).map((m) => ({
+    ...m,
+    apiKey: m.apiKeyEnc ? decryptSecret(m.apiKeyEnc) : m.apiKey,
+  }))
 }
 
 function saveModelConfigs(models: ModelProfile[]) {
-  writeJsonFile(MODELS_CONFIG_PATH, models)
+  const stored: StoredModel[] = models.map((m) => {
+    const { apiKey, ...rest } = m
+    const apiKeyEnc = encryptSecret(apiKey)
+    return apiKeyEnc ? { ...rest, apiKey: '', apiKeyEnc } : { ...rest, apiKey }
+  })
+  writeJsonFile(MODELS_CONFIG_PATH, stored)
+}
+
+/** 无已保存模型时用内置预设填充默认（不落盘） */
+function defaultModelConfigs(): ModelProfile[] {
+  return BUILTIN_PRESETS.flatMap((p) => {
+    const generation = p.models.map((m) => ({
+      id: `${p.provider}-${m.name}`,
+      name: m.name,
+      provider: p.provider as ModelProfile['provider'],
+      protocol: p.protocol as 'openai' | 'gemini',
+      modelName: m.name,
+      apiKey: '',
+      baseUrl: p.baseUrl,
+      temperature: 0.7,
+      maxTokens: m.maxTokens,
+      purposes: ['generation', 'refinement', 'summary'] as ModelProfile['purposes'],
+    }))
+    const embedding = p.embeddingModels.map((name) => ({
+      id: `${p.provider}-${name}`,
+      name,
+      provider: p.provider as ModelProfile['provider'],
+      protocol: p.protocol as 'openai' | 'gemini',
+      modelName: name,
+      apiKey: '',
+      baseUrl: p.baseUrl,
+      temperature: 0.7,
+      maxTokens: 0,
+      purposes: ['embedding'] as ModelProfile['purposes'],
+    }))
+    return [...generation, ...embedding]
+  })
 }
 
 function getModelConfig(modelId: string): ModelProfile | null {
@@ -50,9 +94,7 @@ async function logLlmCall(call: {
 }
 
 function applyProxyConfig() {
-  // 代理配置只应用一次（进程级 env 全局副作用），避免每次调用清空/重写 env
-  if (proxyApplied) return
-  proxyApplied = true
+  // 每次调用前按当前配置重建 env（代理可能在运行中被修改，不能只应用一次）
   try {
     const config = readJsonFile<GlobalConfig>(GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG)
     if (config.proxy?.enabled && config.proxy.host) {
@@ -191,14 +233,19 @@ export function registerLLMController() {
     return { success: false }
   })
 
-  ipcMain.handle('llm:list-models', async () => loadModelConfigs())
+  ipcMain.handle('llm:list-models', async () => {
+    const models = loadModelConfigs()
+    return models.length > 0 ? models : defaultModelConfigs()
+  })
 
   ipcMain.handle('llm:save-model', async (_event, model: ModelProfile) => {
+    const v = safeValidate(validateModelProfile, model)
+    if (!v.ok) return { success: false, error: v.error }
     try {
       const models = loadModelConfigs()
-      const idx = models.findIndex((m) => m.id === model.id)
-      if (idx >= 0) models[idx] = model
-      else models.push(model)
+      const idx = models.findIndex((m) => m.id === v.data.id)
+      if (idx >= 0) models[idx] = v.data
+      else models.push(v.data)
       saveModelConfigs(models)
       return { success: true }
     } catch (error) {

@@ -358,6 +358,7 @@
     "reviewFixGateError": "  ❌ [Canon] Исключение шлюза рецензионного исправления: {{error}}",
     "finalizeGateVerdict": "  [Gate] {{verdict}}: {{report}}",
     "finalizeGateBlocked": "  [Gate] BLOCKED - HIGH conflicts. Please refine and retry.",
+    "finalizeGateBlockedReport": "Шлюз повествовательной согласованности заблокировал финализацию: {{report}}",
     "finalizeGateRepaired": "  [Gate] REPAIRED ({{attempts}} attempts)",
     "finalizeGateError": "  [Gate] error: {{error}}",
     "reviewResultFormat": "Отчёт рецензии: Гл.{{chapter}}",

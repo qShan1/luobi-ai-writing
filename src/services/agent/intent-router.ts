@@ -212,9 +212,11 @@ export function mentionsToToolCalls(mentions: ParsedMention[]): Array<{
       case 'knowledge':
         return { toolName: 'search_knowledge', args: { query: '' } }
       case 'chapter':
-        return { toolName: 'list_chapters', args: {} }
+        // 取当前章节实际内容（read_drafts 缺省自动解析最新章节）
+        return { toolName: 'read_drafts', args: {} }
       case 'file':
-        return { toolName: 'read_file', args: { file_path: '' } }
+        // 未指定路径时 read_file 回退到当前编辑器中打开的文件
+        return { toolName: 'read_file', args: {} }
       default:
         return { toolName: 'read_project_state', args: {} }
     }

@@ -100,6 +100,14 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   },
 
   quitApp: async () => {
+    const { useEditorStore } = await import('./editor-store')
+    const dirtyTabs = useEditorStore.getState().tabs.filter(t => t.dirty)
+    if (dirtyTabs.length > 0) {
+      const { confirm } = await import('../components/ui/Confirm')
+      const i18n = (await import('../i18n')).default
+      const ok = await confirm(i18n.t('layout.closeProjectConfirm', { ns: 'layout', names: dirtyTabs.map(t => t.name).join('\n') }))
+      if (!ok) return
+    }
     set({ askOpen: false })
     try {
       await ipc.invoke('window:quit')

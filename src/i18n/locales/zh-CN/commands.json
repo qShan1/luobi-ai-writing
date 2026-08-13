@@ -358,6 +358,7 @@
     "reviewFixGateError": "  ❌ [Canon] 审稿修复 Gate 异常：{{error}}",
     "finalizeGateVerdict": "  [Gate] {{verdict}}: {{report}}",
     "finalizeGateBlocked": "  [Gate] BLOCKED - HIGH conflicts. Please refine and retry.",
+    "finalizeGateBlockedReport": "叙事一致性 Gate 阻止定稿：{{report}}",
     "finalizeGateRepaired": "  [Gate] REPAIRED ({{attempts}} attempts)",
     "finalizeGateError": "  [Gate] error: {{error}}",
     "reviewResultFormat": "审稿报告：第{{chapter}}章",

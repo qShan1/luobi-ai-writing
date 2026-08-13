@@ -164,6 +164,11 @@ export class DraftRepository {
         const db = getProjectDb()
         if (!db) return
 
+        const VALID_STATUSES = ['draft', 'revised', 'finalized', 'archived'] as const
+        if (!VALID_STATUSES.includes(status as (typeof VALID_STATUSES)[number])) {
+            throw new Error(`[DraftRepository] 非法草稿状态: ${status}`)
+        }
+
         if (wordCount !== undefined) {
             db.prepare(`
         UPDATE drafts SET status = ?, word_count = ?, updated_at = datetime('now')

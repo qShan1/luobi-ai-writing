@@ -132,9 +132,10 @@ export class ProjectCoreRepository {
         const values: unknown[] = []
 
         for (const [camel, col] of Object.entries(fieldMap)) {
-            if (camel in data) {
+            const value = (data as Record<string, unknown>)[camel]
+            if (value !== undefined) {
                 setClauses.push(`${col} = ?`)
-                values.push((data as Record<string, unknown>)[camel])
+                values.push(value)
             }
         }
 

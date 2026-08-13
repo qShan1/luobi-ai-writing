@@ -3,6 +3,7 @@ import { History, RotateCcw, ArrowLeftRight, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useEditorStore } from '../../stores/editor-store'
 import { useProjectStore } from '../../stores/project-store'
+import { useDraftStore } from '../../stores/draft-store'
 import { Button } from '../ui/Button'
 import { cn } from '../../lib/utils'
 import {
@@ -78,13 +79,21 @@ export default function VersionHistory() {
     // 获取最新草稿内容进行比对
     const currentContent = await getChapterLatestContent(chapter.chapter_number)
 
+    // 携带真实 draftId 的路径（现行 luobi://draft/{id}），供合并视图正确写入 DB
+    const currentDraft = (useDraftStore.getState().draftsByChapter[chapter.chapter_number] ?? [])
+      .sort((a, b) => b.version - a.version)[0]
+    const draftPath = currentDraft?.filePath
+
     useEditorStore.getState().openFile({
       id: `diff-version-${versionId}`,
       name: `${versionLabel} ${t('versionHistory.vsCurrent')}`,
       type: 'diff',
       originalContent: oldContent,
       content: currentContent,
-      filePath: `luobi://draft/ch${chapter.chapter_number}`, // 不再指向实体文件
+      filePath: draftPath ?? `luobi://draft/ch${chapter.chapter_number}`,
+      revisionPath: draftPath,
+      chapterNumber: chapter.chapter_number,
+      chapterDir: `luobi://draft/ch${chapter.chapter_number}`,
     })
   }
 

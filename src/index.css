@@ -82,7 +82,6 @@
 /* ===== Tailwind v4 设计令牌（精简版 — 仅保留 Tailwind 需要的扩展） ===== */
 @theme {
   /* Interface type should be quiet and predictable; prose has its own font. */
-  --font-sans: system-ui, 'Microsoft YaHei UI', 'Noto Sans SC', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
   --font-writing: 'Noto Serif SC', 'Source Han Serif SC', Georgia, serif;
 
@@ -99,7 +98,6 @@
   /* 间距 */
   --spacing-sidebar: 260px;
   --spacing-panel-min: 200px;
-  --spacing-titlebar: 36px;
   --spacing-statusbar: 24px;
   --spacing-activity-bar: 48px;
 
@@ -117,7 +115,7 @@
     --animate-slide-in-left: slide-in-left 0.2s var(--ease-out);
     --animate-slide-in-up: slide-in-up 0.2s var(--ease-out);
     --animate-scale-in: scale-in 0.2s var(--ease-out);
-    --animate-bounce-in: bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --animate-bounce-in: bounce-in 0.4s var(--ease-out);
     --animate-shimmer: shimmer 2s linear infinite;
 
   @keyframes fade-in {
@@ -281,7 +279,13 @@
     --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
     --transition-fast: 0.12s var(--ease-out);
     --transition-normal: 0.25s var(--ease-out);
-    --transition-spring: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    /* 层级 — 浮层统一 z-index 令牌 */
+    --z-modal: 50;
+    --z-overlay: 55;
+    --z-popover: 60;
+    --z-toast: 70;
+    --z-max: 9999;
 
     /* 字体 */
     --font-sans: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
@@ -314,7 +318,7 @@
     --color-accent-rgb: 201, 139, 127;
 
     /* 品牌金色 — Logo 星辰金 #C9A76C */
-    --color-gold: #D9825B;
+    --color-gold: #C9A76C;
 
     --color-success: #6FBF9A;
     --color-warning: #D0A24A;
@@ -455,7 +459,7 @@
     --color-tab-bg: transparent;
     --color-tab-active: #1F1F1F;
     --color-tab-border: transparent;
-    --color-tab-indicator: #0E639C;
+    --color-tab-indicator: #C88273;
 
     --color-statusbar: #181818;
     --color-statusbar-text: #909090;
@@ -513,8 +517,8 @@
     background-color: var(--color-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* 增强的过渡曲线 */
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    /* 统一的过渡曲线 */
+    transition-timing-function: var(--ease-out);
   }
 
   /* 禁止文本选择（IDE 区域） */
@@ -700,24 +704,6 @@
     box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
   }
 
-  /* ===== 配置编辑器输入框 ===== */
-  .config-input {
-    @apply w-full px-2.5 py-1.5 text-xs outline-none;
-    border-radius: var(--radius-md);
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
-    color: var(--color-text);
-    transition: border-color var(--transition-fast);
-  }
-
-  .config-input:focus {
-    border-color: var(--color-accent);
-  }
-
-  .config-input::placeholder {
-    color: var(--color-text-muted);
-  }
-
   /* ===== 工具窗口按钮 — 三条工具栏共用，带增强悬停效果 ===== */
   .tool-btn {
     @apply flex items-center justify-center relative;
@@ -747,33 +733,6 @@
   }
 
   .tool-btn:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
-  }
-
-  /* ===== 底部工具栏按钮（更矮） ===== */
-  .bottom-tool-btn {
-    @apply flex items-center justify-center relative w-full;
-    height: 26px;
-    color: var(--color-activity-icon);
-    transition: color var(--transition-fast), background var(--transition-fast);
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    outline: none;
-  }
-
-  .bottom-tool-btn:hover {
-    background: rgba(128, 128, 128, 0.10);
-    color: var(--color-text);
-  }
-
-  .bottom-tool-btn.active {
-    color: var(--color-accent);
-    box-shadow: inset -2px 0 0 var(--color-accent);
-  }
-
-  .bottom-tool-btn:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
   }
@@ -1033,30 +992,10 @@
 
 /* ===== 新增强动画 ===== */
 
-/* 弹跳进入 - 用于成功状态 */
-@keyframes bounce-in {
-  0% { opacity: 0; transform: scale(0.95); }
-  50% { transform: scale(1.05); }
-  70% { transform: scale(0.97); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-/* 闪烁效果 - 用于加载状态 */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
 /* 旋转进入 */
 @keyframes spin-in {
   0% { opacity: 0; transform: rotate(-10deg) scale(0.95); }
   100% { opacity: 1; transform: rotate(0) scale(1); }
-}
-
-/* 渐显下滑 */
-@keyframes fade-in-down {
-  0% { opacity: 0; transform: translateY(-10px); }
-  100% { opacity: 1; transform: translateY(0); }
 }
 
 /* =====================================================================
@@ -1242,21 +1181,7 @@
 }
 
 /* ===== 增强动画工具类 ===== */
-
-/* 渐入动画 */
-.animate-fade-in {
-  animation: fade-in 0.2s var(--ease-out) forwards;
-}
-
-/* 渐入上移动画 */
-.animate-fade-in-up {
-  animation: fade-in-up 0.25s var(--ease-out) forwards;
-}
-
-/* 缩放入场动画 */
-.animate-scale-in {
-  animation: scale-in 0.2s var(--ease-out) forwards;
-}
+/* 动画定义以 @theme 的 --animate-* 令牌为唯一来源（fade-in / fade-in-up / scale-in / bounce-in / shimmer 等） */
 
 /* ===== Popover / 下拉菜单入场 =====
    Origin-aware 缩放（Emil 标准）：从触发点展开，而不是居中缩放。
@@ -1276,71 +1201,12 @@
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* 弹跳入场动画 */
-.animate-bounce-in {
-  animation: bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* 交错渐入 - 用于列表项依次入场（35ms 间隔，Emil 推荐 30-40ms） */
-.stagger-enter > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-enter > *:nth-child(2) { animation-delay: 35ms; }
-.stagger-enter > *:nth-child(3) { animation-delay: 70ms; }
-.stagger-enter > *:nth-child(4) { animation-delay: 105ms; }
-.stagger-enter > *:nth-child(5) { animation-delay: 140ms; }
-.stagger-enter > *:nth-child(6) { animation-delay: 175ms; }
-.stagger-enter > *:nth-child(7) { animation-delay: 210ms; }
-.stagger-enter > *:nth-child(8) { animation-delay: 245ms; }
-.stagger-enter > *:nth-child(9) { animation-delay: 280ms; }
-.stagger-enter > *:nth-child(10) { animation-delay: 315ms; }
-
-/* 悬停上浮效果 */
-.hover-lift {
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
-}
-.hover-lift:hover {
-  box-shadow: var(--shadow-md);
-}
-
-/* 悬停缩放效果 */
-.hover-scale {
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.hover-scale:hover {
-  /* transform handled by @media (hover: hover) */
-}
-
 /* 按下缩放效果 */
 .active-press:active {
   transform: scale(0.96);
 }
 
-/* 发光边框效果 */
-.glow-border {
-  position: relative;
-}
-.glow-border::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-gold));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
-.glow-border:hover::before {
-  opacity: 0.5;
-}
-
 /* 玻璃态效果 — 苹果式磨砂：柔和模糊 + 提饱和 + 细边框 + 柔和小阴影 */
-.glass {
-  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
-  backdrop-filter: blur(14px) saturate(1.5);
-  border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
-  box-shadow: var(--shadow-md);
-}
-
-/* 状态栏磨砂 — 底部工具条：半透明材质 + 上浮柔和投影 */
 .statusbar-frost {
   background: color-mix(in srgb, var(--color-statusbar) 88%, transparent);
   backdrop-filter: blur(12px) saturate(1.2);
@@ -1349,26 +1215,12 @@
 
 /* 降低透明度偏好：降级为实心材质，关闭模糊与投影 */
 @media (prefers-reduced-transparency: reduce) {
-  .glass {
-    background: var(--color-bg);
-    backdrop-filter: none;
-    box-shadow: var(--shadow-sm);
-  }
-
   .statusbar-frost {
     background: var(--color-statusbar);
     backdrop-filter: none;
     box-shadow: 0 -1px 0 var(--color-border);
   }
 }
-
-/* 渐变文字效果 */
-  .text-gradient {
-  background: linear-gradient(135deg, var(--color-accent), var(--color-gold));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  }
 
   /* Welcome page: restrained editorial workspace rather than a dashboard of cards. */
   .welcome-shell { background: var(--color-editor-bg); }
@@ -1412,18 +1264,6 @@
   pointer-events: none;
 }
 
-/* 加载状态闪烁 */
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--color-skeleton) 25%,
-    rgba(var(--color-accent-rgb), 0.12) 50%,
-    var(--color-skeleton) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-}
-
 /* =====================================================================
  * Accessibility — Reduced Motion & Hover Gating
  * ===================================================================== */
@@ -1461,14 +1301,6 @@
   .ai-glow:hover {
     box-shadow: 0 6px 20px rgba(var(--color-accent-rgb), 0.22);
   }
-
-  .hover-lift:hover {
-    transform: translateY(-2px);
-  }
-
-  .hover-scale:hover {
-    transform: scale(1.02);
-  }
 }
 
 /* 非 hover 环境下清除 transform（触屏设备） */
@@ -1477,9 +1309,7 @@
   .icon-btn:hover,
   .tool-btn:hover,
   .btn-primary:hover,
-  .ai-glow:hover,
-  .hover-lift:hover,
-  .hover-scale:hover {
+  .ai-glow:hover {
     transform: none;
   }
 }
@@ -1600,7 +1430,24 @@
   box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent);
 }
 
+/* 浮层玻璃 — Dialog / Toast / Confirm / AlertDialog / SettingsModal 等弹层主体。
+   由 .liquid-enabled 门控，并尊重 prefers-reduced-transparency；默认关闭。 */
+.glass-overlay-panel {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.liquid-enabled .glass-overlay-panel {
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+}
+
 @media (prefers-reduced-transparency: reduce) {
+  .liquid-enabled .glass-overlay-panel {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .statusbar-frost.liquid-glass-panel,
   .knowledge-surface,
   .knowledge-backfill,

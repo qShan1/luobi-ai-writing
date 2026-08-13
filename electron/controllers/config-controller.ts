@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import { execFileSync } from 'node:child_process'
 import { readJsonFile, writeJsonFile, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG, LUOBI_HOME } from '../utils/config-utils'
 import { GlobalConfig } from '../../src/shared/ipc-channels'
+import { safeValidate, validateGlobalConfigInput } from '../ipc-validation'
 
 export function registerConfigController() {
   /** 读取全局配置 */
@@ -11,9 +12,11 @@ export function registerConfigController() {
 
   /** 保存全局配置 */
   ipcMain.handle('config:set', async (_event, config: Partial<GlobalConfig>) => {
+    const v = safeValidate(validateGlobalConfigInput, config)
+    if (!v.ok) return { success: false, error: v.error }
     try {
       const existing = readJsonFile<GlobalConfig>(GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG)
-      const updated = { ...existing, ...config }
+      const updated = { ...existing, ...v.data }
       writeJsonFile(GLOBAL_CONFIG_PATH, updated)
       return { success: true }
     } catch (error) {

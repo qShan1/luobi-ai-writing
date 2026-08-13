@@ -68,7 +68,7 @@ function ToastHost() {
         position: 'fixed',
         bottom: 20,
         right: 20,
-        zIndex: 9999,
+        zIndex: 'var(--z-toast)',
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
@@ -129,9 +129,13 @@ function ToastCard({ item }: { item: ToastItem }) {
   const { accent, icon } = TYPE_STYLE[item.type]
 
   return (
-    <motion.div layout={!reduce} transition={{ layout: { duration: 0.25, ease: [0.23, 1, 0.32, 1] } }}>
+    <motion.div
+      layout={!reduce}
+      aria-live={item.type === 'error' ? 'assertive' : 'polite'}
+      transition={{ layout: { duration: 0.25, ease: [0.23, 1, 0.32, 1] } }}
+    >
       <div
-        className={`toast-card ${isExiting ? 'toast-card--exit' : 'toast-card--enter'}`}
+        className={`toast-card glass-overlay-panel ${isExiting ? 'toast-card--exit' : 'toast-card--enter'}`}
         style={{
           pointerEvents: 'auto',
           display: 'flex',
@@ -142,7 +146,6 @@ function ToastCard({ item }: { item: ToastItem }) {
           padding: '12px 14px',
           borderRadius: 'var(--radius-xl)',
           backgroundColor: 'color-mix(in srgb, var(--color-panel) 80%, transparent)',
-          backdropFilter: 'blur(24px) saturate(1.3)',
           border: '1px solid color-mix(in srgb, var(--color-border) 80%, transparent)',
           borderLeft: `3px solid ${accent}`,
           boxShadow: 'var(--shadow-popover)',

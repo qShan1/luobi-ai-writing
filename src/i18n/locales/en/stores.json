@@ -30,6 +30,11 @@
     "streamFailed": "Stream generation failed",
     "noModel": "No default AI model configured"
   },
+  "agent": {
+    "thinkingRound": "Thinking — round {{round}}… ({{elapsed}}s elapsed)",
+    "historySummary": "(Brief summary of earlier conversation, {{count}} messages)",
+    "unknownCommand": "Unknown command {{cmd}}. Type /help to see available commands."
+  },
   "guard": {
     "openProjectFirst": "Please open or create a project first.",
     "fillNovelConfig": "Please fill in the core outline or protagonist profile in Novel Configuration first, so AI can generate the story architecture.\n\nCurrent genre: {{genre}}",

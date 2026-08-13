@@ -180,7 +180,7 @@ export function registerImportController() {
       if (filePaths.length === 1) {
         // ===== 单文件模式 =====
         const filePath = filePaths[0]
-        const content = fs.readFileSync(filePath, 'utf-8')
+        const content = await fs.promises.readFile(filePath, 'utf-8')
 
         if (hasChapterHeadings(content)) {
           // 文件内含章节标题 → 正则拆章
@@ -206,7 +206,7 @@ export function registerImportController() {
 
         for (let i = 0; i < sorted.length; i++) {
           const filePath = sorted[i]
-          const content = fs.readFileSync(filePath, 'utf-8').trim()
+          const content = (await fs.promises.readFile(filePath, 'utf-8')).trim()
           if (!content) continue
 
           // 尝试从文件内容中检测章节标题
