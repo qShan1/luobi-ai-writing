@@ -209,7 +209,7 @@
     --color-tab-bg: transparent;
     --color-tab-active: #FFFFFF;
     --color-tab-border: transparent;
-    --color-tab-indicator: #A53D32;
+    --color-tab-indicator: #A2554A;
 
     /* 状态栏 */
     --color-statusbar: #ECE8E0;
@@ -221,31 +221,31 @@
     /* 活动栏图标颜色 */
     --color-activity-icon: #928B7F;
     --color-activity-icon-active: #262019;
-    --color-activity-indicator: #5B9ED6;
+    --color-activity-indicator: #A2554A;
 
     /* 编辑器 */
     --color-editor-bg: #FAF8F4;
-    --color-editor-line-highlight: rgba(91, 158, 214, 0.04);
-    --color-editor-selection: rgba(91, 158, 214, 0.14);
+    --color-editor-line-highlight: rgba(var(--color-accent-rgb), 0.04);
+    --color-editor-selection: rgba(var(--color-accent-rgb), 0.14);
 
     /* 分割条 Sash */
     --color-sash: transparent;
-    --color-sash-hover: rgba(91, 158, 214, 0.15);
+    --color-sash-hover: rgba(var(--color-accent-rgb), 0.15);
 
     /* ===== 语义令牌 ===== */
 
     /* 焦点环 */
-    --color-focus-ring: rgba(91, 158, 214, 0.45);
+    --color-focus-ring: rgba(var(--color-accent-rgb), 0.40);
     /* 遮罩层 */
     --color-backdrop: rgba(10, 22, 40, 0.20);
     /* Tooltip */
     --color-tooltip-bg: #0F1A2E;
     --color-tooltip-text: #E8ECF2;
     /* 骨架屏 */
-    --color-skeleton: rgba(91, 158, 214, 0.08);
+    --color-skeleton: rgba(var(--color-accent-rgb), 0.08);
     /* Badge */
-    --color-badge-bg: rgba(91, 158, 214, 0.10);
-    --color-badge-text: #5B9ED6;
+    --color-badge-bg: rgba(var(--color-accent-rgb), 0.10);
+    --color-badge-text: #A2554A;
 
     /* ===== 尺寸规范 ===== */
     --height-titlebar: 40px;
@@ -318,7 +318,7 @@
     --color-tab-bg: transparent;
     --color-tab-active: #25302A;
     --color-tab-border: transparent;
-    --color-tab-indicator: #D9825B;
+    --color-tab-indicator: #C98B7F;
 
     --color-statusbar: #121815;
     --color-statusbar-text: #708177;
@@ -327,23 +327,23 @@
 
     --color-activity-icon: #708177;
     --color-activity-icon-active: #E7EEE8;
-    --color-activity-indicator: #D9825B;
+    --color-activity-indicator: #C98B7F;
 
     --color-editor-bg: #181F1C;
-    --color-editor-line-highlight: rgba(159, 190, 169, 0.04);
-    --color-editor-selection: rgba(159, 190, 169, 0.18);
+    --color-editor-line-highlight: rgba(var(--color-accent-rgb), 0.04);
+    --color-editor-selection: rgba(var(--color-accent-rgb), 0.18);
 
     --color-sash: transparent;
-    --color-sash-hover: rgba(159, 190, 169, 0.15);
+    --color-sash-hover: rgba(var(--color-accent-rgb), 0.15);
 
     /* 语义令牌 */
-    --color-focus-ring: rgba(159, 190, 169, 0.50);
+    --color-focus-ring: rgba(var(--color-accent-rgb), 0.50);
     --color-backdrop: rgba(10, 14, 12, 0.68);
     --color-tooltip-bg: #E7EEE8;
     --color-tooltip-text: #18201D;
-    --color-skeleton: rgba(159, 190, 169, 0.06);
-    --color-badge-bg: rgba(159, 190, 169, 0.12);
-    --color-badge-text: #9FBEA9;
+    --color-skeleton: rgba(var(--color-accent-rgb), 0.06);
+    --color-badge-bg: rgba(var(--color-accent-rgb), 0.12);
+    --color-badge-text: #C98B7F;
 
     /* 阴影 — 深蓝光晕 */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
@@ -384,7 +384,7 @@
     --color-tab-bg: transparent;
     --color-tab-active: #FCFAF5;
     --color-tab-border: transparent;
-    --color-tab-indicator: #9B8EC8;
+    --color-tab-indicator: #A55B4E;
 
     --color-statusbar: #EDE8E0;
     --color-statusbar-text: #A09488;
@@ -393,23 +393,23 @@
 
     --color-activity-icon: #A09488;
     --color-activity-icon-active: #2C2520;
-    --color-activity-indicator: #9B8EC8;
+    --color-activity-indicator: #A55B4E;
 
     --color-editor-bg: #F9F5ED;
-    --color-editor-line-highlight: rgba(155, 142, 200, 0.04);
-    --color-editor-selection: rgba(155, 142, 200, 0.12);
+    --color-editor-line-highlight: rgba(var(--color-accent-rgb), 0.04);
+    --color-editor-selection: rgba(var(--color-accent-rgb), 0.12);
 
     --color-sash: transparent;
-    --color-sash-hover: rgba(155, 142, 200, 0.12);
+    --color-sash-hover: rgba(var(--color-accent-rgb), 0.12);
 
     /* 语义令牌 */
-    --color-focus-ring: rgba(155, 142, 200, 0.45);
+    --color-focus-ring: rgba(var(--color-accent-rgb), 0.45);
     --color-backdrop: rgba(44, 37, 32, 0.25);
     --color-tooltip-bg: #2C2520;
     --color-tooltip-text: #F5F0E8;
-    --color-skeleton: rgba(0, 0, 0, 0.05);
-    --color-badge-bg: rgba(155, 142, 200, 0.10);
-    --color-badge-text: #9B8EC8;
+    --color-skeleton: rgba(var(--color-accent-rgb), 0.06);
+    --color-badge-bg: rgba(var(--color-accent-rgb), 0.10);
+    --color-badge-text: #A55B4E;
 
     /* 阴影 */
     --shadow-sm: 0 1px 2px rgba(44, 37, 32, 0.06);
@@ -462,18 +462,18 @@
 
     --color-editor-bg: #1F1F1F;
     --color-editor-line-highlight: rgba(255, 255, 255, 0.04);
-    --color-editor-selection: rgba(38, 79, 120, 0.6);
+    --color-editor-selection: rgba(var(--color-accent-rgb), 0.22);
 
     --color-sash: transparent;
-    --color-sash-hover: rgba(0, 122, 204, 0.5);
+    --color-sash-hover: rgba(var(--color-accent-rgb), 0.18);
 
-    --color-focus-ring: rgba(0, 122, 204, 0.4);
+    --color-focus-ring: rgba(var(--color-accent-rgb), 0.45);
     --color-backdrop: rgba(0, 0, 0, 0.4);
     --color-tooltip-bg: #252526;
     --color-tooltip-text: #CCCCCC;
-    --color-skeleton: rgba(255, 255, 255, 0.05);
-    --color-badge-bg: #4D4D4D;
-    --color-badge-text: #FFFFFF;
+    --color-skeleton: rgba(var(--color-accent-rgb), 0.06);
+    --color-badge-bg: rgba(var(--color-accent-rgb), 0.14);
+    --color-badge-text: #D69283;
 
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -1426,8 +1426,9 @@
 /* 环境背景：柔和光晕渐变，作为玻璃磨砂的内容层 */
 .app-liquid-bg {
   background:
-    radial-gradient(900px 600px at 12% -5%, rgba(var(--color-accent-rgb), 0.10), transparent 60%),
-    radial-gradient(800px 600px at 108% 18%, rgba(var(--color-accent-rgb), 0.07), transparent 55%),
+    radial-gradient(1200px 800px at 12% -5%, rgba(var(--color-accent-rgb), 0.20), transparent 60%),
+    radial-gradient(1000px 700px at 108% 18%, rgba(var(--color-accent-rgb), 0.14), transparent 55%),
+    radial-gradient(900px 700px at 82% 105%, rgba(var(--color-accent-rgb), 0.10), transparent 60%),
     var(--color-bg);
 }
 
@@ -1436,12 +1437,14 @@
   background: var(--color-panel);
 }
 
-/* effects 开启：高透磨砂 + 顶部白高光（Apple 液态玻璃） */
+/* effects 开启：高透磨砂 + 白色高光边 + 浮起投影（Apple 液态玻璃） */
 .liquid-enabled .liquid-glass-panel {
-  background: color-mix(in srgb, var(--color-panel) 45%, transparent);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  backdrop-filter: blur(24px) saturate(160%);
-  box-shadow: inset 0 1px 0 0 color-mix(in srgb, #fff 14%, transparent);
+  background: color-mix(in srgb, var(--color-panel) 38%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, #fff 24%, transparent),
+    0 8px 24px -14px rgba(0, 0, 0, 0.14);
 }
 
 @media (prefers-reduced-transparency: reduce) {

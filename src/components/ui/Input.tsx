@@ -31,9 +31,9 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
       <input
         type={type}
         className={cn(
-          'flex h-7 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-panel)] px-3 py-1 text-xs text-[var(--color-text)]',
+          'flex h-7 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-panel)] px-3 py-1 text-xs text-[var(--color-text)]',
           'placeholder:text-[var(--color-text-muted)]',
-          'transition-[border-color,box-shadow] duration-200 ease-out',
+          'transition-[border-color,box-shadow,background-color] duration-150 ease-[var(--ease-out)]',
           'focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-1 focus:ring-offset-[var(--color-bg)]',
           'focus:border-[var(--color-accent)]',
           'hover:border-[var(--color-text-muted)]',

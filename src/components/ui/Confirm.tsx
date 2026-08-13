@@ -90,10 +90,13 @@ function ConfirmDialog({
         role="dialog"
         aria-modal="true"
         style={{
-          backgroundColor: 'var(--color-sidebar)',
+          backgroundColor: 'color-mix(in srgb, var(--color-panel) 70%, transparent)',
           border: '1px solid var(--color-border)',
           borderRadius: 'var(--radius-2xl)',
-          boxShadow: 'var(--shadow-popover)',
+          boxShadow:
+            'inset 0 1px 0 0 rgba(255,255,255,0.35), 0 25px 50px -12px rgba(0,0,0,0.25), var(--shadow-popover)',
+          backdropFilter: 'blur(24px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(160%)',
           padding: '20px 24px',
           minWidth: 380,
           maxWidth: 460,

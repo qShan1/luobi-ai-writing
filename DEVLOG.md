@@ -30,6 +30,23 @@
 
 ---
 
+## 2026-08-13: 弹窗升级液态玻璃质感 + 统一入场动效
+
+**DialogContent / Confirm / AlertDialog / SettingsModal 主体由纯色改为高透液态玻璃，保持 Radix 逻辑与可访问性不动。**
+
+### 实现
+- `src/components/ui/Dialog.tsx` — `DialogContent` 从 `bg-[var(--color-bg)]` 纯色改为 `color-mix(in srgb, var(--color-panel) 70%, transparent)` + `backdrop-filter: blur(24px) saturate(160%)`（含 `-webkit-`），boxShadow 叠加顶部白高光 `inset 0 1px 0 0 rgba(255,255,255,0.35)` 与大投影 `0 25px 50px -12px rgba(0,0,0,0.25)`；保留 `rounded-2xl border`、`zoom-in-95 + fade-in-0` 入场与 `duration-200 ease-out`。
+- `src/components/ui/Confirm.tsx` — 弹窗主体独立容器同样玻璃化（`--color-panel` 70% + blur 24px + 白高光顶边 + 大投影，叠加 `--shadow-popover`）。
+- `src/components/ui/AlertDialog.tsx` — 弹窗主体同样玻璃化（与 Confirm 同参数）。
+- `src/components/settings/SettingsModal.tsx` — 主容器由 `--color-editor-bg` 改为 `color-mix(in srgb, var(--color-editor-bg) 80%, transparent)` + `blur(28px) saturate(160%)` + 白高光顶边 + 大投影；遮罩 blur 4px→12px，与 DialogOverlay 一致。
+- 遮罩 `DialogOverlay` 保持 `bg-black/30 backdrop-blur-sm`（内联已是 blur(12px)），不动。
+
+### 验证
+- `pnpm exec tsc --noEmit` ✅
+- `pnpm lint` ✅
+
+---
+
 ## 2026-08-13: 修复「故事架构生成自动停止、无法生成完整」— 移除三处 60s 硬超时叠加
 
 **架构四步流水线（前提→角色→世界观→大纲）任一步 LLM 输出超约 60s 被掐断致整条 workflow 失败，移除渲染端/主进程的 60s 看门狗叠加，并补流中途重试、max_tokens 截断检测与架构步骤大 maxTokens。**

@@ -66,14 +66,17 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+      style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="relative flex w-full max-w-[880px] max-h-[80vh] rounded-2xl overflow-hidden shadow-2xl"
+        className="relative flex w-full max-w-[880px] max-h-[80vh] rounded-2xl overflow-hidden"
         style={{
-          backgroundColor: 'var(--color-editor-bg)',
+          background: 'color-mix(in srgb, var(--color-editor-bg) 80%, transparent)',
           border: '1px solid var(--color-border)',
+          backdropFilter: 'blur(28px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(160%)',
+          boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.35), 0 25px 50px -12px rgba(0,0,0,0.25)',
         }}
       >
         {/* 左侧导航 */}

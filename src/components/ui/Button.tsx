@@ -13,17 +13,17 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'btn-primary text-white',
+          'btn-primary text-white hover:-translate-y-px',
         ai:
           'ai-glow text-white shadow-sm hover:shadow-md relative overflow-hidden',
         destructive:
-          'bg-[var(--color-error)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-error)]/30 transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 active:scale-[0.96]',
+          'bg-[var(--color-error)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-error)]/30 transition-[transform,filter,box-shadow] duration-200 hover:brightness-110',
         outline:
           'border border-[var(--color-border)] bg-transparent text-[var(--color-text)] hover:bg-[var(--color-hover)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:-translate-y-px hover:shadow-sm transition-[background-color,color,border-color,transform,box-shadow] duration-200',
         ghost:
-          'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] active:scale-[0.98] transition-[background-color,color,transform] duration-200',
+          'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] transition-[background-color,color,transform] duration-200',
         success:
-          'bg-[var(--color-success)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-success)]/30 transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 active:scale-[0.96]',
+          'bg-[var(--color-success)] text-white shadow-sm hover:shadow-md hover:shadow-[var(--color-success)]/30 transition-[transform,filter,box-shadow] duration-200 hover:brightness-110',
       },
       size: {
         default: 'h-7 px-3 py-1 rounded-[var(--radius-md)]',    /* 28px 高 */

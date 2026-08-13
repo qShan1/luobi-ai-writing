@@ -9,8 +9,8 @@ const NativeSelect = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttribu
       <div className={cn('relative', className)}>
         <select
           className={cn(
-            'flex h-7 w-full cursor-pointer appearance-none rounded-md border border-[var(--color-border)] bg-[var(--color-panel)] py-1 pl-2 pr-8 text-xs text-[var(--color-text)]',
-            'transition-[border-color,box-shadow] duration-200 ease-out',
+            'flex h-7 w-full cursor-pointer appearance-none rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-panel)] py-1 pl-2 pr-8 text-xs text-[var(--color-text)]',
+            'transition-[border-color,box-shadow,background-color] duration-150 ease-[var(--ease-out)]',
             'focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-1 focus:ring-offset-[var(--color-bg)] focus:border-[var(--color-accent)]',
             'hover:border-[var(--color-text-muted)]',
             'disabled:cursor-not-allowed disabled:opacity-50',
