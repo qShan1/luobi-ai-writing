@@ -250,8 +250,8 @@ export default function ArchitectureConfirmDialog({
                     className={`text-[0.7rem] px-1.5 py-0.5 rounded flex-shrink-0 ${
                       exists
                         ? isChecked
-                          ? 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400'
-                          : 'bg-green-500/10 text-green-600 dark:text-green-400'
+                          ? 'bg-[color-mix(in_srgb,var(--color-warning)_15%,transparent)] text-[var(--color-warning)]'
+                          : 'bg-[color-mix(in_srgb,var(--color-success)_10%,transparent)] text-[var(--color-success)]'
                         : 'bg-[rgba(var(--color-accent-rgb),0.1)] text-[var(--color-accent)]'
                     }`}
                   >
@@ -298,14 +298,14 @@ export default function ArchitectureConfirmDialog({
           )}
 
           {noneSelected && (
-            <p className="text-xs px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400">
+            <p className="text-xs px-3 py-2 rounded-lg bg-[color-mix(in_srgb,var(--color-error)_10%,transparent)] border border-[color-mix(in_srgb,var(--color-error)_20%,transparent)] text-[var(--color-error)]">
               ⚠️ {t('architectureConfirm.noStepSelected')}
             </p>
           )}
           {/* 前置校验失败提示 */}
           {guardError && (
-            <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg text-xs bg-yellow-500/10 border border-yellow-500/30 text-yellow-600 dark:text-yellow-400">
-              <AlertCircle size={13} className="flex-shrink-0 mt-0.5 text-yellow-500" />
+            <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg text-xs bg-[color-mix(in_srgb,var(--color-warning)_10%,transparent)] border border-[color-mix(in_srgb,var(--color-warning)_30%,transparent)] text-[var(--color-warning)]">
+              <AlertCircle size={13} className="flex-shrink-0 mt-0.5 text-[var(--color-warning)]" />
               <span className="whitespace-pre-line">{guardError}</span>
             </div>
           )}

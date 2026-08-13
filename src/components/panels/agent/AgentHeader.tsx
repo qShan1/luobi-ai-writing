@@ -119,7 +119,6 @@ export default function AgentHeader() {
                 backgroundColor: 'var(--color-sidebar)',
                 border: '1px solid var(--color-border)',
                 boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-                transition: 'width 0.15s ease',
               }}
             >
               {/* ===== 主菜单视图 ===== */}

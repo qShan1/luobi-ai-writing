@@ -155,21 +155,21 @@ const SEVERITY_META: Record<ReviewIssue['severity'], {
 }> = {
   error: {
     emoji: '🔴',
-    colorClass: 'text-red-400',
-    bgClass: 'bg-red-500/10',
-    borderClass: 'border-red-500/30',
+    colorClass: 'text-[var(--color-error)]',
+    bgClass: 'bg-[color-mix(in_srgb,var(--color-error)_10%,transparent)]',
+    borderClass: 'border-[color-mix(in_srgb,var(--color-error)_30%,transparent)]',
   },
   warning: {
     emoji: '🟡',
-    colorClass: 'text-yellow-400',
-    bgClass: 'bg-yellow-500/10',
-    borderClass: 'border-yellow-500/30',
+    colorClass: 'text-[var(--color-warning)]',
+    bgClass: 'bg-[color-mix(in_srgb,var(--color-warning)_10%,transparent)]',
+    borderClass: 'border-[color-mix(in_srgb,var(--color-warning)_30%,transparent)]',
   },
   pass: {
     emoji: '🟢',
-    colorClass: 'text-green-400',
-    bgClass: 'bg-green-500/10',
-    borderClass: 'border-green-500/30',
+    colorClass: 'text-[var(--color-success)]',
+    bgClass: 'bg-[color-mix(in_srgb,var(--color-success)_10%,transparent)]',
+    borderClass: 'border-[color-mix(in_srgb,var(--color-success)_30%,transparent)]',
   },
 }
 
@@ -246,9 +246,9 @@ export default function ReviewReport({ reportText, draftPath, chapterNumber, cha
   }
 
   const SeverityIcon = ({ severity }: { severity: string }) => {
-    if (severity === 'error') return <AlertTriangle size={14} className="text-red-400 flex-shrink-0" />
-    if (severity === 'warning') return <AlertTriangle size={14} className="text-yellow-400 flex-shrink-0" />
-    return <CheckCircle size={14} className="text-green-400 flex-shrink-0" />
+    if (severity === 'error') return <AlertTriangle size={14} className="text-[var(--color-error)] flex-shrink-0" />
+    if (severity === 'warning') return <AlertTriangle size={14} className="text-[var(--color-warning)] flex-shrink-0" />
+    return <CheckCircle size={14} className="text-[var(--color-success)] flex-shrink-0" />
   }
 
   // 是否可以触发修稿（有草稿路径和章节信息时）
@@ -262,16 +262,16 @@ export default function ReviewReport({ reportText, draftPath, chapterNumber, cha
           <h3 className="text-base font-bold text-[var(--color-text)]"> {t('reviewReport.title')}</h3>
           <div className="flex items-center gap-3 text-xs ml-auto">
             {errorCount > 0 && (
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-red-500/20 text-red-400">
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-[color-mix(in_srgb,var(--color-error)_20%,transparent)] text-[var(--color-error)]">
                 🔴 {errorCount} {t('reviewReport.criticalIssues')}
               </span>
             )}
             {warningCount > 0 && (
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400">
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-[color-mix(in_srgb,var(--color-warning)_20%,transparent)] text-[var(--color-warning)]">
                 🟡 {warningCount} {t('reviewReport.suggestions')}
               </span>
             )}
-            <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-green-500/20 text-green-400">
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-[color-mix(in_srgb,var(--color-success)_20%,transparent)] text-[var(--color-success)]">
               🟢 {passCount} {t('reviewReport.passed')}
             </span>
             {/* 图例帮助按钮 */}
@@ -334,7 +334,7 @@ export default function ReviewReport({ reportText, draftPath, chapterNumber, cha
         {/* 分类展示 */}
         {issues.length === 0 ? (
           <div className="text-center py-8 text-[var(--color-text-muted)] text-sm">
-            <CheckCircle size={32} className="mx-auto mb-2 text-green-400" />
+            <CheckCircle size={32} className="mx-auto mb-2 text-[var(--color-success)]" />
             {t('reviewReport.noIssues')}
           </div>
         ) : (

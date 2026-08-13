@@ -42,17 +42,17 @@ const ROLE_LABELS: Record<string, string> = {
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  高潮: 'bg-red-500/20 text-red-400',
+  高潮: 'bg-[color-mix(in_srgb,var(--color-error)_20%,transparent)] text-[var(--color-error)]',
   冲突: 'bg-orange-500/20 text-orange-400',
   转折: 'bg-purple-500/20 text-purple-400',
   建置: 'bg-blue-500/20 text-blue-400',
-  收尾: 'bg-green-500/20 text-green-400',
-  climax: 'bg-red-500/20 text-red-400',
+  收尾: 'bg-[color-mix(in_srgb,var(--color-success)_20%,transparent)] text-[var(--color-success)]',
+  climax: 'bg-[color-mix(in_srgb,var(--color-error)_20%,transparent)] text-[var(--color-error)]',
   conflict: 'bg-orange-500/20 text-orange-400',
   turning: 'bg-purple-500/20 text-purple-400',
   setup: 'bg-blue-500/20 text-blue-400',
   setupAlt: 'bg-blue-500/20 text-blue-400',
-  resolution: 'bg-green-500/20 text-green-400',
+  resolution: 'bg-[color-mix(in_srgb,var(--color-success)_20%,transparent)] text-[var(--color-success)]',
 }
 
 function getRoleLabel(role: string): string {

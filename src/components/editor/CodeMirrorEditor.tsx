@@ -40,7 +40,7 @@ export default function CodeMirrorEditor({
 
   const AI_ACTIONS = useMemo(() => [
     { key: 'refine', label: t('codeMirrorEditor.aiRefine'), color: 'text-blue-400', prompt: t('codeMirrorEditor.aiRefinePrompt') },
-    { key: 'expand', label: t('codeMirrorEditor.aiExpand'), color: 'text-amber-400', prompt: t('codeMirrorEditor.aiExpandPrompt') },
+    { key: 'expand', label: t('codeMirrorEditor.aiExpand'), color: 'text-[var(--color-warning)]', prompt: t('codeMirrorEditor.aiExpandPrompt') },
     { key: 'continue', label: t('codeMirrorEditor.aiContinue'), color: 'text-purple-400', prompt: t('codeMirrorEditor.aiContinuePrompt') },
     { key: 'dialogue', label: t('codeMirrorEditor.aiDialogue'), color: 'text-emerald-400', prompt: t('codeMirrorEditor.aiDialoguePrompt') },
   ], [t])
