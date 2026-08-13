@@ -246,18 +246,29 @@ function WorldBuildingGroup({
       <div
         className="tree-item gap-1.5 cursor-pointer select-none"
         style={{ paddingLeft: 10 }}
+        role="button"
+        tabIndex={0}
         onClick={() => openBuiltinEditor('world-building-editor', t('projectTree.storyArch'), 'world-building')}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            openBuiltinEditor('world-building-editor', t('projectTree.storyArch'), 'world-building')
+          }
+        }}
         title={t('projectTree.archEditorTip')}
       >
-        <span
+        <button
+          type="button"
+          className="bg-transparent border-none p-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
           style={{ width: 12, flexShrink: 0, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
           onClick={(e) => { e.stopPropagation(); setOpen(v => !v) }}
+          aria-expanded={open}
         >
           {open
             ? <ChevronDown size={12} style={{ color: 'var(--color-text-muted)' }} />
             : <ChevronRight size={12} style={{ color: 'var(--color-text-muted)' }} />
           }
-        </span>
+        </button>
         <FolderTree size={14} style={{ color: 'var(--color-text-muted)' }} />
         <span className="text-sm font-medium flex-1 min-w-0 truncate" style={{ color: 'var(--color-text)' }}>{t('projectTree.storyArch')}</span>
         {/* 进度徽章 */}
@@ -308,8 +319,9 @@ function ArchFileRow({
 }) {
   const { t } = useTranslation('panels')
   return (
-    <div
-      className="tree-item gap-1.5 cursor-pointer select-none"
+    <button
+      type="button"
+      className="tree-item gap-1.5 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
       style={{ paddingLeft: 26 }}
       onClick={() => openArchFile(filePath, `${f.label}`)}
       onContextMenu={e => showSidebarMenu([
@@ -345,6 +357,6 @@ function ArchFileRow({
           {t('projectTree.pendingGeneration')}
         </span>
       )}
-    </div>
+    </button>
   )
 }

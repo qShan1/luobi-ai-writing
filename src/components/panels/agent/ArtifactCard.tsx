@@ -68,7 +68,18 @@ export default function ArtifactCard({ artifact }: Props) {
   }
 
   return (
-    <div className="artifact-card" onClick={handleClick}>
+    <div
+      role="button"
+      tabIndex={0}
+      className="artifact-card cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+      onClick={handleClick}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
+    >
       <div className="artifact-icon">
         <ArtifactIcon type={type} />
       </div>

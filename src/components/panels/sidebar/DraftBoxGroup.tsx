@@ -36,8 +36,9 @@ export default function DraftBoxGroup({
   return (
     <div>
       {/* 草稿箱标题行 */}
-      <div
-        className="tree-item gap-1.5 cursor-pointer select-none"
+      <button
+        type="button"
+        className="tree-item gap-1.5 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
         style={{ paddingLeft: 10 }}
         onClick={() => setOpen(v => !v)}
         title={t('draftBox.tooltip')}
@@ -53,7 +54,7 @@ export default function DraftBoxGroup({
             {activeChapterCount} {t('common:chapters')}
           </span>
         )}
-      </div>
+      </button>
 
       {open && (
         <div>
@@ -118,8 +119,9 @@ function DraftChapterGroup({
   return (
     <div>
       {/* 章节行 */}
-      <div
-        className="tree-item gap-1.5 cursor-pointer select-none"
+      <button
+        type="button"
+        className="tree-item gap-1.5 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
         style={{ paddingLeft: 26 }}
         onClick={() => setOpen(v => !v)}
         title={displayTitle}
@@ -138,7 +140,7 @@ function DraftChapterGroup({
         <span className="ml-auto text-[0.7rem] flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
           {t('drafts.draftsCount', { count: activeDrafts.length })}
         </span>
-      </div>
+      </button>
 
       {/* 草稿列表 */}
       {open && (
@@ -154,15 +156,16 @@ function DraftChapterGroup({
 
           {/* 显示归档草稿的切换按钮 */}
           {archivedDrafts.length > 0 && (
-            <div
-              className="flex items-center gap-1 cursor-pointer select-none"
+            <button
+              type="button"
+              className="flex items-center gap-1 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
               style={{ paddingLeft: 54 }}
               onClick={() => setShowArchived(v => !v)}
             >
               <span className="text-[0.7rem]" style={{ color: 'var(--color-text-muted)', opacity: 0.6 }}>
                 {showArchived ? t('drafts.hide') : t('drafts.archived', { count: archivedDrafts.length })}
               </span>
-            </div>
+            </button>
           )}
           {showArchived && archivedDrafts.map(draft => (
             <DraftItem
@@ -218,8 +221,9 @@ function DraftItem({
   const isFinalized = draft.status === 'finalized'
 
   return (
-    <div
-      className="relative flex items-center gap-1.5 cursor-pointer hover:bg-[var(--color-hover)]"
+    <button
+      type="button"
+      className="relative flex items-center gap-1.5 cursor-pointer hover:bg-[var(--color-hover)] w-full bg-transparent border-none text-left"
       style={{
         paddingLeft: 50,
         paddingRight: 8,
@@ -269,6 +273,6 @@ function DraftItem({
       {isFinalized && (
         <CheckCircle2 size={10} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
       )}
-    </div>
+    </button>
   )
 }

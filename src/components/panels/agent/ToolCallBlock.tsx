@@ -60,7 +60,18 @@ export default function ToolCallBlock({ toolCall }: Props) {
   return (
     <div className="tool-call-block">
       {/* 折叠头部 */}
-      <div className="tool-call-header" onClick={() => setExpanded(v => !v)}>
+      <div
+        role="button"
+        tabIndex={0}
+        className="tool-call-header cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+        onClick={() => setExpanded(v => !v)}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setExpanded(v => !v)
+          }
+        }}
+      >
         <div className="tool-call-icon">
           <Wrench size={12} style={{ color: 'var(--color-text-muted)' }} />
         </div>

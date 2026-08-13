@@ -21,8 +21,9 @@ export function LeafItem({
   onContextMenu?: (event: React.MouseEvent) => void
 }) {
   return (
-    <div
-      className="tree-item gap-1.5 cursor-pointer select-none"
+    <button
+      type="button"
+      className="tree-item gap-1.5 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
       style={{ paddingLeft: 10 }}
       onClick={onClick}
       onContextMenu={onContextMenu}
@@ -39,6 +40,6 @@ export function LeafItem({
           {badge}
         </span>
       )}
-    </div>
+    </button>
   )
 }

@@ -108,8 +108,9 @@ export default function ManuscriptGroup({ files }: { files: FileNode[]; projectP
 
   return (
     <div>
-      <div
-        className="tree-item gap-1.5 cursor-pointer select-none"
+      <button
+        type="button"
+        className="tree-item gap-1.5 cursor-pointer select-none w-full bg-transparent border-none py-0 text-left"
         style={{ paddingLeft: 10 }}
         onClick={() => setOpen(v => !v)}
       >
@@ -124,7 +125,7 @@ export default function ManuscriptGroup({ files }: { files: FileNode[]; projectP
             {chapterFiles.length} {t('common:chapters')}
           </span>
         )}
-      </div>
+      </button>
       {open && (
         <div>
           {chapterFiles.length === 0 ? (
@@ -135,9 +136,10 @@ export default function ManuscriptGroup({ files }: { files: FileNode[]; projectP
             chapterFiles.map(f => {
               const displayName = getDisplay(f)
               return (
-                <div
+                <button
                   key={f.path}
-                  className="tree-item gap-1.5 cursor-pointer"
+                  type="button"
+                  className="tree-item gap-1.5 cursor-pointer w-full bg-transparent border-none py-0 text-left"
                   style={{ paddingLeft: 30 }}
                   onClick={() => openChapterFile(f.path, displayName)}
                   onContextMenu={e => showSidebarMenu([
@@ -161,7 +163,7 @@ export default function ManuscriptGroup({ files }: { files: FileNode[]; projectP
                   <span className="text-sm truncate" style={{ color: 'var(--color-text-secondary)' }}>
                     {displayName}
                   </span>
-                </div>
+                </button>
               )
             })
           )}
