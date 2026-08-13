@@ -64,11 +64,11 @@ export default function StatusBar() {
 
         {defaultModel ? (
           <StatusBarSegment
-            title={t('statusBar.currentModel', { name: defaultModel.name })}
+            title={t('statusBar.currentModel', { name: defaultModel.name || defaultModel.modelName })}
             onClick={() => openSettings()}
           >
             <Wifi size={11} />
-            <span className="opacity-80 max-w-[120px] truncate">{defaultModel.name}</span>
+            <span className="opacity-80 max-w-[120px] truncate">{defaultModel.name || defaultModel.modelName}</span>
           </StatusBarSegment>
         ) : (
           <StatusBarSegment

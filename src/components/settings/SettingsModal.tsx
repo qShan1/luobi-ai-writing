@@ -714,15 +714,17 @@ function ModelForm({
           </div>
           <div>
             <Label>{t('models.maxTokens')}</Label>
-            <Input
-              type="number"
-              value={model.maxTokens}
-              onChange={(e) => up('maxTokens', (e.target.value === '' ? '' : parseInt(e.target.value)) as number)}
-              onBlur={() => {
-                const v = Number(model.maxTokens);
-                if (!v || v < 1) up('maxTokens', 4096)
-              }}
-            />
+            <NativeSelect
+              value={String(model.maxTokens ?? 4096)}
+              onChange={(e) => up('maxTokens', parseInt(e.target.value) || 4096)}
+            >
+              {[...new Set([4096, 8192, 16384, 32768, 65536, Number(model.maxTokens) || 4096])]
+                .filter(v => v > 0)
+                .sort((a, b) => a - b)
+                .map(v => (
+                  <option key={v} value={v}>{v.toLocaleString()}</option>
+                ))}
+            </NativeSelect>
           </div>
         </div>
       )}
