@@ -60,6 +60,7 @@
     "provider": "Provider",
     "modelId": "Model ID",
     "modelName": "Model Name",
+    "displayName": "Display name",
     "modelNamePlaceholder": "e.g.: DeepSeek Primary / GPT-4o Backup",
     "apiKey": "API Key",
     "apiKeyPlaceholder": "sk-...",

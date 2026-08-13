@@ -60,6 +60,7 @@
     "provider": "Провайдер",
     "modelId": "ID модели",
     "modelName": "Название модели",
+    "displayName": "Отображаемое имя",
     "modelNamePlaceholder": "напр.: DeepSeek основная / GPT-4o резервная",
     "apiKey": "API-ключ",
     "apiKeyPlaceholder": "sk-...",

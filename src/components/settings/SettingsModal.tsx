@@ -162,7 +162,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           >
             <div>
               <h2 className="text-title-page" style={{ color: 'var(--color-text)' }}>
-                {t(`general.${section}`)}
+                {t(`general.${section === 'llm' ? 'models' : section}`)}
               </h2>
               <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
                 {t(SECTIONS.find((s) => s.id === section)?.descriptionKey ?? '')}
@@ -436,7 +436,7 @@ function ModelCard({
           )}
         </div>
         <p className="text-xs truncate mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
-          {model.provider} · {model.modelName} · {model.baseUrl}
+          {providerName(model.provider, t)} · {model.modelName} · {model.baseUrl}
         </p>
       </div>
 
@@ -573,7 +573,7 @@ function ModelForm({
 
       {/* 显示名称 */}
       <div>
-        <Label>{t('models.modelName')}</Label>
+        <Label>{t('models.displayName')}</Label>
         <Input
           value={model.name}
           onChange={(e) => up('name', e.target.value)}
@@ -746,10 +746,21 @@ function ModelForm({
           <Save size={13} />
           {saving ? t('models.saving') : t('models.saveConfig')}
         </Button>
-        <Button variant="ghost" onClick={onCancel}>{t('draftEditor.cancel')}</Button>
+        <Button variant="ghost" onClick={onCancel}>{t('cancel', { ns: 'common' })}</Button>
       </div>
       {testResult && (
-        <div className={`text-xs p-2 rounded ${testResult.success ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'} break-all`}>
+        <div
+          className="text-xs p-2 rounded border break-all"
+          style={{
+            backgroundColor: testResult.success
+              ? 'color-mix(in srgb, var(--color-success) 10%, transparent)'
+              : 'color-mix(in srgb, var(--color-error) 10%, transparent)',
+            color: testResult.success ? 'var(--color-success)' : 'var(--color-error)',
+            borderColor: testResult.success
+              ? 'color-mix(in srgb, var(--color-success) 30%, transparent)'
+              : 'color-mix(in srgb, var(--color-error) 30%, transparent)',
+          }}
+        >
           {testResult.success ? t('models.connectionSuccess') : t('models.connectionFailed', { error: testResult.error })}
         </div>
       )}
@@ -1280,4 +1291,16 @@ function providerEmoji(provider: string) {
     openai: '🤖', deepseek: '🐬', gemini: '✨', ollama: '🦙', bigmodel: '🧠', custom: '⚙️',
   }
   return map[provider] ?? '🔧'
+}
+
+function providerName(provider: string, t: (key: string) => string): string {
+  const map: Record<string, string> = {
+    openai: 'OpenAI',
+    deepseek: 'DeepSeek',
+    gemini: 'Google Gemini',
+    ollama: t('modelsProviders.ollama'),
+    bigmodel: t('modelsProviders.bigmodel'),
+    custom: t('modelsProviders.custom'),
+  }
+  return map[provider] ?? provider
 }

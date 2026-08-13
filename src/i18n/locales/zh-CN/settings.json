@@ -60,6 +60,7 @@
     "provider": "服务商",
     "modelId": "模型 ID",
     "modelName": "模型标识",
+    "displayName": "显示名称",
     "modelNamePlaceholder": "如：DeepSeek 主力 / GPT-4o 备用",
     "apiKey": "API Key",
     "apiKeyPlaceholder": "sk-...",
