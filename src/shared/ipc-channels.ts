@@ -522,6 +522,21 @@ export interface WindowChannels {
     args: []
     return: CloseBehavior
   }
+  /** 获取是否开机自启 */
+  'window:get-auto-launch': {
+    args: []
+    return: boolean
+  }
+  /** 设置开机自启 */
+  'window:set-auto-launch': {
+    args: [enable: boolean]
+    return: { success: boolean }
+  }
+  /** 启动 Windows 卸载程序；返回是否找到卸载程序 */
+  'window:uninstall': {
+    args: []
+    return: boolean
+  }
 }
 
 /** 主进程 → 渲染进程事件 */

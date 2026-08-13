@@ -1,5 +1,7 @@
 import { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage } from 'electron'
 import path from 'node:path'
+import fs from 'node:fs'
+import { spawn } from 'node:child_process'
 import { readJsonFile, writeJsonFile, GLOBAL_CONFIG_PATH, DEFAULT_GLOBAL_CONFIG } from '../utils/config-utils'
 import { GlobalConfig, CloseBehavior } from '../../src/shared/ipc-channels'
 
@@ -82,6 +84,35 @@ export function isQuittingFlag() {
   return isQuitting
 }
 
+/** 读取是否开机自启（系统登录项） */
+export function getAutoLaunch(): boolean {
+  return app.getLoginItemSettings().openAtLogin
+}
+
+/** 设置开机自启 */
+export function setAutoLaunch(enable: boolean) {
+  app.setLoginItemSettings({ openAtLogin: enable })
+}
+
+/** 启动 Windows 卸载程序（nsis 安装版）；便携版/找不到时返回 false */
+export function launchUninstaller(): boolean {
+  const exePath = app.getPath('exe')
+  const dir = path.dirname(exePath)
+  let uninstaller: string | undefined
+  try {
+    uninstaller = fs.readdirSync(dir).find((f) => f.toLowerCase().startsWith('uninstall') && f.endsWith('.exe'))
+  } catch {
+    return false
+  }
+  if (!uninstaller) return false
+  try {
+    spawn(path.join(dir, uninstaller), [], { detached: true, stdio: 'ignore' }).unref()
+    return true
+  } catch {
+    return false
+  }
+}
+
 /**
  * 拦截窗口关闭：根据 closeBehavior 决定最小化到托盘 / 询问 / 退出。
  * 在 createWindow 后调用，绑定到主窗口。
@@ -124,5 +155,18 @@ export function registerWindowController() {
 
   ipcMain.handle('window:get-close-behavior', () => {
     return getCloseBehavior()
+  })
+
+  ipcMain.handle('window:get-auto-launch', () => {
+    return getAutoLaunch()
+  })
+
+  ipcMain.handle('window:set-auto-launch', (_e, enable: boolean) => {
+    setAutoLaunch(!!enable)
+    return { success: true }
+  })
+
+  ipcMain.handle('window:uninstall', () => {
+    return launchUninstaller()
   })
 }

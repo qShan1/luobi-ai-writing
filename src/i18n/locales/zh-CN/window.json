@@ -13,5 +13,12 @@
   "option_minimizeDesc": "关闭即隐藏到托盘，应用继续在后台运行",
   "option_quit": "直接退出",
   "option_quitDesc": "关闭即退出应用",
-  "hint": "提示：选择「最小化到托盘」后，可通过双击托盘图标快速恢复窗口。"
+  "hint": "提示：选择「最小化到托盘」后，可通过双击托盘图标快速恢复窗口。",
+  "autoLaunchLabel": "开机自启",
+  "autoLaunchDesc": "登录系统时自动启动落笔",
+  "uninstallLabel": "卸载落笔",
+  "uninstallDesc": "卸载并移除安装版应用",
+  "uninstallAction": "卸载",
+  "uninstallStarted": "已启动卸载程序，请按提示完成卸载。",
+  "uninstallPortable": "当前为便携版，删除应用文件夹即可完成卸载。"
 }

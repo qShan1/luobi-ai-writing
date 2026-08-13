@@ -50,7 +50,7 @@ export default function StatusBar() {
         <StatusBarDivider />
         <StatusBarSegment
           title={t('statusBar.sponsorTooltip')}
-          onClick={openSettings}
+          onClick={() => openSettings('about')}
         >
           <span className="font-medium" style={{ color: 'var(--color-accent)' }}>
             {t('statusBar.supportAuthor')}

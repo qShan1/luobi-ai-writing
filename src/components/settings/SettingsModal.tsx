@@ -11,6 +11,7 @@ import { useLLMStore } from '../../stores/llm-store'
 import { useThemeStore, FONT_OPTIONS, type FontId } from '../../stores/theme-store'
 import { useEffectsStore } from '../../stores/effects-store'
 import { useWindowStore } from '../../stores/window-store'
+import { useLayoutStore } from '../../stores/layout-store'
 import type { ModelProfile, CloseBehavior } from '../../shared/ipc-channels'
 import type { ProviderPreset } from '../../shared/provider-presets'
 import { BUILTIN_PRESETS } from '../../shared/provider-presets'
@@ -57,7 +58,8 @@ interface SettingsModalProps {
 /** 全屏设置弹窗 */
 export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   const { t } = useTranslation('settings')
-  const [section, setSection] = useState<SettingsSection>('llm')
+  const section = (useLayoutStore(s => s.settingsSection) ?? 'llm') as SettingsSection
+  const setSettingsSection = useLayoutStore(s => s.setSettingsSection)
 
   if (!open) return null
 
@@ -93,7 +95,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           {SECTIONS.map((s) => (
             <button
               key={s.id}
-              onClick={() => setSection(s.id)}
+              onClick={() => setSettingsSection(s.id)}
               className={cn(
                 'flex items-center gap-2.5 mx-2 px-3 py-2.5 rounded-lg text-left text-sm transition-colors min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
                 section === s.id
@@ -1151,10 +1153,21 @@ function WindowSection() {
   const closeBehavior = useWindowStore((s) => s.closeBehavior)
   const loaded = useWindowStore((s) => s.loaded)
   const setCloseBehavior = useWindowStore((s) => s.setCloseBehavior)
+  const autoLaunch = useWindowStore((s) => s.autoLaunch)
+  const autoLaunchLoaded = useWindowStore((s) => s.autoLaunchLoaded)
+  const setAutoLaunch = useWindowStore((s) => s.setAutoLaunch)
+  const uninstall = useWindowStore((s) => s.uninstall)
+  const [uninstallHint, setUninstallHint] = useState<string | null>(null)
 
   useEffect(() => {
     useWindowStore.getState().loadCloseBehavior()
+    useWindowStore.getState().loadAutoLaunch()
   }, [])
+
+  const handleUninstall = async () => {
+    const found = await uninstall()
+    setUninstallHint(windowT(found ? 'uninstallStarted' : 'uninstallPortable'))
+  }
 
   const options: { value: CloseBehavior; icon: React.ReactNode }[] = [
     { value: 'ask', icon: <MessageSquare size={15} /> },
@@ -1218,6 +1231,45 @@ function WindowSection() {
       <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
         {windowT('hint')}
       </p>
+
+      {/* 系统：开机自启 + 卸载 */}
+      <div className="space-y-5 pt-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
+        <div className="space-y-1.5">
+          <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
+            {windowT('autoLaunchLabel')}
+          </p>
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+              {windowT('autoLaunchDesc')}
+            </p>
+            <Switch
+              checked={autoLaunch}
+              disabled={!autoLaunchLoaded}
+              onCheckedChange={setAutoLaunch}
+              aria-label={windowT('autoLaunchLabel')}
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
+              {windowT('uninstallLabel')}
+            </p>
+            <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+              {windowT('uninstallDesc')}
+            </p>
+          </div>
+          <Button variant="destructive" size="sm" onClick={handleUninstall}>
+            {windowT('uninstallAction')}
+          </Button>
+        </div>
+        {uninstallHint && (
+          <p className="text-[0.68rem]" style={{ color: 'var(--color-text-muted)' }}>
+            {uninstallHint}
+          </p>
+        )}
+      </div>
     </div>
   )
 }

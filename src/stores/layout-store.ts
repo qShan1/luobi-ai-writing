@@ -63,8 +63,12 @@ interface LayoutState {
   openBottomTab: (tab: BottomTab) => void
 
   // ===== 全局弹窗 Actions =====
-  openSettings: () => void
+  /** 打开设置弹窗，可选指定初始侧边栏区块（如 'about'） */
+  openSettings: (section?: string) => void
   closeSettings: () => void
+  /** 当前设置侧边栏区块（受控） */
+  settingsSection: string | null
+  setSettingsSection: (section: string) => void
   openNewProject: () => void
   closeNewProject: () => void
   openExport: () => void
@@ -86,6 +90,7 @@ const DEFAULT_STATE = {
   bottomTab: 'tasks' as BottomTab,
   bottomPanelHeight: 25,
   settingsOpen: false,
+  settingsSection: null,
   newProjectOpen: false,
   exportOpen: false,
   importNovelOpen: false,
@@ -138,8 +143,9 @@ export const useLayoutStore = create<LayoutState>()(
       openBottomTab: (tab) => set({ bottomPanelOpen: true, bottomTab: tab }),
 
       // 全局弹窗 Actions
-      openSettings: () => set({ settingsOpen: true }),
-      closeSettings: () => set({ settingsOpen: false }),
+      openSettings: (section) => set({ settingsOpen: true, settingsSection: section ?? null }),
+      closeSettings: () => set({ settingsOpen: false, settingsSection: null }),
+      setSettingsSection: (section) => set({ settingsSection: section }),
       openNewProject: () => set({ newProjectOpen: true }),
       closeNewProject: () => set({ newProjectOpen: false }),
       openExport: () => set({ exportOpen: true }),
@@ -175,6 +181,7 @@ export const useLayoutStore = create<LayoutState>()(
           bottomPanelHeight: readNum(p.bottomPanelHeight, current.bottomPanelHeight),
           // 弹窗状态永远从默认值开始
           settingsOpen: false,
+          settingsSection: null,
           newProjectOpen: false,
           exportOpen: false,
           importNovelOpen: false,

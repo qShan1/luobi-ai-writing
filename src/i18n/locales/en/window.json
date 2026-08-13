@@ -13,5 +13,12 @@
   "option_minimizeDesc": "Hide to the tray and keep running in the background",
   "option_quit": "Quit directly",
   "option_quitDesc": "Close the window and exit the app",
-  "hint": "Tip: with 'Minimize to tray', double-click the tray icon to quickly restore the window."
+  "hint": "Tip: with 'Minimize to tray', double-click the tray icon to quickly restore the window.",
+  "autoLaunchLabel": "Launch at startup",
+  "autoLaunchDesc": "Start Luobi automatically when you sign in",
+  "uninstallLabel": "Uninstall Luobi",
+  "uninstallDesc": "Uninstall and remove the installed app",
+  "uninstallAction": "Uninstall",
+  "uninstallStarted": "Uninstaller started. Follow the prompts to complete.",
+  "uninstallPortable": "This is the portable build. Delete the app folder to uninstall."
 }
