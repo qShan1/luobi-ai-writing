@@ -15,6 +15,7 @@ export interface WorkflowStep {
   id: string
   name: string
   description: string
+  key?: string
   status: StepStatus
   progress?: number
   result?: string
@@ -90,6 +91,7 @@ export interface WorkflowDefinition {
   steps: Array<{
     name: string
     description: string
+    key?: string
     executor: StepExecutor
   }>
   /** 工作流完成后的通知/跳转动作（可选） */
@@ -223,6 +225,7 @@ export const useWorkflowStore = create<WorkflowState>()((set, get) => ({
         id: randomUUID(),
         name: s.name,
         description: s.description,
+        key: s.key,
         status: 'pending',
         logs: [],
       })),

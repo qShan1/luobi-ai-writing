@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Sparkles, CheckCircle2, Circle, RefreshCw, FileText, BookOpen, AlertTriangle, FolderTree } from 'lucide-react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { Sparkles, CheckCircle2, Circle, RefreshCw, FileText, BookOpen, AlertTriangle, FolderTree, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useProjectStore } from '../../stores/project-store'
 import { useCharacterStore } from '../../stores/character-store'
@@ -15,6 +15,7 @@ import { ipc } from '../../services/ipc-client'
 import { ARCH_CHARACTER_SCOPE, runArchCharacterExtract, createArchitectureWorkflow } from '../../services/workflows/architecture-workflow'
 import { readPostProcessStatus, type PostProcessStatus } from '../../services/workflows/workflow-utils'
 import { globalEventBus } from '../../shared/event-bus'
+import { useWorkflowStore, type StepStatus } from '../../stores/workflow-store'
 
 type ArchStepKey = 'premise' | 'characters' | 'worldbuilding' | 'synopsis'
 
@@ -107,6 +108,20 @@ export default function WorldBuildingEditor() {
 
 
 
+  /** 进行中的架构生成工作流（用于进度可视化） */
+  const activeRuns = useWorkflowStore(s => s.activeRuns)
+  const archRun = activeRuns.find(r => r.type === 'architecture_generation' && (r.status === 'running' || r.status === 'waiting'))
+
+  const stepStatus = useMemo(() => {
+    const m: Record<string, StepStatus> = {}
+    if (archRun) for (const s of archRun.steps) if (s.key) m[s.key] = s.status
+    return m
+  }, [archRun])
+
+  const runningStep = archRun?.steps.find(s => s.status === 'running')
+  const completedSteps = archRun?.steps.filter(s => s.status === 'completed').length ?? 0
+  const totalSteps = archRun?.steps.length ?? 0
+
   /** 从角色图谱提取角色卡（首次提取 / 重新提取） */
   const handleExtractCharacters = useCallback(async () => {
     if (!currentProject || extracting) return
@@ -181,7 +196,7 @@ export default function WorldBuildingEditor() {
     )
   }
 
-  const generatedCount = ARCH_FILES.filter(f => archStatus[f.key]).length
+  const generatedCount = ARCH_FILES.filter(f => archStatus[f.key] || stepStatus[f.key] === 'completed').length
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
@@ -221,10 +236,38 @@ export default function WorldBuildingEditor() {
         </div>
       </div>
 
+      {/* 生成中进度横幅 */}
+      {archRun && (
+        <div
+          className="flex items-center gap-2.5 px-3 py-2 border-b flex-shrink-0"
+          style={{ borderColor: 'var(--color-border)', backgroundColor: 'color-mix(in srgb, var(--color-accent) 6%, transparent)' }}
+        >
+          <Loader2 size={13} className="animate-spin flex-shrink-0" style={{ color: 'var(--color-accent)' }} />
+          <span className="text-xs flex-1 min-w-0 truncate" style={{ color: 'var(--color-text)' }}>
+            {t('worldBuilding.generatingProgress', { step: runningStep?.name ?? '', index: completedSteps + 1, total: totalSteps })}
+          </span>
+          <div
+            className="w-28 h-1 rounded-full overflow-hidden flex-shrink-0"
+            style={{ backgroundColor: 'color-mix(in srgb, var(--color-border) 60%, transparent)' }}
+          >
+            <div
+              className="h-full rounded-full transition-[width] duration-300"
+              style={{
+                width: `${totalSteps ? Math.round((completedSteps / totalSteps) * 100) : 0}%`,
+                backgroundColor: 'var(--color-accent)',
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* 文件卡片列表 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {ARCH_FILES.map(f => {
-          const generated = archStatus[f.key]
+          const runStatus = stepStatus[f.key]
+          const isRunning = runStatus === 'running'
+          const isFailed = runStatus === 'failed'
+          const generated = archStatus[f.key] || runStatus === 'completed'
           const words = wordCounts[f.key] ?? 0
           const isCharacters = f.key === 'characters'
           // 角色图谱卡片：提取失败时显示红色警告
@@ -234,23 +277,31 @@ export default function WorldBuildingEditor() {
               <div
                 className={cn(
                   'rounded-lg border p-4 flex items-center gap-4 cursor-pointer transition-[border-color,background-color,opacity,transform] hover:border-[var(--color-accent)] active:scale-[0.98]',
-                  charExtractFailed
-                    ? 'border-[var(--color-error,#ef4444)]'
-                    : generated
-                      ? 'border-[var(--color-success)]'
-                      : 'border-[var(--color-border)]',
+                  isRunning
+                    ? 'border-[var(--color-accent)]'
+                    : charExtractFailed || isFailed
+                      ? 'border-[var(--color-error,#ef4444)]'
+                      : generated
+                        ? 'border-[var(--color-success)]'
+                        : 'border-[var(--color-border)]',
                 )}
                 style={{
-                  backgroundColor: charExtractFailed ? 'rgba(239, 68, 68, 0.03)' : 'var(--color-panel)',
+                  backgroundColor: isRunning
+                    ? 'color-mix(in srgb, var(--color-accent) 4%, var(--color-panel))'
+                    : charExtractFailed
+                      ? 'rgba(239, 68, 68, 0.03)'
+                      : 'var(--color-panel)',
                   opacity: loading ? 0.6 : 1,
                 }}
                 onClick={() => openArchFile(f)}
                 title={t('worldBuilding.clickToViewDesc', { desc: f.desc })}
               >
                 {/* 状态图标 */}
-                {generated
-                  ? <CheckCircle2 size={18} style={{ flexShrink: 0, color: 'var(--color-success)' }} />
-                  : <Circle size={18} style={{ flexShrink: 0, color: 'var(--color-text-muted)' }} />
+                {isRunning
+                  ? <Loader2 size={18} className="animate-spin" style={{ flexShrink: 0, color: 'var(--color-accent)' }} />
+                  : generated
+                    ? <CheckCircle2 size={18} style={{ flexShrink: 0, color: 'var(--color-success)' }} />
+                    : <Circle size={18} style={{ flexShrink: 0, color: 'var(--color-text-muted)' }} />
                 }
 
                 {/* 图标 */}
@@ -268,7 +319,26 @@ export default function WorldBuildingEditor() {
 
                 {/* 右侧状态标签 / 字数 / 提取按钮 */}
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                  {generated ? (
+                  {isRunning ? (
+                    <>
+                      <span
+                        className="text-[0.7rem] px-1.5 py-0.5 rounded font-medium"
+                        style={{ backgroundColor: 'color-mix(in srgb, var(--color-accent) 12%, transparent)', color: 'var(--color-accent)' }}
+                      >
+                        {t('worldBuilding.generating')}
+                      </span>
+                      <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                        {words.toLocaleString()} {t('worldBuilding.chars')}
+                      </span>
+                    </>
+                  ) : isFailed ? (
+                    <span
+                      className="text-[0.7rem] px-1.5 py-0.5 rounded font-medium"
+                      style={{ backgroundColor: 'color-mix(in srgb, var(--color-error) 12%, transparent)', color: 'var(--color-error)' }}
+                    >
+                      {t('worldBuilding.failed')}
+                    </span>
+                  ) : generated ? (
                     <>
                       <span className="text-[0.7rem] px-1.5 py-0.5 rounded font-medium bg-green-500/10 text-green-600 dark:text-green-400">
                         {t('worldBuilding.generated')}
