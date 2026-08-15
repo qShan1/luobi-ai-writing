@@ -62,3 +62,6 @@ realistic-benchmark.mjs
 stress-test.mjs
 ci-validate.sh
 
+
+# Serena 工具工作数据
+.serena/

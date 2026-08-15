@@ -60,7 +60,7 @@
     "kbResultLine": "[{{index}}] ({{file}}, 相关度 {{score}}%)\n{{text}}",
     "kbNoContent": "（知识库中无相关内容）",
     "kbUnavailable": "（知识库检索不可用）",
-    "noPreviousEnding": "（无前文）",
+    "noPreviousEnding": "（无前文结尾可用：本章请从自身最具画面感的事件节点直接切入，严禁用'醒来/睁眼/清晨'等套话开场，且不得与之前章节的开头雷同）",
     "noUserGuidance": "（无微操指导）",
     "noRagResults": "（无 RAG 检索结果）",
     "tokenBudgetWarning": "⚠️ Prompt 预估 {{tokens}} tokens，超出预算 {{budget}}，请考虑精简上下文",

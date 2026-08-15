@@ -1115,11 +1115,13 @@ Requirements:
 {{filtered_context}}
 
 【网文连载更新核心法则】
-1. 无缝衔接断句：你的第一段必须自然、丝滑地接续上一章结尾，绝不允许出现场景瞬移或突兀的视角跳跃。
-2. 动作与神态驱动：用动态的描写推动剧情，不要写"他们聊了很久"，用拔剑声、茶水滴落声、瞳孔的骤缩来代替。
-3. 落实本章核心冲突：用{{word_number}}字左右的篇幅，踏踏实实地推演完本章目标，拒绝平淡流水账。
-4. 悬念断章大法：全章的最后一段，必须卡在一个剧情的小高潮点或突发变故上。
-5. 底线铁律：严禁碰触【全局写作要求与禁忌】：{{global_guidance}}。
+1. 开头必须紧贴本章的【核心任务】，用这一章独有的冲突、场景或对话直接开场——切忌用通用的"醒来/起床/睁眼/清晨阳光"等套话切入，更禁止与前一章雷同的开场。若上一章结尾不可用，也不要退回到模板化开场，而应直接从本章最具画面感的事件节点切入。
+2. 每章开场方式必须与已写过的各章区分开（动作开场、对话开场、悬念式回忆开场、环境张力开场等轮换），严禁连续多章用同一个开头套路。
+3. 若提供了【上一章结尾】，你的第一段必须自然、丝滑地接续该结尾，绝不允许出现场景瞬移或突兀的视角跳跃。
+4. 动作与神态驱动：用动态的描写推动剧情，不要写"他们聊了很久"，用拔剑声、茶水滴落声、瞳孔的骤缩来代替。
+5. 落实本章核心冲突：用{{word_number}}字左右的篇幅，踏踏实实地推演完本章目标，拒绝平淡流水账。
+6. 悬念断章大法：全章的最后一段，必须卡在一个剧情的小高潮点或突发变故上。
+7. 底线铁律：严禁碰触【全局写作要求与禁忌】：{{global_guidance}}。
 
 【文风要求（如有，请严格遵循）】
 {{writing_style}}`,
@@ -1160,11 +1162,13 @@ Requirements:
 {{filtered_context}}
 
 【Core Serialization Update Rules】
-1. Seamless sentence bridging: Your first paragraph must naturally and smoothly continue from the previous chapter's ending — absolutely no scene jumps or abrupt POV shifts.
-2. Action and body language driven: Use dynamic descriptions to push the plot. Don't write "they talked for a long time" — use the sound of a sword drawn, tea dripping, pupils contracting.
-3. Execute this chapter's core conflict: In approximately {{word_number}} words, thoroughly play out this chapter's objective — no bland diary entries.
-4. Suspense cliffhanger technique: The final paragraph must land on a minor climax or sudden twist.
-5. Iron-bottom rule: Never violate [Global Writing Requirements]: {{global_guidance}}.
+1. The opening must closely follow this chapter's 【Core Task】 and dive straight into this chapter's unique conflict, scene, or dialogue — never use generic openings like "woke up / opened eyes / morning sunlight" and never repeat a previous chapter's opening. If the previous chapter's ending is unavailable, don't fall back to a formulaic opening — cut straight into the chapter's most vivid moment.
+2. Vary each chapter's opening style (action opening, dialogue opening, suspense flashback, tense environment, etc.) and never reuse the same opening trope across consecutive chapters.
+3. If the 【previous chapter ending】 is provided, your first paragraph must naturally and smoothly continue from it — no scene jumps or abrupt POV shifts.
+4. Action and body language driven: use dynamic descriptions to push the plot. Don't write "they talked for a long time" — use the sound of a sword drawn, tea dripping, pupils contracting.
+5. Execute this chapter's core conflict: In approximately {{word_number}} words, thoroughly play out this chapter's objective — no bland diary entries.
+6. Suspense cliffhanger technique: The final paragraph must land on a minor climax or sudden twist.
+7. Iron-bottom rule: Never violate [Global Writing Requirements]: {{global_guidance}}.
 
 【Writing Style Requirements (if any, follow strictly)】
 {{writing_style}}`,
@@ -1190,11 +1194,13 @@ Requirements:
 {{filtered_context}}
 
 【Основные правила обновления сериала】
-1. Бесшовное соединение предложений: ваш первый абзац должен естественно и плавно продолжать концовку предыдущей главы — абсолютно никаких скачков сцены или резких переключений точки зрения.
-2. Через действия и язык тела: используйте динамичные описания для продвижения сюжета. Не пишите «они долго разговаривали» — используйте звук вынутого меча, капающий чай, резкое сужение зрачков.
-3. Выполните основной конфликт этой главы: в объёме примерно {{word_number}} слов тщательно разыграйте цель этой главы — никаких скучных дневниковых записей.
-4. Техника интриги: последний абзац должен завершиться малой кульминацией или внезапным поворотом.
-5. Железное правило: никогда не нарушайте [Глобальные требования к написанию]: {{global_guidance}}.
+1. Начало должно тесно следовать 【Основной задаче】 этой главы и сразу погружать в уникальный конфликт, сцену или диалог этой главы — никогда не используйте шаблонные зачины вроде «проснулся / открыл глаза / утренний свет» и не повторяйте начало предыдущей главы. Если концовка предыдущей главы недоступна, не откатывайтесь к шаблонному зачину — сразу режьте в самый яркий момент этой главы.
+2. Варьируйте стиль зачина каждой главы (действие, диалог, интрига-флешбэк, напряжённая обстановка и т.д.) и никогда не повторяйте один и тот же приём зачина в соседних главах.
+3. Если предоставлена 【концовка предыдущей главы】, ваш первый абзац должен естественно и плавно её продолжать — никаких скачков сцены или резких переключений точки зрения.
+4. Через действия и язык тела: используйте динамичные описания для продвижения сюжета. Не пишите «они долго разговаривали» — используйте звук вынутого меча, капающий чай, резкое сужение зрачков.
+5. Выполните основной конфликт этой главы: в объёме примерно {{word_number}} слов тщательно разыграйте цель этой главы — никаких скучных дневниковых записей.
+6. Техника интриги: последний абзац должен завершиться малой кульминацией или внезапным поворотом.
+7. Железное правило: никогда не нарушайте [Глобальные требования к написанию]: {{global_guidance}}.
 
 【Требования к стилю (если есть, строго соблюдайте)】
 {{writing_style}}`

@@ -60,7 +60,7 @@
     "kbResultLine": "[{{index}}] ({{file}}, relevance {{score}}%)\n{{text}}",
     "kbNoContent": "(No relevant content in knowledge base)",
     "kbUnavailable": "(Knowledge base search unavailable)",
-    "noPreviousEnding": "(No previous ending)",
+    "noPreviousEnding": "(No previous ending available: open this chapter directly at its most vivid event — never start with formulaic openings like 'woke up / opened eyes / morning', and don't repeat earlier chapters' openings)",
     "noUserGuidance": "(No author guidance)",
     "noRagResults": "(No RAG search results)",
     "tokenBudgetWarning": "⚠️ Estimated prompt tokens: {{tokens}}, exceeds budget {{budget}}. Consider trimming context",

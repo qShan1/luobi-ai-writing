@@ -19,6 +19,12 @@
 
 <!-- SEO: Luobi is an open-source, privacy-first, local-first AI writing IDE purpose-built for novel writing, fiction writing, web novel creation, and long-form creative writing. -->
 
+> **⚠️ 维护状态 / Maintenance Notice**
+>
+> 本项目当前**暂时不进行主动维护**（处于低活跃维护状态）。如果您在使用过程中遇到问题，欢迎通过 Issues 反馈，我们会记录问题并在后续版本中逐步修复。
+>
+> This project is currently **not under active maintenance**. If you encounter any issues, please feel free to report them via Issues — we log every report and will address them gradually in future releases.
+
 ---
 
 ## ✨ 核心特性 / Key Features

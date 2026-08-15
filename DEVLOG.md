@@ -4,6 +4,29 @@
 
 ---
 
+## 2026-08-14: 清理死代码 — useOutsideClick
+
+- 盘点 8 个无引用文件，逐一判断"是否有同方向更好替代"：
+  - **删除** `src/hooks/useOutsideClick.ts`：被 `ui/Popover` 的 `onClose` 内置外部点击监听完全替代（原调用点已改 Popover），hook 未删属遗留。rule.md 文档同步更新。
+  - **保留** `project-templates.ts`、`style-presets.ts`：均为预留功能，UI 未接线，无替代实现。
+  - **保留** 5 个叙事一致性服务（reader-simulation/drift-monitor/semantic-coherence/stability-controller/narrative-tension）：现有 consistency-gate 是规则校验，非这些增强服务的替代。
+
+### 验证
+- 删除后 tsc 待确认；未打包。
+
+---
+
+## 2026-08-14: 批量审核 + 修章节开头雷同
+
+- 新增"批量审核"按钮（章节蓝图页面），复用 `createReviewOnlyWorkflow` 遍历未定稿草稿串行审核，按勾选或全量执行并诚实报告完成/跳过/失败。
+- 修复生成章节开头雷同（如连续多章"醒来"）：强化 `next_chapter_draft` 模板——要求开头紧贴本章核心任务、每章开场方式轮换不重复、禁套话开场；无上一章结尾时明确要求从本章最富画面感的事件切入而非模板化开场（三语同步更新）。
+
+### 验证
+- `pnpm exec tsc --noEmit` 通过；`vitest run src/i18n/__tests__/i18n.test.ts` 68/68 通过。
+- 未打包。
+
+---
+
 ## 2026-08-13: 正文章节标题、删除入口与定稿稳定性
 
 - 正文编辑器新增只读章节标题行（标题作为元数据显示，不写入正文内容）。

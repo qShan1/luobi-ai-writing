@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
   Save, BookOpen, RefreshCw, Plus, Trash2,
-  Sparkles, PenLine
+  Sparkles, PenLine, ClipboardCheck
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useProjectStore } from '../../stores/project-store'
@@ -19,7 +19,7 @@ import {
   type ChapterBlueprint,
   type DirectoryWorkflowParams,
 } from '../../services/workflows/directory-workflow'
-import { createChapterWorkflow, createFinalizeWorkflow } from '../../services/workflows/chapter-workflow'
+import { createChapterWorkflow, createFinalizeWorkflow, createReviewOnlyWorkflow } from '../../services/workflows/chapter-workflow'
 import { guardDirectoryGeneration, guardChapterWriting } from '../../services/workflow-guards'
 import DirectoryConfigDialog from '../dialogs/DirectoryConfigDialog'
 import { Button } from '../ui/Button'
@@ -391,6 +391,57 @@ export default function ChapterCardEditor() {
     }
   }
 
+  const handleBatchReview = async () => {
+    if (!currentProject || batchRunning) return
+    const scope = selectedChapters.size > 0
+      ? blueprints.filter(b => selectedChapters.has(b.chapterNumber))
+      : blueprints
+    const targets: Array<{ blueprint: ChapterBlueprint; draft: { id: number; version: number; status: string; filePath: string } }> = []
+    let skipped = 0
+    for (const blueprint of scope) {
+      const drafts = await ipc.invoke('db:draft-list', blueprint.chapterNumber)
+      if (drafts.some(d => d.status === 'finalized')) { skipped += 1; continue }
+      const draft = drafts
+        .filter(d => d.status === 'draft' || d.status === 'revised')
+        .sort((a, b) => b.version - a.version)[0]
+      if (draft) targets.push({ blueprint, draft: { ...draft, filePath: `luobi://draft/${draft.id}` } })
+      else skipped += 1
+    }
+    if (targets.length === 0) {
+      toast.info(t('chapterCard.batchNoReviewTargets'))
+      return
+    }
+    const confirmKey = selectedChapters.size > 0 ? 'chapterCard.batchConfirmReviewSelected' : 'chapterCard.batchConfirmReview'
+    const ok = await confirm(t(confirmKey, { count: targets.length }), {
+      title: t('chapterCard.batchReview'),
+      confirmText: t('chapterCard.reviewBatch'),
+    })
+    if (!ok) return
+
+    setBatchRunning(true)
+    let completed = 0
+    let failed = 0
+    try {
+      for (const { blueprint, draft } of targets) {
+        const content = await readDraftBody(draft.filePath)
+        const runId = await startWorkflow(createReviewOnlyWorkflow({
+          chapterNumber: blueprint.chapterNumber,
+          chapterTitle: blueprint.title,
+          draftPath: draft.filePath,
+          draftContent: content,
+        }), false)
+        if (getBatchRunStatus(runId) === 'failed') failed += 1
+        else completed += 1
+      }
+      reportBatchResult(completed, skipped, failed)
+    } catch (error) {
+      toast.error(t('chapterCard.batchStopped', { error: String(error) }))
+    } finally {
+      setBatchRunning(false)
+      setSelectedChapters(new Set())
+    }
+  }
+
   /**
    * 写作此章 — 将当前蓝图信息注入创作弹窗
    * 支持指定章节（默认为当前选中章）
@@ -485,6 +536,9 @@ export default function ChapterCardEditor() {
            </Button>
            <Button variant="outline" size="sm" onClick={handleBatchFinalize} disabled={batchRunning || blueprints.length === 0}>
              <Save size={12} /> {t('chapterCard.batchFinalize')}
+           </Button>
+           <Button variant="outline" size="sm" onClick={handleBatchReview} disabled={batchRunning || blueprints.length === 0}>
+             <ClipboardCheck size={12} /> {t('chapterCard.batchReview')}
            </Button>
           <Button variant="ghost" size="icon" onClick={() => loadBlueprints()} title={t('chapterCard.reload')} disabled={loading}>
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />

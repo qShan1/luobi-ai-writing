@@ -71,7 +71,7 @@ src/
 │   ├── draft-status.ts        # 草稿状态常量
 │   └── provider-presets.ts    # LLM 服务商预设
 ├── hooks/                     # 自定义 React Hooks
-│   └── useOutsideClick.ts     # 点击外部检测
+│   （已删除 useOutsideClick.ts，外部点击关闭统一由 ui/Popover 承担）
 ├── lib/
 │   └── utils.ts               # cn() 类名合并工具
 └── utils/                     # 纯工具函数
@@ -511,17 +511,7 @@ import { MenuItem } from '../ui/MenuItem'
 
 ### 4.8 通用 Hooks
 
-#### `useOutsideClick` — 点击外部检测
-
-```tsx
-import { useOutsideClick } from '../hooks/useOutsideClick'
-
-const menuRef = useRef<HTMLDivElement>(null)
-const [open, setOpen] = useState(false)
-
-// 第三个参数 enabled：菜单关闭时暂停监听，减少事件开销
-useOutsideClick(menuRef, () => setOpen(false), open)
-```
+> 已删除 `useOutsideClick`。点击外部关闭浮层/菜单统一使用 `ui/Popover` 的 `onClose` 能力（内置外部点击监听）。
 
 ### 4.9 工具函数
 
